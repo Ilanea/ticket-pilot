@@ -1,9 +1,7 @@
 package com.example.application.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -17,15 +15,17 @@ public class Contact extends AbstractEntity {
     @NotEmpty
     private String lastName = "";
 
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    @NotNull
-    @JsonIgnoreProperties({"employees"})
-    private Company company;
-
     @NotNull
     @ManyToOne
     private Status status;
+
+
+    @NotEmpty
+    private String issue = "";
+
+    @NotNull
+    @ManyToOne
+    private Priority priority;
 
     @Email
     @NotEmpty
@@ -34,6 +34,26 @@ public class Contact extends AbstractEntity {
     @Override
     public String toString() {
         return firstName + " " + lastName;
+    }
+
+    public @NotNull Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(@NotNull Priority priority) {
+        this.priority = priority;
+    }
+
+    public @NotNull Status getTicketStatus() {
+        return status;
+    }
+
+    public String getIssue() {
+        return issue;
+    }
+
+    public void setIssue(@NotNull String issue) {
+        this.issue = issue;
     }
 
     public String getFirstName() {
@@ -52,19 +72,11 @@ public class Contact extends AbstractEntity {
         this.lastName = lastName;
     }
 
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    public Status getStatus() {
+    public @NotNull Status getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(@NotNull Status status) {
         this.status = status;
     }
 
@@ -75,4 +87,6 @@ public class Contact extends AbstractEntity {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
 }

@@ -1,7 +1,7 @@
 package com.example.application.views.list;
 
-import com.example.application.data.entity.Company;
 import com.example.application.data.entity.Contact;
+import com.example.application.data.entity.Priority;
 import com.example.application.data.entity.Status;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
@@ -25,7 +25,12 @@ public class ContactForm extends FormLayout {
     TextField lastName = new TextField("Last name");
     EmailField email = new EmailField("Email");
     ComboBox<Status> status = new ComboBox<>("Status");
-    ComboBox<Company> company = new ComboBox<>("Company");
+
+    TextField issue = new TextField("Issue");
+
+    ComboBox<Priority> priority = new ComboBox<>("Priority");
+
+
 
     Button save = new Button("Save");
     Button delete = new Button("Delete");
@@ -33,20 +38,26 @@ public class ContactForm extends FormLayout {
     // Other fields omitted
     Binder<Contact> binder = new BeanValidationBinder<>(Contact.class);
 
-    public ContactForm(List<Company> companies, List<Status> statuses) {
+    public ContactForm(List<Status> statuses, List<Priority> priorities) {
         addClassName("contact-form");
         binder.bindInstanceFields(this);
 
-        company.setItems(companies);
-        company.setItemLabelGenerator(Company::getName);
+        status.setPlaceholder("Select Status");
         status.setItems(statuses);
-        status.setItemLabelGenerator(Status::getName);
+        status.setItemLabelGenerator(Status::getStatusName);
+
+
+        priority.setPlaceholder("Select Priority");
+        priority.setItems(priorities);
+        priority.setItemLabelGenerator(Priority::getPriorityName);
+        priority.setAllowCustomValue(true);
 
         add(firstName,
                 lastName,
                 email,
-                company,
                 status,
+                issue,
+                priority,
                 createButtonsLayout());
     }
 

@@ -1,6 +1,7 @@
 package com.example.application.views.list;
 
 import com.example.application.data.entity.Contact;
+import com.example.application.data.entity.Ticket;
 import com.example.application.data.service.CrmService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -27,6 +28,8 @@ public class ListView extends VerticalLayout {
     ContactForm form;
     CrmService service;
 
+    Ticket ticket;
+
     public ListView(CrmService service) {
         this.service = service;
         addClassName("list-view");
@@ -49,20 +52,20 @@ public class ListView extends VerticalLayout {
     }
 
     private void configureForm() {
-        form = new ContactForm(service.findAllCompanies(), service.findAllStatuses());
+        form = new ContactForm(service.findAllStatuses(), service.findAllPriorities());
         form.setWidth("25em");
-        form.addSaveListener(this::saveContact); // <1>
-        form.addDeleteListener(this::deleteContact); // <2>
+        form.addSaveListener(this::saveTicket); // <1>
+        form.addDeleteListener(this::deleteTicket); // <2>
         form.addCloseListener(e -> closeEditor()); // <3>
     }
 
-    private void saveContact(ContactForm.SaveEvent event) {
+    private void saveTicket(ContactForm.SaveEvent event) {
         service.saveContact(event.getContact());
         updateList();
         closeEditor();
     }
 
-    private void deleteContact(ContactForm.DeleteEvent event) {
+    private void deleteTicket(ContactForm.DeleteEvent event) {
         service.deleteContact(event.getContact());
         updateList();
         closeEditor();
@@ -71,13 +74,14 @@ public class ListView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassNames("contact-grid");
         grid.setSizeFull();
-        grid.setColumns("firstName", "lastName", "email");
-        grid.addColumn(contact -> contact.getStatus().getName()).setHeader("Status");
-        grid.addColumn(contact -> contact.getCompany().getName()).setHeader("Company");
+        grid.setColumns("firstName", "lastName", "email", "issue");
+        grid.addColumn(contact -> contact.getStatus().getStatusName()).setHeader("Status");
+        grid.addColumn(contact -> contact.getPriority().getPriorityName()).setHeader("Priority");
+        //grid.addColumn("Issue").setHeader("Issue");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(event ->
-                editContact(event.getValue()));
+                editTicket(event.getValue()));
     }
 
     private Component getToolbar() {
@@ -86,15 +90,15 @@ public class ListView extends VerticalLayout {
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
 
-        Button addContactButton = new Button("Add contact");
-        addContactButton.addClickListener(click -> addContact());
+        Button createTicketButton = new Button("Create Ticket");
+        createTicketButton.addClickListener(click -> createTicket());
 
-        var toolbar = new HorizontalLayout(filterText, addContactButton);
+        var toolbar = new HorizontalLayout(filterText, createTicketButton);
         toolbar.addClassName("toolbar");
         return toolbar;
     }
 
-    public void editContact(Contact contact) {
+    public void editTicket(Contact contact) {
         if (contact == null) {
             closeEditor();
         } else {
@@ -110,9 +114,9 @@ public class ListView extends VerticalLayout {
         removeClassName("editing");
     }
 
-    private void addContact() {
+    private void createTicket() {
         grid.asSingleSelect().clear();
-        editContact(new Contact());
+        editTicket(new Contact());
     }
 
 

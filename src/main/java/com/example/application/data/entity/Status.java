@@ -4,22 +4,22 @@ import jakarta.persistence.Entity;
 
 @Entity
 public class Status extends AbstractEntity {
-    private String name;
+    private String statusName;
 
     public Status() {
 
     }
 
-    public Status(String name) {
-        this.name = name;
+    public Status(String statusName) {
+        this.statusName = statusName;
     }
 
-    public String getName() {
-        return name;
+    public String getStatusName() {
+        return statusName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setStatusName(String name) {
+        this.statusName = name;
     }
 
 }

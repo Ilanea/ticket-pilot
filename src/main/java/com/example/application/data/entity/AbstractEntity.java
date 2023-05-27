@@ -49,4 +49,5 @@ public abstract class AbstractEntity {
         }
         return super.equals(that);
     }
+
 }

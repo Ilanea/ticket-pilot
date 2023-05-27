@@ -24,7 +24,7 @@ public class DashboardView extends VerticalLayout {
         addClassName("dashboard-view");
         setDefaultHorizontalComponentAlignment(Alignment.CENTER); // <3>
 
-        add(getContactStats(), getCompaniesChart());
+        add(getContactStats());
     }
 
     private Component getContactStats() {
@@ -33,15 +33,5 @@ public class DashboardView extends VerticalLayout {
                 LumoUtility.FontSize.XLARGE,
                 LumoUtility.Margin.Top.MEDIUM);
         return stats;
-    }
-
-    private Chart getCompaniesChart() {
-        Chart chart = new Chart(ChartType.PIE);
-
-        DataSeries dataSeries = new DataSeries();
-        service.findAllCompanies().forEach(company ->
-                dataSeries.add(new DataSeriesItem(company.getName(), company.getEmployeeCount()))); // <5>
-        chart.getConfiguration().setSeries(dataSeries);
-        return chart;
     }
 }

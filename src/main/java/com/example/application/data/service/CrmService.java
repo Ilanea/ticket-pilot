@@ -1,10 +1,10 @@
 package com.example.application.data.service;
 
-import com.example.application.data.entity.Company;
 import com.example.application.data.entity.Contact;
+import com.example.application.data.entity.Priority;
 import com.example.application.data.entity.Status;
-import com.example.application.data.repository.CompanyRepository;
 import com.example.application.data.repository.ContactRepository;
+import com.example.application.data.repository.PriorityRepository;
 import com.example.application.data.repository.StatusRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,15 +14,16 @@ import java.util.List;
 public class CrmService {
 
     private final ContactRepository contactRepository;
-    private final CompanyRepository companyRepository;
     private final StatusRepository statusRepository;
 
+    private final PriorityRepository priorityRepository;
+
     public CrmService(ContactRepository contactRepository,
-                      CompanyRepository companyRepository,
-                      StatusRepository statusRepository) {
+                      StatusRepository statusRepository,
+                      PriorityRepository priorityRepository) {
         this.contactRepository = contactRepository;
-        this.companyRepository = companyRepository;
         this.statusRepository = statusRepository;
+        this.priorityRepository = priorityRepository;
     }
 
     public List<Contact> findAllContacts(String stringFilter) {
@@ -49,11 +50,13 @@ public class CrmService {
         contactRepository.save(contact);
     }
 
-    public List<Company> findAllCompanies() {
-        return companyRepository.findAll();
-    }
 
     public List<Status> findAllStatuses(){
         return statusRepository.findAll();
     }
+    public List<Priority> findAllPriorities(){
+        return priorityRepository.findAll();
+    }
+
+
 }
