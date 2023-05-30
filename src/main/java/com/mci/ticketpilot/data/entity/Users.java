@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+
 @Entity
 public class Users extends AbstractEntity {
 
@@ -20,13 +22,16 @@ public class Users extends AbstractEntity {
 
 
     @Enumerated(EnumType.ORDINAL)
-    @Column(columnDefinition = "integer default 1")
+    @Column(columnDefinition = "integer default 2")
     private UserRole userRole;
 
 
     @Email
     @NotEmpty
     private String email = "";
+
+    @OneToMany
+    private List<Project> project;
 
     @Override
     public String toString() {
@@ -73,4 +78,11 @@ public class Users extends AbstractEntity {
         this.userRole = userRole;
     }
 
+    public List<Project> getProject() {
+        return project;
+    }
+
+    public void setProject(List<Project> project) {
+        this.project = project;
+    }
 }

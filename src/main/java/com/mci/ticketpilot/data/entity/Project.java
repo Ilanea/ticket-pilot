@@ -1,14 +1,21 @@
 package com.mci.ticketpilot.data.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class Project extends AbstractEntity {
 
+    @NotEmpty
     private String title;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Users manager;
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    private List<Ticket> tickets = new ArrayList<>();
     public String getTitle() {
         return title;
     }
@@ -25,8 +32,11 @@ public class Project extends AbstractEntity {
         this.tickets = tickets;
     }
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Ticket> tickets = new ArrayList<>();
+    public Users getManager() {
+        return manager;
+    }
 
-
+    public void setManager(Users manager) {
+        this.manager = manager;
+    }
 }
