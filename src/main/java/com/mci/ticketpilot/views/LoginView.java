@@ -1,5 +1,9 @@
 package com.mci.ticketpilot.views;
 
+import com.mci.ticketpilot.security.PilotUserDetailsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -14,9 +18,11 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 @AnonymousAllowed
 public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
+    private static final Logger logger = LoggerFactory.getLogger(LoginView.class);
     private final LoginForm login = new LoginForm();
 
     public LoginView(){
+        //logger.info("Built LoginView");
         addClassName("login-view");
         setSizeFull();
         setAlignItems(Alignment.CENTER);

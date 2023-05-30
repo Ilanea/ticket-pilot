@@ -1,5 +1,8 @@
 package com.mci.ticketpilot.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mci.ticketpilot.data.entity.Users;
 import com.mci.ticketpilot.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import java.util.Optional;
 @Service
 public class PilotUserDetailsService implements UserDetailsService {
 
+    private static final Logger logger = LoggerFactory.getLogger(PilotUserDetailsService.class);
     private final UserRepository userRepository;
 
     @Autowired
@@ -27,7 +31,8 @@ public class PilotUserDetailsService implements UserDetailsService {
         Optional<Users> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isPresent()) {
             Users user = optionalUser.get();
-            String role = "ROLE_" + user.getUserRole().name();
+            String role = user.getUserRole().name();
+            logger.info("User logged in: {} (Role: {})", email, role);
             return org.springframework.security.core.userdetails.User
                     .builder()
                     .username(user.getEmail())

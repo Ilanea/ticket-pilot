@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <!-- Project from https://start.vaadin.com/ -->
-    <groupId>com.example.application</groupId>
-    <artifactId>flowcrmtutorial</artifactId>
+
+    <groupId>com.mci.ticketpilot</groupId>
+    <artifactId>ticketpilot</artifactId>
     <name>flowcrmtutorial</name>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -99,6 +99,13 @@
             <artifactId>line-awesome</artifactId>
             <version>1.1.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.17.1</version>
+        </dependency>
+
 
         <dependency>
             <groupId>com.h2database</groupId>
