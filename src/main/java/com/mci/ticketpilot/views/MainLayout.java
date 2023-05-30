@@ -1,7 +1,9 @@
-package com.example.application.views;
+package com.mci.ticketpilot.views;
 
-import com.example.application.security.SecurityService;
-import com.example.application.views.list.ListView;
+import com.mci.ticketpilot.security.SecurityService;
+import com.mci.ticketpilot.views.list.ProjectListView;
+import com.mci.ticketpilot.views.list.TicketListView;
+import com.mci.ticketpilot.views.list.UserListView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -22,7 +24,7 @@ public class MainLayout extends AppLayout {
     }
 
     private void createHeader() {
-        H1 logo = new H1("Vaadin CRM");
+        H1 logo = new H1("Ticket Pilot | goes brrrrr");
         logo.addClassNames(
                 LumoUtility.FontSize.LARGE,
                 LumoUtility.Margin.MEDIUM);
@@ -45,8 +47,10 @@ public class MainLayout extends AppLayout {
 
     private void createDrawer() {
         addToDrawer(new VerticalLayout(
-                new RouterLink("List", ListView.class),
-                new RouterLink("Dashboard", DashboardView.class)
+                new RouterLink("Dashboard", DashboardView.class),
+                new RouterLink("User List", UserListView.class),
+                new RouterLink("Project List", ProjectListView.class),
+                new RouterLink("Ticket List", TicketListView.class)
         ));
     }
 }

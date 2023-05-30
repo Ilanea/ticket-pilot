@@ -1,15 +1,12 @@
-package com.example.application.views.list;
+package com.mci.ticketpilot.views.list;
 
-import com.example.application.data.entity.Contact;
-import com.example.application.data.entity.Priority;
-import com.example.application.data.entity.Status;
+import com.mci.ticketpilot.data.entity.Users;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -20,15 +17,10 @@ import com.vaadin.flow.shared.Registration;
 
 import java.util.List;
 
-public class ContactForm extends FormLayout {
+public class UserForm extends FormLayout {
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
     EmailField email = new EmailField("Email");
-    ComboBox<Status> status = new ComboBox<>("Status");
-
-    TextField issue = new TextField("Issue");
-
-    ComboBox<Priority> priority = new ComboBox<>("Priority");
 
 
 
@@ -36,28 +28,15 @@ public class ContactForm extends FormLayout {
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
     // Other fields omitted
-    Binder<Contact> binder = new BeanValidationBinder<>(Contact.class);
+    Binder<Users> binder = new BeanValidationBinder<>(Users.class);
 
-    public ContactForm(List<Status> statuses, List<Priority> priorities) {
+    public UserForm(List<Users> users) {
         addClassName("contact-form");
         binder.bindInstanceFields(this);
-
-        status.setPlaceholder("Select Status");
-        status.setItems(statuses);
-        status.setItemLabelGenerator(Status::getStatusName);
-
-
-        priority.setPlaceholder("Select Priority");
-        priority.setItems(priorities);
-        priority.setItemLabelGenerator(Priority::getPriorityName);
-        priority.setAllowCustomValue(true);
 
         add(firstName,
                 lastName,
                 email,
-                status,
-                issue,
-                priority,
                 createButtonsLayout());
     }
 
@@ -84,39 +63,39 @@ public class ContactForm extends FormLayout {
     }
 
 
-    public void setContact(Contact contact) {
-        binder.setBean(contact); // <1>
+    public void setContact(Users user) {
+        binder.setBean(user); // <1>
     }
 
     // Events
-    public static abstract class ContactFormEvent extends ComponentEvent<ContactForm> {
-        private Contact contact;
+    public static abstract class ContactFormEvent extends ComponentEvent<UserForm> {
+        private Users user;
 
-        protected ContactFormEvent(ContactForm source, Contact contact) {
+        protected ContactFormEvent(UserForm source, Users user) {
             super(source, false);
-            this.contact = contact;
+            this.user = user;
         }
 
-        public Contact getContact() {
-            return contact;
+        public Users getContact() {
+            return user;
         }
     }
 
     public static class SaveEvent extends ContactFormEvent {
-        SaveEvent(ContactForm source, Contact contact) {
-            super(source, contact);
+        SaveEvent(UserForm source, Users user) {
+            super(source, user);
         }
     }
 
     public static class DeleteEvent extends ContactFormEvent {
-        DeleteEvent(ContactForm source, Contact contact) {
-            super(source, contact);
+        DeleteEvent(UserForm source, Users user) {
+            super(source, user);
         }
 
     }
 
     public static class CloseEvent extends ContactFormEvent {
-        CloseEvent(ContactForm source) {
+        CloseEvent(UserForm source) {
             super(source, null);
         }
     }

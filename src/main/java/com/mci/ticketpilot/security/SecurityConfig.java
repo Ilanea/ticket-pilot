@@ -1,6 +1,6 @@
-package com.example.application.security;
+package com.mci.ticketpilot.security;
 
-import com.example.application.views.LoginView;
+import com.mci.ticketpilot.views.LoginView;
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +36,11 @@ public class SecurityConfig extends VaadinWebSecurity { // <2>
                 .password("{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW")
                 .roles("USER", "ADMIN")
                 .build();
-        return new InMemoryUserDetailsManager(user, admin); // <5>
+        UserDetails manager = User.builder()
+                .username("manager")
+                .password("{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW")
+                .roles("USER", "MANAGER")
+                .build();
+        return new InMemoryUserDetailsManager(user, admin, manager); // <5>
     }
 }

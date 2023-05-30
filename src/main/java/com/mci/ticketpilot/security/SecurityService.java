@@ -1,4 +1,4 @@
-package com.example.application.security;
+package com.mci.ticketpilot.security;
 
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import org.springframework.security.core.userdetails.UserDetails;

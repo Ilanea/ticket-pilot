@@ -1,13 +1,12 @@
-package com.example.application.data.entity;
+package com.mci.ticketpilot.data.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-public class Contact extends AbstractEntity {
+public class Users extends AbstractEntity {
 
     @NotEmpty
     private String firstName = "";
@@ -15,17 +14,15 @@ public class Contact extends AbstractEntity {
     @NotEmpty
     private String lastName = "";
 
-    @NotNull
-    @ManyToOne
-    private Status status;
+    @Enumerated(EnumType.ORDINAL)
+    @Column(columnDefinition = "integer default 0")
+    private UserStatus userStatus;
 
 
-    @NotEmpty
-    private String issue = "";
+    @Enumerated(EnumType.ORDINAL)
+    @Column(columnDefinition = "integer default 1")
+    private UserRole userRole;
 
-    @NotNull
-    @ManyToOne
-    private Priority priority;
 
     @Email
     @NotEmpty
@@ -34,26 +31,6 @@ public class Contact extends AbstractEntity {
     @Override
     public String toString() {
         return firstName + " " + lastName;
-    }
-
-    public @NotNull Priority getPriority() {
-        return priority;
-    }
-
-    public void setPriority(@NotNull Priority priority) {
-        this.priority = priority;
-    }
-
-    public @NotNull Status getTicketStatus() {
-        return status;
-    }
-
-    public String getIssue() {
-        return issue;
-    }
-
-    public void setIssue(@NotNull String issue) {
-        this.issue = issue;
     }
 
     public String getFirstName() {
@@ -72,14 +49,6 @@ public class Contact extends AbstractEntity {
         this.lastName = lastName;
     }
 
-    public @NotNull Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(@NotNull Status status) {
-        this.status = status;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -88,5 +57,20 @@ public class Contact extends AbstractEntity {
         this.email = email;
     }
 
+    public UserStatus getUserStatus() {
+        return userStatus;
+    }
+
+    public void setUserStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
+    }
+
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
 
 }
