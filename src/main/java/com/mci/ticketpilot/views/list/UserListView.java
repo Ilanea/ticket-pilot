@@ -58,13 +58,13 @@ public class UserListView extends VerticalLayout {
     }
 
     private void saveUser(UserForm.SaveEvent event) {
-        service.saveUser(event.getContact());
+        service.saveUser(event.getUser());
         updateList();
         closeEditor();
     }
 
     private void deleteUser(UserForm.DeleteEvent event) {
-        service.deleteUser(event.getContact());
+        service.deleteUser(event.getUser());
         updateList();
         closeEditor();
     }
@@ -114,8 +114,7 @@ public class UserListView extends VerticalLayout {
         editUser(new Users());
     }
 
-
     private void updateList() {
-        grid.setItems(service.findAllContacts(filterText.getValue()));
+        grid.setItems(service.findAllUsers(filterText.getValue()));
     }
 }

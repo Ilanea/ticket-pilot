@@ -17,7 +17,6 @@ public class TicketService {
     private final ProjectRepository projectRepository;
     private final TicketRepository ticketRepository;
 
-
     public TicketService(UserRepository userRepository,
                          ProjectRepository projectRepository,
                          TicketRepository ticketRepository) {
@@ -26,7 +25,8 @@ public class TicketService {
         this.ticketRepository = ticketRepository;
     }
 
-    public List<Users> findAllContacts(String stringFilter) {
+    // Users
+    public List<Users> findAllUsers(String stringFilter) {
         if (stringFilter == null || stringFilter.isEmpty()) {
             return userRepository.findAll();
         } else {
@@ -34,30 +34,51 @@ public class TicketService {
         }
     }
 
+    public List<Users> findAllUsers() { return userRepository.findAll(); }
     public long countUsers() {
         return userRepository.count();
     }
-    public long countTickets() { return ticketRepository.count(); }
-    public long countProjects() { return projectRepository.count(); }
-
     public void deleteUser(Users user) {
         userRepository.delete(user);
     }
 
+
     public void saveUser(Users user) {
         if (user == null) {
-            System.err.println("Contact is null. Are you sure you have connected your form to the application?");
+            System.err.println("Contact is null.");
             return;
         }
         userRepository.save(user);
     }
 
 
+    // Projects
+    public List<Project> findAllProjects(String stringFilter) {
+        if (stringFilter == null || stringFilter.isEmpty()) {
+            return projectRepository.findAll();
+        } else {
+            return projectRepository.search(stringFilter);
+        }
+    }
+
     public List<Project> findAllProjects(){ return projectRepository.findAll(); }
+    public long countProjects() { return projectRepository.count(); }
+    public void deleteProject(Project project) {
+        projectRepository.delete(project);
+    }
+
+    public void saveProject(Project project) {
+        if (project == null) {
+            System.err.println("Project is null.");
+            return;
+        }
+        projectRepository.save(project);
+    }
+
+    // Tickets
+    public long countTickets() { return ticketRepository.count(); }
     public List<Ticket> findAllTickets(){
         return ticketRepository.findAll();
     }
-    public List<Users> findAllUsers() { return userRepository.findAll(); }
-
 
 }

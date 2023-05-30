@@ -15,6 +15,7 @@ import jakarta.annotation.security.PermitAll;
 public class DashboardView extends VerticalLayout {
     private final TicketService service;
 
+
     public DashboardView(TicketService service) { // <2>
         this.service = service;
         addClassName("dashboard-view");

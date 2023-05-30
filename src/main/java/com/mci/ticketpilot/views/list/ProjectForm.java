@@ -1,6 +1,6 @@
 package com.mci.ticketpilot.views.list;
 
-import com.mci.ticketpilot.data.entity.Users;
+import com.mci.ticketpilot.data.entity.Project;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -9,7 +9,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
@@ -17,26 +16,21 @@ import com.vaadin.flow.shared.Registration;
 
 import java.util.List;
 
-public class UserForm extends FormLayout {
-    TextField firstName = new TextField("First name");
-    TextField lastName = new TextField("Last name");
-    EmailField email = new EmailField("Email");
-
+public class ProjectForm extends FormLayout {
+    TextField title = new TextField("Title");
 
 
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
 
-    Binder<Users> binder = new BeanValidationBinder<>(Users.class);
+    Binder<Project> binder = new BeanValidationBinder<>(Project.class);
 
-    public UserForm(List<Users> users) {
-        addClassName("contact-form");
+    public ProjectForm(List<Project> projects) {
+        addClassName("project-form");
         binder.bindInstanceFields(this);
 
-        add(firstName,
-                lastName,
-                email,
+        add(title,
                 createButtonsLayout());
     }
 
@@ -63,39 +57,39 @@ public class UserForm extends FormLayout {
     }
 
 
-    public void setContact(Users user) {
-        binder.setBean(user); // <1>
+    public void setProject(Project project) {
+        binder.setBean(project); // <1>
     }
 
     // Events
-    public static abstract class ContactFormEvent extends ComponentEvent<UserForm> {
-        private Users user;
+    public static abstract class ProjectFormEvent extends ComponentEvent<ProjectForm> {
+        private Project project;
 
-        protected ContactFormEvent(UserForm source, Users user) {
+        protected ProjectFormEvent(ProjectForm source, Project project) {
             super(source, false);
-            this.user = user;
+            this.project = project;
         }
 
-        public Users getUser() {
-            return user;
-        }
-    }
-
-    public static class SaveEvent extends ContactFormEvent {
-        SaveEvent(UserForm source, Users user) {
-            super(source, user);
+        public Project getProject() {
+            return project;
         }
     }
 
-    public static class DeleteEvent extends ContactFormEvent {
-        DeleteEvent(UserForm source, Users user) {
-            super(source, user);
+    public static class SaveEvent extends ProjectFormEvent {
+        SaveEvent(ProjectForm source, Project project) {
+            super(source, project);
+        }
+    }
+
+    public static class DeleteEvent extends ProjectFormEvent {
+        DeleteEvent(ProjectForm source, Project project) {
+            super(source, project);
         }
 
     }
 
-    public static class CloseEvent extends ContactFormEvent {
-        CloseEvent(UserForm source) {
+    public static class CloseEvent extends ProjectFormEvent {
+        CloseEvent(ProjectForm source) {
             super(source, null);
         }
     }
