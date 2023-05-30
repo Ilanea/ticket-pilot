@@ -3,6 +3,7 @@ package com.mci.ticketpilot.security;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.spring.security.AuthenticationContext;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +20,7 @@ public class SecurityService {
     private static final String LOGOUT_SUCCESS_URL = "/";
 
     public UserDetails getAuthenticatedUser() {
-        logger.info("getAuthenticatedUser()");
+        logger.info("Getting authenticated user");
         SecurityContext context = SecurityContextHolder.getContext();
         Object principal = context.getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {

@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<Users, Long> {
     @Query("SELECT u FROM Users u WHERE u.email = :email")
-    Optional<Users> findByEmail(String email);
+    Optional<Users> findByUsername(@Param("email") String email);
     @Query("select c from Users c " +
             "where lower(c.firstName) like lower(concat('%', :searchTerm, '%')) " +
             "or lower(c.lastName) like lower(concat('%', :searchTerm, '%'))")

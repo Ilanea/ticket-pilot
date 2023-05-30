@@ -1,4 +1,4 @@
-package com.mci.ticketpilot.views.list;
+package com.mci.ticketpilot.views;
 
 import com.mci.ticketpilot.data.entity.Users;
 import com.vaadin.flow.component.Component;

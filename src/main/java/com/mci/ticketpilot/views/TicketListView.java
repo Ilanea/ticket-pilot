@@ -1,6 +1,5 @@
-package com.mci.ticketpilot.views.list;
+package com.mci.ticketpilot.views;
 
-import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;

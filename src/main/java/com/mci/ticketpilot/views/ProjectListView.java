@@ -1,8 +1,7 @@
-package com.mci.ticketpilot.views.list;
+package com.mci.ticketpilot.views;
 
 import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.service.TicketService;
-import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;

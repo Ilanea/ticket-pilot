@@ -12,14 +12,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Optional;
 
 @Service
 public class PilotUserDetailsService implements UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(PilotUserDetailsService.class);
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
     public PilotUserDetailsService(UserRepository userRepository) {
@@ -28,17 +27,13 @@ public class PilotUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Users> optionalUser = userRepository.findByEmail(email);
+        logger.info("Loading user");
+        Optional<Users> optionalUser = userRepository.findByUsername(email);
         if (optionalUser.isPresent()) {
             Users user = optionalUser.get();
             String role = user.getUserRole().name();
             logger.info("User logged in: {} (Role: {})", email, role);
-            return org.springframework.security.core.userdetails.User
-                    .builder()
-                    .username(user.getEmail())
-                    .password(user.getPassword())
-                    .authorities(Collections.singletonList(new SimpleGrantedAuthority(role)))
-                    .build();
+            return new PilotUserPrincipal(user);
         } else {
             throw new UsernameNotFoundException("User not found: " + email);
         }
