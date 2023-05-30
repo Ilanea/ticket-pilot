@@ -10,16 +10,16 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
 
 @PermitAll
-@Route(value = "", layout = MainLayout.class) // <1>
+@Route(value = "", layout = MainLayout.class)
 @PageTitle("Dashboard | Ticket Pilot")
 public class DashboardView extends VerticalLayout {
     private final TicketService service;
 
 
-    public DashboardView(TicketService service) { // <2>
+    public DashboardView(TicketService service) {
         this.service = service;
         addClassName("dashboard-view");
-        setDefaultHorizontalComponentAlignment(Alignment.CENTER); // <3>
+        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
         add(getUserStats(),
                 getTicketStats(),
@@ -27,7 +27,7 @@ public class DashboardView extends VerticalLayout {
     }
 
     private Component getUserStats() {
-        Span stats = new Span(service.countUsers() + " contacts"); // <4>
+        Span stats = new Span(service.countUsers() + " contacts");
         stats.addClassNames(
                 LumoUtility.FontSize.XLARGE,
                 LumoUtility.Margin.Top.MEDIUM);
@@ -35,7 +35,7 @@ public class DashboardView extends VerticalLayout {
     }
 
     private Component getTicketStats() {
-        Span stats = new Span(service.countTickets() + " tickets"); // <4>
+        Span stats = new Span(service.countTickets() + " tickets");
         stats.addClassNames(
                 LumoUtility.FontSize.XLARGE,
                 LumoUtility.Margin.Top.MEDIUM);
@@ -43,7 +43,7 @@ public class DashboardView extends VerticalLayout {
     }
 
     private Component getProjectStats() {
-        Span stats = new Span(service.countProjects() + " projects"); // <4>
+        Span stats = new Span(service.countProjects() + " projects");
         stats.addClassNames(
                 LumoUtility.FontSize.XLARGE,
                 LumoUtility.Margin.Top.MEDIUM);

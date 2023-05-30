@@ -30,12 +30,12 @@ public class MainLayout extends AppLayout {
                 LumoUtility.Margin.MEDIUM);
 
         String u = securityService.getAuthenticatedUser().getUsername();
-        Button logout = new Button("Log out " + u, e -> securityService.logout()); // <2>
+        Button logout = new Button("Log out " + u, e -> securityService.logout());
 
         var header = new HorizontalLayout(new DrawerToggle(), logo, logout);
 
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-        header.expand(logo); // <4>
+        header.expand(logo);
         header.setWidthFull();
         header.addClassNames(
                 LumoUtility.Padding.Vertical.NONE,

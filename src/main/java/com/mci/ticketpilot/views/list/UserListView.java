@@ -52,9 +52,9 @@ public class UserListView extends VerticalLayout {
     private void configureForm() {
         form = new UserForm(service.findAllUsers());
         form.setWidth("25em");
-        form.addSaveListener(this::saveUser); // <1>
-        form.addDeleteListener(this::deleteUser); // <2>
-        form.addCloseListener(e -> closeEditor()); // <3>
+        form.addSaveListener(this::saveUser);
+        form.addDeleteListener(this::deleteUser);
+        form.addCloseListener(e -> closeEditor());
     }
 
     private void saveUser(UserForm.SaveEvent event) {

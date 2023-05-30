@@ -3,7 +3,6 @@ package com.mci.ticketpilot.data.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -11,10 +10,10 @@ import java.util.List;
 public class Users extends AbstractEntity {
 
     @NotEmpty
-    private String firstName = "";
+    private String firstName;
 
     @NotEmpty
-    private String lastName = "";
+    private String lastName;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(columnDefinition = "integer default 0")
@@ -28,8 +27,9 @@ public class Users extends AbstractEntity {
 
     @Email
     @NotEmpty
-    private String email = "";
-
+    private String email;
+    @NotEmpty
+    private String password;
     @OneToMany
     private List<Project> project;
 
@@ -76,6 +76,14 @@ public class Users extends AbstractEntity {
 
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public List<Project> getProject() {

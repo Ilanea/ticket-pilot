@@ -22,6 +22,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
 
+        login.getElement().getThemeList().add("dark");
         login.setAction("login");
 
         add(new H1("Ticket Pilot | YA BOI"), login);

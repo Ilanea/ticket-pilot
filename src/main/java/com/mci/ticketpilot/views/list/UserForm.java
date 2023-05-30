@@ -48,24 +48,22 @@ public class UserForm extends FormLayout {
         save.addClickShortcut(Key.ENTER);
         close.addClickShortcut(Key.ESCAPE);
 
-        save.addClickListener(event -> validateAndSave()); // <1>
-        delete.addClickListener(event -> fireEvent(new DeleteEvent(this, binder.getBean()))); // <2>
-        close.addClickListener(event -> fireEvent(new CloseEvent(this))); // <3>
+        save.addClickListener(event -> validateAndSave());
+        delete.addClickListener(event -> fireEvent(new DeleteEvent(this, binder.getBean())));
+        close.addClickListener(event -> fireEvent(new CloseEvent(this)));
 
-        binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid())); // <4>
+        binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
         return new HorizontalLayout(save, delete, close);
     }
 
     private void validateAndSave() {
         if(binder.isValid()) {
-            fireEvent(new SaveEvent(this, binder.getBean())); // <6>
+            fireEvent(new SaveEvent(this, binder.getBean()));
         }
     }
 
 
-    public void setContact(Users user) {
-        binder.setBean(user); // <1>
-    }
+    public void setContact(Users user) { binder.setBean(user); }
 
     // Events
     public static abstract class ContactFormEvent extends ComponentEvent<UserForm> {

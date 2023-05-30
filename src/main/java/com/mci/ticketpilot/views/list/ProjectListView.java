@@ -52,9 +52,9 @@ public class ProjectListView extends VerticalLayout {
     private void configureForm() {
         form = new ProjectForm(service.findAllProjects());
         form.setWidth("25em");
-        form.addSaveListener(this::saveProject); // <1>
-        form.addDeleteListener(this::deleteProject); // <2>
-        form.addCloseListener(e -> closeEditor()); // <3>
+        form.addSaveListener(this::saveProject);
+        form.addDeleteListener(this::deleteProject);
+        form.addCloseListener(e -> closeEditor());
     }
 
     private void saveProject(ProjectForm.SaveEvent event) {
