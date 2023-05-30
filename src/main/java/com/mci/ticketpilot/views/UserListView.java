@@ -96,14 +96,14 @@ public class UserListView extends VerticalLayout {
         if (user == null) {
             closeEditor();
         } else {
-            form.setContact(user);
+            form.setUser(user);
             form.setVisible(true);
             addClassName("editing");
         }
     }
 
     private void closeEditor() {
-        form.setContact(null);
+        form.setUser(null);
         form.setVisible(false);
         removeClassName("editing");
     }

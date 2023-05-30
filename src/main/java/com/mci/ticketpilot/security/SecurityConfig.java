@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 @Configuration
@@ -27,7 +26,6 @@ public class SecurityConfig extends VaadinWebSecurity {
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http,
                                                        PasswordEncoder bCryptPasswordEncoder,
-
                                                        UserDetailsService
                                                                userDetailService) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)

@@ -1,5 +1,6 @@
 package com.mci.ticketpilot.views;
 
+import com.mci.ticketpilot.data.entity.UserRole;
 import com.mci.ticketpilot.data.entity.Users;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
@@ -13,7 +14,11 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.Result;
+import com.vaadin.flow.data.binder.ValueContext;
+import com.vaadin.flow.data.converter.Converter;
 import com.vaadin.flow.shared.Registration;
+import io.beanmother.core.converter.std.StringToEnumConverter;
 
 import java.util.List;
 
@@ -21,9 +26,7 @@ public class UserForm extends FormLayout {
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
     EmailField email = new EmailField("Email");
-
-
-
+    //TextField userRole = new TextField("Role");
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
@@ -34,10 +37,19 @@ public class UserForm extends FormLayout {
         addClassName("contact-form");
         binder.bindInstanceFields(this);
 
-        add(firstName,
-                lastName,
-                email,
-                createButtonsLayout());
+        if (!users.isEmpty()) {
+
+            // Convert Role as Enum to String for TextField
+            //binder.forField(userRole)
+            //        .withConverter(toString())
+            //        .bind(Users::getUserRole, Users::setUserRole);
+
+            add(firstName,
+                    lastName,
+                    email,
+                    //userRole,
+                    createButtonsLayout());
+        }
     }
 
     private Component createButtonsLayout() {
@@ -63,7 +75,7 @@ public class UserForm extends FormLayout {
     }
 
 
-    public void setContact(Users user) { binder.setBean(user); }
+    public void setUser(Users user) { binder.setBean(user); }
 
     // Events
     public static abstract class ContactFormEvent extends ComponentEvent<UserForm> {

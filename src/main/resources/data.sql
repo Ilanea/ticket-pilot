@@ -1,3 +1,11 @@
--- Insert the admin user
+-- Insert a admin user
 INSERT INTO Users (id, version, first_name, last_name, user_status, user_role, email, password)
 VALUES (0, 0, 'Admin', 'Test', 0, 0, 'admin@test.com', '$2a$10$NO54IlIvFio4Gu5GRgEyMuKr1hHtvm8xyf/L/LtAUPKDwQ2KIWuae');
+
+-- Insert a Manager user
+INSERT INTO Users (id, version, first_name, last_name, user_status, user_role, email, password)
+VALUES (1, 0, 'Manager', 'Test', 0, 1, 'manager@test.com', '$2a$10$NO54IlIvFio4Gu5GRgEyMuKr1hHtvm8xyf/L/LtAUPKDwQ2KIWuae');
+
+-- Insert a Standard user
+INSERT INTO Users (id, version, first_name, last_name, user_status, user_role, email, password)
+VALUES (2, 0, 'User', 'Test', 0, 2, 'user@test.com', '$2a$10$NO54IlIvFio4Gu5GRgEyMuKr1hHtvm8xyf/L/LtAUPKDwQ2KIWuae');
