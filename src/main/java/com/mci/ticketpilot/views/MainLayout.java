@@ -2,6 +2,9 @@ package com.mci.ticketpilot.views;
 
 import com.mci.ticketpilot.security.SecurityService;
 import com.mci.ticketpilot.security.SecurityUtils;
+import com.mci.ticketpilot.views.lists.ProjectListView;
+import com.mci.ticketpilot.views.lists.TicketListView;
+import com.mci.ticketpilot.views.lists.UserListView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -9,7 +12,6 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,38 +1,59 @@
-package com.mci.ticketpilot.views;
+package com.mci.ticketpilot.views.lists;
 
-import com.mci.ticketpilot.data.entity.Project;
+import com.mci.ticketpilot.data.entity.UserRole;
+import com.mci.ticketpilot.data.entity.Users;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
 
+
 import java.util.List;
 
-public class ProjectForm extends FormLayout {
-    TextField title = new TextField("Title");
-
-
+public class UserForm extends FormLayout {
+    TextField firstName = new TextField("First name");
+    TextField lastName = new TextField("Last name");
+    EmailField email = new EmailField("Email");
+    ComboBox<UserRole> userRole = new ComboBox<>("Role");
+    // Does not work, only shows BCrypt encrypted passwords and takes BCrypt encrypted Passwords for them to work
+    PasswordField password = new PasswordField("Password");
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
 
-    Binder<Project> binder = new BeanValidationBinder<>(Project.class);
+    Binder<Users> binder = new BeanValidationBinder<>(Users.class);
 
-    public ProjectForm(List<Project> projects) {
-        addClassName("project-form");
+    public UserForm(List<Users> users) {
+        addClassName("contact-form");
         binder.bindInstanceFields(this);
 
-        add(title,
-                createButtonsLayout());
+        userRole.setItems(UserRole.values());
+        //userRole.setReadOnly(true);
+
+        password.setRevealButtonVisible(false);
+
+        if (!users.isEmpty()) {
+
+            add(firstName,
+                    lastName,
+                    email,
+                    userRole,
+                    password,
+                    createButtonsLayout());
+        }
     }
+
 
     private Component createButtonsLayout() {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -57,39 +78,37 @@ public class ProjectForm extends FormLayout {
     }
 
 
-    public void setProject(Project project) {
-        binder.setBean(project);
-    }
+    public void setUser(Users user) { binder.setBean(user); }
 
     // Events
-    public static abstract class ProjectFormEvent extends ComponentEvent<ProjectForm> {
-        private Project project;
+    public static abstract class ContactFormEvent extends ComponentEvent<UserForm> {
+        private Users user;
 
-        protected ProjectFormEvent(ProjectForm source, Project project) {
+        protected ContactFormEvent(UserForm source, Users user) {
             super(source, false);
-            this.project = project;
+            this.user = user;
         }
 
-        public Project getProject() {
-            return project;
-        }
-    }
-
-    public static class SaveEvent extends ProjectFormEvent {
-        SaveEvent(ProjectForm source, Project project) {
-            super(source, project);
+        public Users getUser() {
+            return user;
         }
     }
 
-    public static class DeleteEvent extends ProjectFormEvent {
-        DeleteEvent(ProjectForm source, Project project) {
-            super(source, project);
+    public static class SaveEvent extends ContactFormEvent {
+        SaveEvent(UserForm source, Users user) {
+            super(source, user);
+        }
+    }
+
+    public static class DeleteEvent extends ContactFormEvent {
+        DeleteEvent(UserForm source, Users user) {
+            super(source, user);
         }
 
     }
 
-    public static class CloseEvent extends ProjectFormEvent {
-        CloseEvent(ProjectForm source) {
+    public static class CloseEvent extends ContactFormEvent {
+        CloseEvent(UserForm source) {
             super(source, null);
         }
     }

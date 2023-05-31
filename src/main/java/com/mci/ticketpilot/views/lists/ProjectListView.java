@@ -1,8 +1,8 @@
-package com.mci.ticketpilot.views;
+package com.mci.ticketpilot.views.lists;
 
-import com.mci.ticketpilot.data.entity.Users;
+import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.service.TicketService;
-import com.mci.ticketpilot.security.SecurityUtils;
+import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -13,24 +13,22 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
-import jakarta.annotation.security.RolesAllowed;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.context.annotation.Scope;
-
-import java.util.Set;
 
 @SpringComponent
 @Scope("prototype")
-@Route(value = "users", layout = MainLayout.class)
-@PageTitle("Users | Ticket Pilot")
-@RolesAllowed({"ADMIN", "MANAGER"})
-public class UserListView extends VerticalLayout {
-    Grid<Users> grid = new Grid<>(Users.class);
+@PermitAll
+@Route(value = "projects", layout = MainLayout.class)
+@PageTitle("Projects | Ticket Pilot")
+public class ProjectListView extends VerticalLayout {
+    Grid<Project> grid = new Grid<>(Project.class);
     TextField filterText = new TextField();
-    UserForm form;
+    ProjectForm form;
     TicketService service;
 
 
-    public UserListView(TicketService service) {
+    public ProjectListView(TicketService service) {
         this.service = service;
         addClassName("list-view");
         setSizeFull();
@@ -52,80 +50,72 @@ public class UserListView extends VerticalLayout {
     }
 
     private void configureForm() {
-        form = new UserForm(service.findAllUsers());
+        form = new ProjectForm(service.findAllProjects());
         form.setWidth("25em");
-        form.addSaveListener(this::saveUser);
-        form.addDeleteListener(this::deleteUser);
+        form.addSaveListener(this::saveProject);
+        form.addDeleteListener(this::deleteProject);
         form.addCloseListener(e -> closeEditor());
     }
 
-    private void saveUser(UserForm.SaveEvent event) {
-        service.saveUser(event.getUser());
+    private void saveProject(ProjectForm.SaveEvent event) {
+        service.saveProject(event.getProject());
         updateList();
         closeEditor();
     }
 
-    private void deleteUser(UserForm.DeleteEvent event) {
-        service.deleteUser(event.getUser());
+    private void deleteProject(ProjectForm.DeleteEvent event) {
+        service.deleteProject(event.getProject());
         updateList();
         closeEditor();
     }
 
     private void configureGrid() {
-        grid.addClassNames("contact-grid");
+        grid.addClassNames("project-grid");
         grid.setSizeFull();
-        grid.setColumns("firstName", "lastName", "email", "userRole");
+        grid.setColumns("title");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(event ->
-                editUser(event.getValue()));
+                editProject(event.getValue()));
     }
 
     private Component getToolbar() {
-        filterText.setPlaceholder("Filter by name...");
+        filterText.setPlaceholder("Filter by title...");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
 
-        Button createTicketButton = new Button("Create User");
-        createTicketButton.addClickListener(click -> createUser());
+        Button createTicketButton = new Button("Create Project");
+        createTicketButton.addClickListener(click -> createProject());
 
-        var toolbar = new HorizontalLayout();
+        var toolbar = new HorizontalLayout(filterText, createTicketButton);
         toolbar.addClassName("toolbar");
-        toolbar.add(filterText);
-
-        // only add Create User Button when current authenticated User has ADMIN role
-        if (SecurityUtils.userHasAdminRole()){
-            toolbar.add(createTicketButton);
-        }
-
         return toolbar;
     }
 
-    public void editUser(Users user) {
-        if (user == null) {
+    public void editProject(Project project) {
+        if (project == null) {
             closeEditor();
         } else {
-            form.setUser(user);
+            form.setProject(project);
             form.setVisible(true);
             addClassName("editing");
         }
     }
 
     private void closeEditor() {
-        form.setUser(null);
+        form.setProject(null);
         form.setVisible(false);
         removeClassName("editing");
     }
 
-    private void createUser() {
+    private void createProject() {
         grid.asSingleSelect().clear();
-        editUser(new Users());
+        editProject(new Project());
     }
+
 
     private void updateList() {
-        grid.setItems(service.findAllUsers(filterText.getValue()));
+        grid.setItems(service.findAllProjects(filterText.getValue()));
     }
-
-
 }
