@@ -86,8 +86,8 @@ public class UserListView extends VerticalLayout {
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
 
-        Button createTicketButton = new Button("Create User");
-        createTicketButton.addClickListener(click -> createUser());
+        Button createUserButton = new Button("Create User");
+        createUserButton.addClickListener(click -> createUser());
 
         var toolbar = new HorizontalLayout();
         toolbar.addClassName("toolbar");
@@ -95,7 +95,7 @@ public class UserListView extends VerticalLayout {
 
         // only add Create User Button when current authenticated User has ADMIN role
         if (SecurityUtils.userHasAdminRole()){
-            toolbar.add(createTicketButton);
+            toolbar.add(createUserButton);
         }
 
         return toolbar;
