@@ -12,7 +12,7 @@ public abstract class AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "idgenerator")
-    @SequenceGenerator(name = "idgenerator", initialValue = 10)
+    @SequenceGenerator(name = "idgenerator", initialValue = 100)
     private Long id;
 
     @Version

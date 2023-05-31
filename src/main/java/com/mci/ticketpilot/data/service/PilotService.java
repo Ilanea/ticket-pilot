@@ -105,4 +105,8 @@ public class PilotService {
         }
         ticketRepository.save(ticket);
     }
+
+    public Project findProjectToTicket(Ticket ticket) {
+        return ticketRepository.findProjectToTicket(ticket);
+    }
 }

@@ -10,6 +10,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
@@ -50,6 +51,11 @@ public class TicketForm extends FormLayout {
         List<Project> projects = service.findAllProjects();
         List<Users> users = service.findAllUsers();
 
+        linkedProject.setClearButtonVisible(true);
+        linkedProject.setPrefixComponent(VaadinIcon.SEARCH.create());
+        linkedUser.setClearButtonVisible(true);
+        linkedUser.setPrefixComponent(VaadinIcon.SEARCH.create());
+
         linkedProject.setItems(projects);
         linkedUser.setItems(users);
 
@@ -66,8 +72,6 @@ public class TicketForm extends FormLayout {
 
         add(ticketName, ticketPriority, ticketStatus, linkedProject, linkedUser, createButtonsLayout());
     }
-
-
 
     private Component createButtonsLayout() {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

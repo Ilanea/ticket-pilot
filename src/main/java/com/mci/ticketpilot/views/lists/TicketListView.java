@@ -59,6 +59,7 @@ public class TicketListView extends VerticalLayout {
         form.addSaveListener(this::saveTicket);
         form.addDeleteListener(this::deleteTicket);
         form.addCloseListener(e -> closeEditor());
+
     }
 
     private void saveTicket(TicketForm.SaveEvent event) {
@@ -76,7 +77,7 @@ public class TicketListView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassNames("ticket-grid");
         grid.setSizeFull();
-        grid.setColumns("ticketName", "ticketPriority", "ticketStatus", "project", "user");
+        grid.setColumns("ticketName", "ticketPriority", "ticketStatus", "project.projectName", "user");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(event ->

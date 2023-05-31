@@ -2,7 +2,6 @@ package com.mci.ticketpilot.data.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Ticket extends AbstractEntity {
@@ -11,18 +10,18 @@ public class Ticket extends AbstractEntity {
     private String ticketName;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "varchar(255) default 'OPEN'")
-    private TicketStatus ticketStatus;
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'OPEN'")
+    private TicketStatus ticketStatus = TicketStatus.OPEN;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "varchar(255) default 'DEFAULT'")
-    private TicketPriority ticketPriority;
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'DEFAULT'")
+    private TicketPriority ticketPriority = TicketPriority.DEFAULT;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Project project;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    private Project project = null;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Users user;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    private Users user = null;
 
     public String getTicketName() {
         return ticketName;
