@@ -76,7 +76,7 @@ public class TicketListView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassNames("ticket-grid");
         grid.setSizeFull();
-        grid.setColumns("ticketName", "ticketPriority", "ticketStatus");
+        grid.setColumns("ticketName", "ticketPriority", "ticketStatus", "project", "user");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(event ->

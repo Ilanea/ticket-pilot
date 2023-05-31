@@ -19,11 +19,13 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TicketForm extends FormLayout {
 
-    @Autowired
     private PilotService service;
+    private Project selectedProject;
+    private Users selectedUser;
     TextField ticketName = new TextField("Title");
     ComboBox<TicketPriority> ticketPriority = new ComboBox<>("Priority");
     ComboBox<TicketStatus> ticketStatus = new ComboBox<>("Status");
@@ -37,7 +39,6 @@ public class TicketForm extends FormLayout {
     Binder<Ticket> binder = new BeanValidationBinder<>(Ticket.class);
 
     public TicketForm(List<Ticket> tickets, PilotService service) {
-
         this.service = service;
 
         addClassName("ticket-form");
@@ -48,17 +49,24 @@ public class TicketForm extends FormLayout {
 
         List<Project> projects = service.findAllProjects();
         List<Users> users = service.findAllUsers();
+
         linkedProject.setItems(projects);
         linkedUser.setItems(users);
 
+        linkedProject.setItemLabelGenerator(Project::getProjectName);
+        linkedUser.setItemLabelGenerator(user -> user.getFirstName() + " " + user.getLastName());
 
-        add(ticketName,
-                ticketPriority,
-                ticketStatus,
-                linkedProject,
-                linkedUser,
-                createButtonsLayout());
+        linkedProject.addValueChangeListener(event -> {
+            selectedProject = event.getValue();
+        });
+
+        linkedUser.addValueChangeListener(event -> {
+            selectedUser = event.getValue();
+        });
+
+        add(ticketName, ticketPriority, ticketStatus, linkedProject, linkedUser, createButtonsLayout());
     }
+
 
 
     private Component createButtonsLayout() {
@@ -78,8 +86,12 @@ public class TicketForm extends FormLayout {
     }
 
     private void validateAndSave() {
-        if(binder.isValid()) {
-            fireEvent(new TicketForm.SaveEvent(this, binder.getBean()));
+        if (binder.isValid()) {
+            Ticket ticket = binder.getBean();
+            ticket.setProject(selectedProject);
+            ticket.setUser(selectedUser);
+            service.saveTicket(ticket);
+            fireEvent(new TicketForm.SaveEvent(this, ticket));
         }
     }
 

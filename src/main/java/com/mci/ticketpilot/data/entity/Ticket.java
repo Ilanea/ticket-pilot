@@ -18,8 +18,11 @@ public class Ticket extends AbstractEntity {
     @Column(columnDefinition = "varchar(255) default 'DEFAULT'")
     private TicketPriority ticketPriority;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Project project;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Users user;
 
     public String getTicketName() {
         return ticketName;
@@ -52,5 +55,9 @@ public class Ticket extends AbstractEntity {
     public void setProject(Project project) {
         this.project = project;
     }
+
+    public Users getUser() { return user; }
+
+    public void setUser(Users user) { this.user = user; }
 }
 

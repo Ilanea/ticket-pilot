@@ -12,9 +12,9 @@ public class Project extends AbstractEntity {
     @NotEmpty
     private String projectName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Users manager;
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Users user;
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     private List<Ticket> tickets = new ArrayList<>();
     public String getProjectName() {
         return projectName;
@@ -32,11 +32,11 @@ public class Project extends AbstractEntity {
         this.tickets = tickets;
     }
 
-    public Users getManager() {
-        return manager;
+    public Users getUser() {
+        return user;
     }
 
-    public void setManager(Users manager) {
-        this.manager = manager;
+    public void setUser(Users manager) {
+        this.user = manager;
     }
 }
