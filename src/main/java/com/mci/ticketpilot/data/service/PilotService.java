@@ -11,21 +11,23 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class TicketService {
+public class PilotService {
 
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final TicketRepository ticketRepository;
 
-    public TicketService(UserRepository userRepository,
-                         ProjectRepository projectRepository,
-                         TicketRepository ticketRepository) {
+    public PilotService(UserRepository userRepository,
+                        ProjectRepository projectRepository,
+                        TicketRepository ticketRepository) {
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.ticketRepository = ticketRepository;
     }
 
+    ////////////////////////////////////////////////////////////////////
     // Users
+    ////////////////////////////////////////////////////////////////////
     public List<Users> findAllUsers(String stringFilter) {
         if (stringFilter == null || stringFilter.isEmpty()) {
             return userRepository.findAll();
@@ -51,8 +53,9 @@ public class TicketService {
         userRepository.save(user);
     }
 
-
+    ////////////////////////////////////////////////////////////////////
     // Projects
+    ////////////////////////////////////////////////////////////////////
     public List<Project> findAllProjects(String stringFilter) {
         if (stringFilter == null || stringFilter.isEmpty()) {
             return projectRepository.findAll();
@@ -75,10 +78,31 @@ public class TicketService {
         projectRepository.save(project);
     }
 
+    ////////////////////////////////////////////////////////////////////
     // Tickets
-    public long countTickets() { return ticketRepository.count(); }
+    ////////////////////////////////////////////////////////////////////
+    public List<Ticket> findAllTickets(String stringFilter) {
+        if (stringFilter == null || stringFilter.isEmpty()) {
+            return ticketRepository.findAll();
+        } else {
+            return ticketRepository.search(stringFilter);
+        }
+    }
+
     public List<Ticket> findAllTickets(){
         return ticketRepository.findAll();
     }
+    public long countTickets() { return ticketRepository.count(); }
 
+    public void deleteTicket(Ticket ticket) {
+        ticketRepository.delete(ticket);
+    }
+
+    public void saveTicket(Ticket ticket) {
+        if (ticket == null) {
+            System.err.println("Ticket is null.");
+            return;
+        }
+        ticketRepository.save(ticket);
+    }
 }

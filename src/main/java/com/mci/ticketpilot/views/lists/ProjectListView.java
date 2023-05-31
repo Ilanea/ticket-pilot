@@ -1,7 +1,7 @@
 package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.Project;
-import com.mci.ticketpilot.data.service.TicketService;
+import com.mci.ticketpilot.data.service.PilotService;
 import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -25,10 +25,10 @@ public class ProjectListView extends VerticalLayout {
     Grid<Project> grid = new Grid<>(Project.class);
     TextField filterText = new TextField();
     ProjectForm form;
-    TicketService service;
+    PilotService service;
 
 
-    public ProjectListView(TicketService service) {
+    public ProjectListView(PilotService service) {
         this.service = service;
         addClassName("list-view");
         setSizeFull();

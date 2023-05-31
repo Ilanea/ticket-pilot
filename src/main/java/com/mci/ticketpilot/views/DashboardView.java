@@ -1,6 +1,6 @@
 package com.mci.ticketpilot.views;
 
-import com.mci.ticketpilot.data.service.TicketService;
+import com.mci.ticketpilot.data.service.PilotService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -13,10 +13,10 @@ import jakarta.annotation.security.PermitAll;
 @Route(value = "", layout = MainLayout.class)
 @PageTitle("Dashboard | Ticket Pilot")
 public class DashboardView extends VerticalLayout {
-    private final TicketService service;
+    private final PilotService service;
 
 
-    public DashboardView(TicketService service) {
+    public DashboardView(PilotService service) {
         this.service = service;
         addClassName("dashboard-view");
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);

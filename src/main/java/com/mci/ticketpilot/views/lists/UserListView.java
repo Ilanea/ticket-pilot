@@ -1,7 +1,7 @@
 package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.Users;
-import com.mci.ticketpilot.data.service.TicketService;
+import com.mci.ticketpilot.data.service.PilotService;
 import com.mci.ticketpilot.security.SecurityUtils;
 import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -26,10 +26,10 @@ public class UserListView extends VerticalLayout {
     Grid<Users> grid = new Grid<>(Users.class);
     TextField filterText = new TextField();
     UserForm form;
-    TicketService service;
+    PilotService service;
 
 
-    public UserListView(TicketService service) {
+    public UserListView(PilotService service) {
         this.service = service;
         addClassName("list-view");
         setSizeFull();
