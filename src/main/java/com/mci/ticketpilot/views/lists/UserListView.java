@@ -125,6 +125,4 @@ public class UserListView extends VerticalLayout {
     private void updateList() {
         grid.setItems(service.findAllUsers(filterText.getValue()));
     }
-
-
 }

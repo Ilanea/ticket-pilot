@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Query("select c from Project c " +
-            "where lower(c.title) like lower(concat('%', :searchTerm, '%')) ")
+            "where lower(c.projectName) like lower(concat('%', :searchTerm, '%')) ")
     List<Project> search(@Param("searchTerm") String searchTerm);
 }

@@ -124,5 +124,4 @@ public class UserForm extends FormLayout {
         return addListener(CloseEvent.class, listener);
     }
 
-
 }

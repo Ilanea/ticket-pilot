@@ -17,9 +17,7 @@ import com.vaadin.flow.shared.Registration;
 import java.util.List;
 
 public class ProjectForm extends FormLayout {
-    TextField title = new TextField("Title");
-
-
+    TextField projectName = new TextField("Project");
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
@@ -30,7 +28,7 @@ public class ProjectForm extends FormLayout {
         addClassName("project-form");
         binder.bindInstanceFields(this);
 
-        add(title,
+        add(projectName,
                 createButtonsLayout());
     }
 
@@ -104,6 +102,5 @@ public class ProjectForm extends FormLayout {
     public Registration addCloseListener(ComponentEventListener<CloseEvent> listener) {
         return addListener(CloseEvent.class, listener);
     }
-
 
 }

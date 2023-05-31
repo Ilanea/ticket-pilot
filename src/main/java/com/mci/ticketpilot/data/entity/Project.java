@@ -10,18 +10,18 @@ import java.util.List;
 public class Project extends AbstractEntity {
 
     @NotEmpty
-    private String title;
+    private String projectName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Users manager;
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     private List<Ticket> tickets = new ArrayList<>();
-    public String getTitle() {
-        return title;
+    public String getProjectName() {
+        return projectName;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setProjectName(String title) {
+        this.projectName = title;
     }
 
     public List<Ticket> getTickets() {

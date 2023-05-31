@@ -72,7 +72,7 @@ public class ProjectListView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassNames("project-grid");
         grid.setSizeFull();
-        grid.setColumns("title");
+        grid.setColumns("projectName");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(event ->
