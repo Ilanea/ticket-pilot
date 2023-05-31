@@ -1,6 +1,7 @@
 package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.*;
+import com.mci.ticketpilot.data.service.PilotService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -13,16 +14,21 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.shared.Registration;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class TicketForm extends FormLayout {
+
+    @Autowired
+    private PilotService service;
     TextField ticketName = new TextField("Title");
     ComboBox<TicketPriority> ticketPriority = new ComboBox<>("Priority");
     ComboBox<TicketStatus> ticketStatus = new ComboBox<>("Status");
     ComboBox<Project> linkedProject = new ComboBox<>("Project");
+    ComboBox<Users> linkedUser = new ComboBox<>("User");
 
     Button save = new Button("Save");
     Button delete = new Button("Delete");
@@ -30,17 +36,27 @@ public class TicketForm extends FormLayout {
 
     Binder<Ticket> binder = new BeanValidationBinder<>(Ticket.class);
 
-    public TicketForm(List<Ticket> tickets) {
+    public TicketForm(List<Ticket> tickets, PilotService service) {
+
+        this.service = service;
+
         addClassName("ticket-form");
         binder.bindInstanceFields(this);
 
         ticketPriority.setItems(TicketPriority.values());
         ticketStatus.setItems(TicketStatus.values());
 
+        List<Project> projects = service.findAllProjects();
+        List<Users> users = service.findAllUsers();
+        linkedProject.setItems(projects);
+        linkedUser.setItems(users);
+
+
         add(ticketName,
                 ticketPriority,
                 ticketStatus,
                 linkedProject,
+                linkedUser,
                 createButtonsLayout());
     }
 
