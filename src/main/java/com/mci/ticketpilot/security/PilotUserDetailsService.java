@@ -27,7 +27,7 @@ public class PilotUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        logger.info("Loading user");
+        //logger.info("Loading user");
         Optional<Users> optionalUser = userRepository.findByUsername(email);
         if (optionalUser.isPresent()) {
             Users user = optionalUser.get();

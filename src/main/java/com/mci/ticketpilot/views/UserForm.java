@@ -8,17 +8,16 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.Result;
-import com.vaadin.flow.data.binder.ValueContext;
-import com.vaadin.flow.data.converter.Converter;
 import com.vaadin.flow.shared.Registration;
-import io.beanmother.core.converter.std.StringToEnumConverter;
+
 
 import java.util.List;
 
@@ -26,7 +25,9 @@ public class UserForm extends FormLayout {
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
     EmailField email = new EmailField("Email");
-    //TextField userRole = new TextField("Role");
+    ComboBox<UserRole> userRole = new ComboBox<>("Role");
+    // Does not work, only shows BCrypt encrypted passwords and takes BCrypt encrypted Passwords for them to work
+    PasswordField password = new PasswordField("Password");
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
@@ -37,20 +38,22 @@ public class UserForm extends FormLayout {
         addClassName("contact-form");
         binder.bindInstanceFields(this);
 
-        if (!users.isEmpty()) {
+        userRole.setItems(UserRole.values());
+        //userRole.setReadOnly(true);
 
-            // Convert Role as Enum to String for TextField
-            //binder.forField(userRole)
-            //        .withConverter(toString())
-            //        .bind(Users::getUserRole, Users::setUserRole);
+        password.setRevealButtonVisible(false);
+
+        if (!users.isEmpty()) {
 
             add(firstName,
                     lastName,
                     email,
-                    //userRole,
+                    userRole,
+                    password,
                     createButtonsLayout());
         }
     }
+
 
     private Component createButtonsLayout() {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

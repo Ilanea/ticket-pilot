@@ -2,6 +2,7 @@ package com.mci.ticketpilot.views;
 
 import com.mci.ticketpilot.data.entity.Users;
 import com.mci.ticketpilot.data.service.TicketService;
+import com.mci.ticketpilot.security.SecurityUtils;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -12,14 +13,16 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
-import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.context.annotation.Scope;
+
+import java.util.Set;
 
 @SpringComponent
 @Scope("prototype")
-@PermitAll
 @Route(value = "users", layout = MainLayout.class)
 @PageTitle("Users | Ticket Pilot")
+@RolesAllowed({"ADMIN", "MANAGER"})
 public class UserListView extends VerticalLayout {
     Grid<Users> grid = new Grid<>(Users.class);
     TextField filterText = new TextField();
@@ -71,7 +74,7 @@ public class UserListView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassNames("contact-grid");
         grid.setSizeFull();
-        grid.setColumns("firstName", "lastName", "email");
+        grid.setColumns("firstName", "lastName", "email", "userRole");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(event ->
@@ -87,8 +90,15 @@ public class UserListView extends VerticalLayout {
         Button createTicketButton = new Button("Create User");
         createTicketButton.addClickListener(click -> createUser());
 
-        var toolbar = new HorizontalLayout(filterText, createTicketButton);
+        var toolbar = new HorizontalLayout();
         toolbar.addClassName("toolbar");
+        toolbar.add(filterText);
+
+        // only add Create User Button when current authenticated User has ADMIN role
+        if (SecurityUtils.userHasAdminRole()){
+            toolbar.add(createTicketButton);
+        }
+
         return toolbar;
     }
 
@@ -116,4 +126,6 @@ public class UserListView extends VerticalLayout {
     private void updateList() {
         grid.setItems(service.findAllUsers(filterText.getValue()));
     }
+
+
 }

@@ -9,7 +9,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PilotUserPrincipal implements UserDetails {
+    private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
     private Users user;
 
     public PilotUserPrincipal(Users user) {
@@ -18,7 +22,7 @@ public class PilotUserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(user.getUserRole().toString()));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getUserRole().toString()));
     }
 
     @Override
