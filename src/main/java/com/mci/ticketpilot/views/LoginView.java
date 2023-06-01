@@ -1,4 +1,7 @@
-package com.example.application.views;
+package com.mci.ticketpilot.views;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.login.LoginForm;
@@ -10,21 +13,24 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 @Route("login")
-@PageTitle("Login | Vaadin CRM")
+@PageTitle("Login | Ticket Pilot")
 @AnonymousAllowed
 public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
+    private static final Logger logger = LoggerFactory.getLogger(LoginView.class);
     private final LoginForm login = new LoginForm();
 
     public LoginView(){
+        //logger.info("Built LoginView");
         addClassName("login-view");
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
 
+        login.getElement().getThemeList().add("dark");
         login.setAction("login");
 
-        add(new H1("Vaadin CRM"), login);
+        add(new H1("Ticket Pilot | YA BOI"), login);
     }
 
     @Override

@@ -1,9 +1,9 @@
-package com.example.application.views.list;
+package com.mci.ticketpilot.views.lists;
 
-import com.example.application.data.entity.Contact;
-import com.example.application.data.entity.Ticket;
-import com.example.application.data.service.CrmService;
-import com.example.application.views.MainLayout;
+import com.mci.ticketpilot.data.entity.Users;
+import com.mci.ticketpilot.data.service.PilotService;
+import com.mci.ticketpilot.security.SecurityUtils;
+import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -14,23 +14,22 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
-import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.context.annotation.Scope;
 
 @SpringComponent
 @Scope("prototype")
-@PermitAll
-@Route(value = "", layout = MainLayout.class)
-@PageTitle("Contacts | Vaadin CRM")
-public class ListView extends VerticalLayout {
-    Grid<Contact> grid = new Grid<>(Contact.class);
+@Route(value = "users", layout = MainLayout.class)
+@PageTitle("Users | Ticket Pilot")
+@RolesAllowed({"ADMIN", "MANAGER"})
+public class UserListView extends VerticalLayout {
+    Grid<Users> grid = new Grid<>(Users.class);
     TextField filterText = new TextField();
-    ContactForm form;
-    CrmService service;
+    UserForm form;
+    PilotService service;
 
-    Ticket ticket;
 
-    public ListView(CrmService service) {
+    public UserListView(PilotService service) {
         this.service = service;
         addClassName("list-view");
         setSizeFull();
@@ -52,21 +51,21 @@ public class ListView extends VerticalLayout {
     }
 
     private void configureForm() {
-        form = new ContactForm(service.findAllStatuses(), service.findAllPriorities());
+        form = new UserForm(service.findAllUsers());
         form.setWidth("25em");
-        form.addSaveListener(this::saveTicket); // <1>
-        form.addDeleteListener(this::deleteTicket); // <2>
-        form.addCloseListener(e -> closeEditor()); // <3>
+        form.addSaveListener(this::saveUser);
+        form.addDeleteListener(this::deleteUser);
+        form.addCloseListener(e -> closeEditor());
     }
 
-    private void saveTicket(ContactForm.SaveEvent event) {
-        service.saveContact(event.getContact());
+    private void saveUser(UserForm.SaveEvent event) {
+        service.saveUser(event.getUser());
         updateList();
         closeEditor();
     }
 
-    private void deleteTicket(ContactForm.DeleteEvent event) {
-        service.deleteContact(event.getContact());
+    private void deleteUser(UserForm.DeleteEvent event) {
+        service.deleteUser(event.getUser());
         updateList();
         closeEditor();
     }
@@ -74,14 +73,11 @@ public class ListView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassNames("contact-grid");
         grid.setSizeFull();
-        grid.setColumns("firstName", "lastName", "email", "issue");
-        grid.addColumn(contact -> contact.getStatus().getStatusName()).setHeader("Status");
-        grid.addColumn(contact -> contact.getPriority().getPriorityName()).setHeader("Priority");
-        //grid.addColumn("Issue").setHeader("Issue");
+        grid.setColumns("firstName", "lastName", "email", "userRole");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(event ->
-                editTicket(event.getValue()));
+                editUser(event.getValue()));
     }
 
     private Component getToolbar() {
@@ -90,37 +86,43 @@ public class ListView extends VerticalLayout {
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
 
-        Button createTicketButton = new Button("Create Ticket");
-        createTicketButton.addClickListener(click -> createTicket());
+        Button createUserButton = new Button("Create User");
+        createUserButton.addClickListener(click -> createUser());
 
-        var toolbar = new HorizontalLayout(filterText, createTicketButton);
+        var toolbar = new HorizontalLayout();
         toolbar.addClassName("toolbar");
+        toolbar.add(filterText);
+
+        // only add Create User Button when current authenticated User has ADMIN role
+        if (SecurityUtils.userHasAdminRole()){
+            toolbar.add(createUserButton);
+        }
+
         return toolbar;
     }
 
-    public void editTicket(Contact contact) {
-        if (contact == null) {
+    public void editUser(Users user) {
+        if (user == null) {
             closeEditor();
         } else {
-            form.setContact(contact);
+            form.setUser(user);
             form.setVisible(true);
             addClassName("editing");
         }
     }
 
     private void closeEditor() {
-        form.setContact(null);
+        form.setUser(null);
         form.setVisible(false);
         removeClassName("editing");
     }
 
-    private void createTicket() {
+    private void createUser() {
         grid.asSingleSelect().clear();
-        editTicket(new Contact());
+        editUser(new Users());
     }
 
-
     private void updateList() {
-        grid.setItems(service.findAllContacts(filterText.getValue()));
+        grid.setItems(service.findAllUsers(filterText.getValue()));
     }
 }

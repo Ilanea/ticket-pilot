@@ -1,8 +1,7 @@
-package com.example.application.views.list;
+package com.mci.ticketpilot.views.lists;
 
-import com.example.application.data.entity.Contact;
-import com.example.application.data.entity.Priority;
-import com.example.application.data.entity.Status;
+import com.mci.ticketpilot.data.entity.UserRole;
+import com.mci.ticketpilot.data.entity.Users;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -13,53 +12,48 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
 
+
 import java.util.List;
 
-public class ContactForm extends FormLayout {
+public class UserForm extends FormLayout {
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
     EmailField email = new EmailField("Email");
-    ComboBox<Status> status = new ComboBox<>("Status");
-
-    TextField issue = new TextField("Issue");
-
-    ComboBox<Priority> priority = new ComboBox<>("Priority");
-
-
-
+    ComboBox<UserRole> userRole = new ComboBox<>("Role");
+    // Does not work, only shows BCrypt encrypted passwords and takes BCrypt encrypted Passwords for them to work
+    PasswordField password = new PasswordField("Password");
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
-    // Other fields omitted
-    Binder<Contact> binder = new BeanValidationBinder<>(Contact.class);
 
-    public ContactForm(List<Status> statuses, List<Priority> priorities) {
+    Binder<Users> binder = new BeanValidationBinder<>(Users.class);
+
+    public UserForm(List<Users> users) {
         addClassName("contact-form");
         binder.bindInstanceFields(this);
 
-        status.setPlaceholder("Select Status");
-        status.setItems(statuses);
-        status.setItemLabelGenerator(Status::getStatusName);
+        userRole.setItems(UserRole.values());
+        //userRole.setReadOnly(true);
 
+        password.setRevealButtonVisible(false);
 
-        priority.setPlaceholder("Select Priority");
-        priority.setItems(priorities);
-        priority.setItemLabelGenerator(Priority::getPriorityName);
-        priority.setAllowCustomValue(true);
+        if (!users.isEmpty()) {
 
-        add(firstName,
-                lastName,
-                email,
-                status,
-                issue,
-                priority,
-                createButtonsLayout());
+            add(firstName,
+                    lastName,
+                    email,
+                    userRole,
+                    password,
+                    createButtonsLayout());
+        }
     }
+
 
     private Component createButtonsLayout() {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -69,54 +63,52 @@ public class ContactForm extends FormLayout {
         save.addClickShortcut(Key.ENTER);
         close.addClickShortcut(Key.ESCAPE);
 
-        save.addClickListener(event -> validateAndSave()); // <1>
-        delete.addClickListener(event -> fireEvent(new DeleteEvent(this, binder.getBean()))); // <2>
-        close.addClickListener(event -> fireEvent(new CloseEvent(this))); // <3>
+        save.addClickListener(event -> validateAndSave());
+        delete.addClickListener(event -> fireEvent(new DeleteEvent(this, binder.getBean())));
+        close.addClickListener(event -> fireEvent(new CloseEvent(this)));
 
-        binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid())); // <4>
+        binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
         return new HorizontalLayout(save, delete, close);
     }
 
     private void validateAndSave() {
         if(binder.isValid()) {
-            fireEvent(new SaveEvent(this, binder.getBean())); // <6>
+            fireEvent(new SaveEvent(this, binder.getBean()));
         }
     }
 
 
-    public void setContact(Contact contact) {
-        binder.setBean(contact); // <1>
-    }
+    public void setUser(Users user) { binder.setBean(user); }
 
     // Events
-    public static abstract class ContactFormEvent extends ComponentEvent<ContactForm> {
-        private Contact contact;
+    public static abstract class ContactFormEvent extends ComponentEvent<UserForm> {
+        private Users user;
 
-        protected ContactFormEvent(ContactForm source, Contact contact) {
+        protected ContactFormEvent(UserForm source, Users user) {
             super(source, false);
-            this.contact = contact;
+            this.user = user;
         }
 
-        public Contact getContact() {
-            return contact;
+        public Users getUser() {
+            return user;
         }
     }
 
     public static class SaveEvent extends ContactFormEvent {
-        SaveEvent(ContactForm source, Contact contact) {
-            super(source, contact);
+        SaveEvent(UserForm source, Users user) {
+            super(source, user);
         }
     }
 
     public static class DeleteEvent extends ContactFormEvent {
-        DeleteEvent(ContactForm source, Contact contact) {
-            super(source, contact);
+        DeleteEvent(UserForm source, Users user) {
+            super(source, user);
         }
 
     }
 
     public static class CloseEvent extends ContactFormEvent {
-        CloseEvent(ContactForm source) {
+        CloseEvent(UserForm source) {
             super(source, null);
         }
     }
@@ -131,6 +123,5 @@ public class ContactForm extends FormLayout {
     public Registration addCloseListener(ComponentEventListener<CloseEvent> listener) {
         return addListener(CloseEvent.class, listener);
     }
-
 
 }
