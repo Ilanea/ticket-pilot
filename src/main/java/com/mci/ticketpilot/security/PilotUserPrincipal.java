@@ -54,4 +54,8 @@ public class PilotUserPrincipal implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public Users getUser() {
+        return user;
+    }
 }

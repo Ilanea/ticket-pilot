@@ -2,6 +2,7 @@ package com.mci.ticketpilot.data.repository;
 
 import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.entity.Ticket;
+import com.mci.ticketpilot.data.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +19,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     @Query("SELECT c.ticketProject FROM Ticket c WHERE c = :ticket")
     Project findProjectToTicket(Ticket ticket);
+
+    @Query("SELECT c FROM Ticket c WHERE c.ticketUser = :ticketUser")
+    List<Ticket> findByAssignee(Users ticketUser);
 }

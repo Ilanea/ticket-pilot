@@ -5,8 +5,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SecurityUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
     public static boolean userHasAdminRole() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
@@ -21,10 +25,13 @@ public class SecurityUtils {
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_MANAGER"));
     }
 
-    public static String currentLoggedInUsername() {
+    public static Users getAuthenticatedUser() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
-        return authentication.getPrincipal().toString();
+        if (authentication != null && authentication.getPrincipal() instanceof PilotUserPrincipal) {
+            return ((PilotUserPrincipal) authentication.getPrincipal()).getUser();
+        }
+        return null;
     }
 
 }
