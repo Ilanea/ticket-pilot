@@ -14,6 +14,7 @@ public class SecurityUtils {
     public static boolean userHasAdminRole() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
+        //logger.info("userHasAdminRole: " + authentication.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN")));
         return authentication.getAuthorities().stream()
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
     }
@@ -21,11 +22,12 @@ public class SecurityUtils {
     public static boolean userHasManagerRole() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
+        //logger.info("userHasManagerRole: " + authentication.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_MANAGER")));
         return authentication.getAuthorities().stream()
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_MANAGER"));
     }
 
-    public static Users getAuthenticatedUser() {
+    public static Users getLoggedInUser() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof PilotUserPrincipal) {
