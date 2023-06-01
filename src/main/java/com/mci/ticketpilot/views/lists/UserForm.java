@@ -17,6 +17,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class UserForm extends FormLayout {
     Binder<Users> binder = new BeanValidationBinder<>(Users.class);
 
     public UserForm(List<Users> users) {
+
         addClassName("contact-form");
         binder.bindInstanceFields(this);
 
@@ -56,7 +58,7 @@ public class UserForm extends FormLayout {
 
 
     private Component createButtonsLayout() {
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        save.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
@@ -72,7 +74,11 @@ public class UserForm extends FormLayout {
     }
 
     private void validateAndSave() {
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
         if(binder.isValid()) {
+            binder.getBean().setPassword(encoder.encode(password.getValue()));
             fireEvent(new SaveEvent(this, binder.getBean()));
         }
     }
