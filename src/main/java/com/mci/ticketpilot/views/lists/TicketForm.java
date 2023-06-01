@@ -115,6 +115,7 @@ public class TicketForm extends FormLayout {
         if(ticket != null){
             binder.setBean(ticket);
 
+            // Assignee can only be changed by Admins, Managers or the current assignee
             if (SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole() || service.isCurrentUserAssignee(ticket)) {
                 linkedUser.setReadOnly(false);
             } else {

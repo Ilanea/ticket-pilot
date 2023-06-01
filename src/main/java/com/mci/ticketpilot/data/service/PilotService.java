@@ -143,4 +143,9 @@ public class PilotService {
         return currentUser != null && currentUser.equals(ticket.getUser());
     }
 
+    public boolean isCurrentUserManager(Project project){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        return currentUser != null && currentUser.equals(project.getManager());
+    }
+
 }

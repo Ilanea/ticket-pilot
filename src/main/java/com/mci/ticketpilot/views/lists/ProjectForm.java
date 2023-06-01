@@ -4,6 +4,7 @@ import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.entity.Ticket;
 import com.mci.ticketpilot.data.entity.Users;
 import com.mci.ticketpilot.data.service.PilotService;
+import com.mci.ticketpilot.security.SecurityUtils;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -23,6 +24,8 @@ import com.vaadin.flow.shared.Registration;
 import java.util.List;
 
 public class ProjectForm extends FormLayout {
+
+    private PilotService service;
     TextField projectName = new TextField("Project");
     ComboBox<Users> projectManager = new ComboBox<>("Project Manager");
     Button save = new Button("Save");
@@ -32,6 +35,7 @@ public class ProjectForm extends FormLayout {
     Binder<Project> binder = new BeanValidationBinder<>(Project.class);
 
     public ProjectForm(List<Project> projects, PilotService service) {
+        this.service = service;
 
         addClassName("project-form");
         binder.forField(projectManager).bind(Project::getManager, Project::setManager);
@@ -77,7 +81,17 @@ public class ProjectForm extends FormLayout {
 
 
     public void setProject(Project project) {
-        binder.setBean(project);
+        if(project != null) {
+            binder.setBean(project);
+
+            // Project Name and Manager can only be changed by Admins, Managers or the current Manager
+            if (SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole() || service.isCurrentUserManager(project)) {
+                projectManager.setReadOnly(false);
+            } else {
+                projectManager.setReadOnly(true);
+                projectName.setReadOnly(true);
+            }
+        }
     }
 
     // Events
