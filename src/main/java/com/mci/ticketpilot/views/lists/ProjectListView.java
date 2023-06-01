@@ -2,6 +2,7 @@ package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.service.PilotService;
+import com.mci.ticketpilot.security.SecurityUtils;
 import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -85,11 +86,18 @@ public class ProjectListView extends VerticalLayout {
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
 
-        Button createTicketButton = new Button("Create Project");
-        createTicketButton.addClickListener(click -> createProject());
+        Button createProjectButton = new Button("Create Project");
+        createProjectButton.addClickListener(click -> createProject());
 
-        var toolbar = new HorizontalLayout(filterText, createTicketButton);
+        var toolbar = new HorizontalLayout();
         toolbar.addClassName("toolbar");
+        toolbar.add(filterText);
+
+        // only add Create Project Button when current authenticated User has MANAGER or ADMIN role
+        if (SecurityUtils.userHasManagerRole() || SecurityUtils.userHasAdminRole()) {
+            toolbar.add(createProjectButton);
+        }
+
         return toolbar;
     }
 
