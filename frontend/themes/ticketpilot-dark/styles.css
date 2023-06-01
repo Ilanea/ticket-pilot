@@ -1,0 +1,10 @@
+html {
+    --lumo-error-text-color: rgb(245, 114, 107);
+    --lumo-error-color-50pct: rgba(245, 114, 107, 0.5);
+    --lumo-error-color-10pct: rgba(245, 114, 107, 0.1);
+    --lumo-error-color: hsl(3, 87%, 69%);
+    --lumo-success-text-color: rgb(85, 216, 139);
+    --lumo-success-color-50pct: rgba(85, 216, 139, 0.5);
+    --lumo-success-color-10pct: rgba(85, 216, 139, 0.1);
+    --lumo-success-color: hsl(145, 63%, 59%);
+}
