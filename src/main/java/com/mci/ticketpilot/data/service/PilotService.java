@@ -121,7 +121,7 @@ public class PilotService {
     // Data Retrieving Services
     ////////////////////////////////////////////////////////////////////
     public List<Ticket> getUserTickets(){
-        Users currentUser = SecurityUtils.getAuthenticatedUser();
+        Users currentUser = SecurityUtils.getLoggedInUser();
         //logger.info("Current user: " + currentUser);
         if (currentUser != null) {
             return ticketRepository.findByAssignee(currentUser);
@@ -130,12 +130,22 @@ public class PilotService {
     }
 
     public List<Project> getUserProjects(){
-        Users currentUser = SecurityUtils.getAuthenticatedUser();
+        Users currentUser = SecurityUtils.getLoggedInUser();
         //logger.info("Current user: " + currentUser);
         if (currentUser != null) {
             return projectRepository.findByUser(currentUser);
         }
         return Collections.emptyList();
+    }
+
+    public boolean isCurrentUserAssignee(Ticket ticket){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        return currentUser != null && currentUser.equals(ticket.getUser());
+    }
+
+    public boolean isCurrentUserManager(Project project){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        return currentUser != null && currentUser.equals(project.getManager());
     }
 
 }

@@ -3,6 +3,7 @@ package com.mci.ticketpilot.views.lists;
 import com.mci.ticketpilot.data.entity.*;
 import com.mci.ticketpilot.data.service.PilotService;
 import com.mci.ticketpilot.security.SecurityService;
+import com.mci.ticketpilot.security.SecurityUtils;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -30,6 +31,7 @@ public class TicketForm extends FormLayout {
     private PilotService service;
     private Project selectedProject;
     private Users selectedUser;
+    private Ticket currentTicket;
     TextField ticketName = new TextField("Title");
     ComboBox<TicketPriority> ticketPriority = new ComboBox<>("Priority");
     ComboBox<TicketStatus> ticketStatus = new ComboBox<>("Status");
@@ -112,6 +114,14 @@ public class TicketForm extends FormLayout {
     public void setTicket(Ticket ticket) {
         if(ticket != null){
             binder.setBean(ticket);
+
+            // Assignee can only be changed by Admins, Managers or the current assignee
+            if (SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole() || service.isCurrentUserAssignee(ticket)) {
+                linkedUser.setReadOnly(false);
+            } else {
+                linkedUser.setReadOnly(true);
+            }
+
             logger.info("Set selected Ticket to: " + ticket);
         }
     }
