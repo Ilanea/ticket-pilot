@@ -6,13 +6,16 @@ import com.mci.ticketpilot.data.entity.Users;
 import com.mci.ticketpilot.data.repository.UserRepository;
 import com.mci.ticketpilot.data.repository.ProjectRepository;
 import com.mci.ticketpilot.data.repository.TicketRepository;
+import com.mci.ticketpilot.security.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 @Service
 public class PilotService {
-
+    private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final TicketRepository ticketRepository;
@@ -50,7 +53,7 @@ public class PilotService {
             System.err.println("Contact is null.");
             return;
         }
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -75,7 +78,7 @@ public class PilotService {
             System.err.println("Project is null.");
             return;
         }
-        projectRepository.save(project);
+        projectRepository.saveAndFlush(project);
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -103,7 +106,8 @@ public class PilotService {
             System.err.println("Ticket is null.");
             return;
         }
-        ticketRepository.save(ticket);
+        logger.info("Saving ticket to DB: " + ticket);
+        ticketRepository.saveAndFlush(ticket);
     }
 
     public Project findProjectToTicket(Ticket ticket) {

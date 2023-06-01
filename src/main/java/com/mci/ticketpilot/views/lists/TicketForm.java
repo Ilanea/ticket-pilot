@@ -2,6 +2,7 @@ package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.*;
 import com.mci.ticketpilot.data.service.PilotService;
+import com.mci.ticketpilot.security.SecurityService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -16,14 +17,15 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.flow.spring.annotation.SpringComponent;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TicketForm extends FormLayout {
 
+    private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
     private PilotService service;
     private Project selectedProject;
     private Users selectedUser;
@@ -42,7 +44,10 @@ public class TicketForm extends FormLayout {
     public TicketForm(List<Ticket> tickets, PilotService service) {
         this.service = service;
 
+        // Bind Form Fields to Object
         addClassName("ticket-form");
+        binder.forField(linkedProject).bind(Ticket::getProject, Ticket::setProject);
+        binder.forField(linkedUser).bind(Ticket::getUser, Ticket::setUser);
         binder.bindInstanceFields(this);
 
         ticketPriority.setItems(TicketPriority.values());
@@ -91,16 +96,17 @@ public class TicketForm extends FormLayout {
 
     private void validateAndSave() {
         if (binder.isValid()) {
-            Ticket ticket = binder.getBean();
-            ticket.setProject(selectedProject);
-            ticket.setUser(selectedUser);
-            service.saveTicket(ticket);
-            fireEvent(new TicketForm.SaveEvent(this, ticket));
+            fireEvent(new TicketForm.SaveEvent(this, binder.getBean()));
         }
     }
 
 
-    public void setTicket(Ticket ticket) { binder.setBean(ticket); }
+    public void setTicket(Ticket ticket) {
+        if(ticket != null){
+            binder.setBean(ticket);
+            logger.info("Set Ticket to: " + ticket);
+        }
+    }
 
     // Events
     public static abstract class TicketFormEvent extends ComponentEvent<TicketForm> {
