@@ -113,4 +113,17 @@ public class PilotService {
     public Project findProjectToTicket(Ticket ticket) {
         return ticketRepository.findProjectToTicket(ticket);
     }
+
+
+    ////////////////////////////////////////////////////////////////////
+    // Data Retrieving Services
+    ////////////////////////////////////////////////////////////////////
+    public List<Ticket> getUserTickets(String username){
+        return null;
+    }
+
+    public List<Project> getUserProjects(String username){
+        return null;
+    }
+
 }

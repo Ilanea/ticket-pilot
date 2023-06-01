@@ -1,13 +1,19 @@
 package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.Project;
+import com.mci.ticketpilot.data.entity.Ticket;
+import com.mci.ticketpilot.data.entity.Users;
+import com.mci.ticketpilot.data.service.PilotService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
@@ -18,17 +24,27 @@ import java.util.List;
 
 public class ProjectForm extends FormLayout {
     TextField projectName = new TextField("Project");
+    ComboBox<Users> projectManager = new ComboBox<>("Project Manager");
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
 
     Binder<Project> binder = new BeanValidationBinder<>(Project.class);
 
-    public ProjectForm(List<Project> projects) {
+    public ProjectForm(List<Project> projects, PilotService service) {
+
         addClassName("project-form");
+        binder.forField(projectManager).bind(Project::getManager, Project::setManager);
         binder.bindInstanceFields(this);
 
+        List<Users> users = service.findAllUsers();
+        projectManager.setClearButtonVisible(true);
+        projectManager.setPrefixComponent(VaadinIcon.SEARCH.create());
+        projectManager.setItems(users);
+        projectManager.setItemLabelGenerator(user -> user.getFirstName() + " " + user.getLastName());
+
         add(projectName,
+                projectManager,
                 createButtonsLayout());
     }
 
@@ -49,8 +65,13 @@ public class ProjectForm extends FormLayout {
     }
 
     private void validateAndSave() {
-        if(binder.isValid()) {
-            fireEvent(new SaveEvent(this, binder.getBean()));
+        if (binder.isValid()) {
+            Project project = binder.getBean();
+            if (project.getManager() == null) {
+                Notification.show("Please select a project manager", 2000, Notification.Position.MIDDLE);
+            } else {
+                fireEvent(new ProjectForm.SaveEvent(this, project));
+            }
         }
     }
 

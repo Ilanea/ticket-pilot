@@ -50,7 +50,7 @@ public class ProjectListView extends VerticalLayout {
     }
 
     private void configureForm() {
-        form = new ProjectForm(service.findAllProjects());
+        form = new ProjectForm(service.findAllProjects(), service);
         form.setWidth("25em");
         form.addSaveListener(this::saveProject);
         form.addDeleteListener(this::deleteProject);
@@ -72,7 +72,7 @@ public class ProjectListView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassNames("project-grid");
         grid.setSizeFull();
-        grid.setColumns("projectName");
+        grid.setColumns("projectName", "manager");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(event ->

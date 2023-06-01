@@ -1,5 +1,7 @@
 package com.mci.ticketpilot.views;
 
+import com.mci.ticketpilot.data.entity.Project;
+import com.mci.ticketpilot.data.entity.Ticket;
 import com.mci.ticketpilot.data.service.PilotService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Span;
@@ -9,12 +11,14 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
 
+import java.util.List;
+
+
 @PermitAll
 @Route(value = "", layout = MainLayout.class)
 @PageTitle("Dashboard | Ticket Pilot")
 public class DashboardView extends VerticalLayout {
     private final PilotService service;
-
 
     public DashboardView(PilotService service) {
         this.service = service;

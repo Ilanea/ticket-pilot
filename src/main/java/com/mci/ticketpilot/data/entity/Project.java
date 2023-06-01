@@ -35,11 +35,11 @@ public class Project extends AbstractEntity {
         this.projectTickets = tickets;
     }
 
-    public Users getUser() {
+    public Users getManager() {
         return projectManager;
     }
 
-    public void setUser(Users manager) {
+    public void setManager(Users manager) {
         this.projectManager = manager;
     }
 }

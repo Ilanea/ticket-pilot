@@ -98,10 +98,10 @@ public class TicketForm extends FormLayout {
     private void validateAndSave() {
         if (binder.isValid()) {
             Ticket ticket = binder.getBean();
-            // Saving a ticket without a project and user gets a NullPointerException
+            // Saving a ticket without a project gets a NullPointerException
             // This hack is to circumvent this issue
-            if (ticket.getProject() == null || ticket.getUser() == null) {
-                Notification.show("Please select a project and user", 2000, Notification.Position.MIDDLE);
+            if (ticket.getProject() == null) {
+                Notification.show("Please select a project", 2000, Notification.Position.MIDDLE);
             } else {
                 fireEvent(new TicketForm.SaveEvent(this, ticket));
             }
