@@ -12,6 +12,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
@@ -96,9 +97,12 @@ public class TicketForm extends FormLayout {
 
     private void validateAndSave() {
         if (binder.isValid()) {
-            logger.info("Tickets Project: " + binder.getBean().getProject());
-            logger.info("Tickets User: " + binder.getBean().getUser());
-            fireEvent(new TicketForm.SaveEvent(this, binder.getBean()));
+            Ticket ticket = binder.getBean();
+            if (ticket.getProject() == null || ticket.getUser() == null) {
+                Notification.show("Please select a project and user", 3000, Notification.Position.MIDDLE);
+            } else {
+                fireEvent(new TicketForm.SaveEvent(this, ticket));
+            }
         }
     }
 
