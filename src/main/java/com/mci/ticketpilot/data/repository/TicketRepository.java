@@ -16,6 +16,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
             "where lower(c.ticketName) like lower(concat('%', :searchTerm, '%')) ")
     List<Ticket> search(@Param("searchTerm") String searchTerm);
 
-    @Query("SELECT c.project FROM Ticket c WHERE c = :ticket")
+    @Query("SELECT c.ticketProject FROM Ticket c WHERE c = :ticket")
     Project findProjectToTicket(Ticket ticket);
 }

@@ -31,8 +31,14 @@ public class Users extends AbstractEntity {
     private String email;
     @NotEmpty
     private String password;
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<Project> project;
+
+    // Each User can have many Projects
+    @OneToMany(mappedBy = "projectManager", fetch = FetchType.EAGER)
+    private Set<Project> userProjects;
+
+    // Each User can have many Tickets
+    @OneToMany(mappedBy = "ticketUser", fetch = FetchType.EAGER)
+    private Set<Ticket> userTickets;
 
     @Override
     public String toString() {
@@ -88,10 +94,14 @@ public class Users extends AbstractEntity {
     }
 
     public Set<Project> getProject() {
-        return project;
+        return userProjects;
     }
 
     public void setProject(Set<Project> project) {
-        this.project = project;
+        this.userProjects = project;
     }
+
+    public Set<Ticket> getUserTickets() { return userTickets; }
+
+    public void setUserTickets(Set<Ticket> userTickets) { this.userTickets = userTickets; }
 }

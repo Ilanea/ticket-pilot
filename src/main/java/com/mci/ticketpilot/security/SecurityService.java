@@ -20,7 +20,7 @@ public class SecurityService {
     private static final String LOGOUT_SUCCESS_URL = "/";
 
     public UserDetails getAuthenticatedUser() {
-        logger.info("Getting authenticated user");
+        //logger.info("Getting authenticated user");
         SecurityContext context = SecurityContextHolder.getContext();
         Object principal = context.getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {

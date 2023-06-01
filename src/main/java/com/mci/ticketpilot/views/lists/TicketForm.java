@@ -96,6 +96,8 @@ public class TicketForm extends FormLayout {
 
     private void validateAndSave() {
         if (binder.isValid()) {
+            logger.info("Tickets Project: " + binder.getBean().getProject());
+            logger.info("Tickets User: " + binder.getBean().getUser());
             fireEvent(new TicketForm.SaveEvent(this, binder.getBean()));
         }
     }
@@ -105,6 +107,9 @@ public class TicketForm extends FormLayout {
         if(ticket != null){
             binder.setBean(ticket);
             logger.info("Set Ticket to: " + ticket);
+        } else {
+            linkedProject.setValue(null);
+            linkedUser.setValue(null);
         }
     }
 

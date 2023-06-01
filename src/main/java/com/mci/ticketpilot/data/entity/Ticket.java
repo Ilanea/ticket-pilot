@@ -17,11 +17,15 @@ public class Ticket extends AbstractEntity {
     @Column(nullable = false, columnDefinition = "varchar(255) default 'DEFAULT'")
     private TicketPriority ticketPriority = TicketPriority.DEFAULT;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    private Project project = null;
+    // Each Ticket can be assigned to one Project
+    @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name="projectTickets", nullable=true, insertable=true, updatable=true)
+    private Project ticketProject;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    private Users user = null;
+    // Each Ticket can be assigned to one User
+    @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name="userTickets", nullable=true, insertable=true, updatable=true)
+    private Users ticketUser;
 
     public String getTicketName() {
         return ticketName;
@@ -48,15 +52,15 @@ public class Ticket extends AbstractEntity {
     }
 
     public Project getProject() {
-        return project;
+        return ticketProject;
     }
 
     public void setProject(Project project) {
-        this.project = project;
+        this.ticketProject = project;
     }
 
-    public Users getUser() { return user; }
+    public Users getUser() { return ticketUser; }
 
-    public void setUser(Users user) { this.user = user; }
+    public void setUser(Users user) { this.ticketUser = user; }
 }
 

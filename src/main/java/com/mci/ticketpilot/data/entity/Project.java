@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Project extends AbstractEntity {
@@ -12,10 +12,13 @@ public class Project extends AbstractEntity {
     @NotEmpty
     private String projectName;
 
+    // Each Project can have one Manager
     @ManyToOne(fetch = FetchType.EAGER)
-    private Users user;
-    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
-    private List<Ticket> tickets = new ArrayList<>();
+    private Users projectManager;
+
+    // Each Project can have many Tickets
+    @OneToMany(mappedBy = "ticketProject", fetch = FetchType.EAGER)
+    private Set<Ticket> projectTickets;
     public String getProjectName() {
         return projectName;
     }
@@ -24,19 +27,19 @@ public class Project extends AbstractEntity {
         this.projectName = title;
     }
 
-    public List<Ticket> getTickets() {
-        return tickets;
+    public Set<Ticket> getTickets() {
+        return projectTickets;
     }
 
-    public void setTickets(List<Ticket> tickets) {
-        this.tickets = tickets;
+    public void setTickets(Set<Ticket> tickets) {
+        this.projectTickets = tickets;
     }
 
     public Users getUser() {
-        return user;
+        return projectManager;
     }
 
     public void setUser(Users manager) {
-        this.user = manager;
+        this.projectManager = manager;
     }
 }
