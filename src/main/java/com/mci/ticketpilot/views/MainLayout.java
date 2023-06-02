@@ -7,6 +7,8 @@ import com.mci.ticketpilot.views.lists.TicketListView;
 import com.mci.ticketpilot.views.lists.UserListView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.board.Board;
+import com.vaadin.flow.component.board.Row;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -78,6 +80,4 @@ public class MainLayout extends AppLayout {
         addToDrawer(drawer);
 
     }
-
-
 }

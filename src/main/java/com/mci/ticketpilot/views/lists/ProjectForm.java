@@ -4,6 +4,7 @@ import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.entity.Ticket;
 import com.mci.ticketpilot.data.entity.Users;
 import com.mci.ticketpilot.data.service.PilotService;
+import com.mci.ticketpilot.security.SecurityUtils;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -11,20 +12,30 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 public class ProjectForm extends FormLayout {
+
+    private PilotService service;
     TextField projectName = new TextField("Project");
     ComboBox<Users> projectManager = new ComboBox<>("Project Manager");
+    TextArea projectDescription = new TextArea("Description");
+    DatePicker projectStartDate = new DatePicker("Start date");
+    DatePicker projectEndDate = new DatePicker("End date");
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
@@ -32,6 +43,7 @@ public class ProjectForm extends FormLayout {
     Binder<Project> binder = new BeanValidationBinder<>(Project.class);
 
     public ProjectForm(List<Project> projects, PilotService service) {
+        this.service = service;
 
         addClassName("project-form");
         binder.forField(projectManager).bind(Project::getManager, Project::setManager);
@@ -43,13 +55,27 @@ public class ProjectForm extends FormLayout {
         projectManager.setItems(users);
         projectManager.setItemLabelGenerator(user -> user.getFirstName() + " " + user.getLastName());
 
+        projectDescription.setMaxLength(300);
+        projectDescription.setValueChangeMode(ValueChangeMode.EAGER);
+        projectDescription.addValueChangeListener(e -> {
+            e.getSource()
+                    .setHelperText(e.getValue().length() + "/" + 300);
+        });
+
+        LocalDate now = LocalDate.now(ZoneId.systemDefault());
+        projectStartDate.setMin(now);
+        projectEndDate.setMin(now);
+
         add(projectName,
                 projectManager,
+                projectDescription,
+                projectStartDate,
+                projectEndDate,
                 createButtonsLayout());
     }
 
     private Component createButtonsLayout() {
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        save.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
@@ -77,7 +103,17 @@ public class ProjectForm extends FormLayout {
 
 
     public void setProject(Project project) {
-        binder.setBean(project);
+        if(project != null) {
+            binder.setBean(project);
+
+            // Project Name and Manager can only be changed by Admins, Managers or the current Manager
+            if (SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole() || service.isCurrentUserManager(project)) {
+                projectManager.setReadOnly(false);
+            } else {
+                projectManager.setReadOnly(true);
+                projectName.setReadOnly(true);
+            }
+        }
     }
 
     // Events

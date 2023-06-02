@@ -7,8 +7,10 @@ import com.mci.ticketpilot.data.repository.UserRepository;
 import com.mci.ticketpilot.data.repository.ProjectRepository;
 import com.mci.ticketpilot.data.repository.TicketRepository;
 import com.mci.ticketpilot.security.SecurityService;
+import com.mci.ticketpilot.security.SecurityUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -118,12 +120,32 @@ public class PilotService {
     ////////////////////////////////////////////////////////////////////
     // Data Retrieving Services
     ////////////////////////////////////////////////////////////////////
-    public List<Ticket> getUserTickets(String username){
-        return null;
+    public List<Ticket> getUserTickets(){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        //logger.info("Current user: " + currentUser);
+        if (currentUser != null) {
+            return ticketRepository.findByAssignee(currentUser);
+        }
+        return Collections.emptyList();
     }
 
-    public List<Project> getUserProjects(String username){
-        return null;
+    public List<Project> getUserProjects(){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        //logger.info("Current user: " + currentUser);
+        if (currentUser != null) {
+            return projectRepository.findByUser(currentUser);
+        }
+        return Collections.emptyList();
+    }
+
+    public boolean isCurrentUserAssignee(Ticket ticket){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        return currentUser != null && currentUser.equals(ticket.getUser());
+    }
+
+    public boolean isCurrentUserManager(Project project){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        return currentUser != null && currentUser.equals(project.getManager());
     }
 
 }

@@ -25,10 +25,10 @@ import java.util.List;
 @Route(value = "tickets", layout = MainLayout.class)
 @PageTitle("Tickets | Ticket Pilot")
 public class TicketListView extends VerticalLayout {
-    Grid<Ticket> grid = new Grid<>(Ticket.class);
-    TextField filterText = new TextField();
-    TicketForm form;
-    PilotService service;
+    private Grid<Ticket> grid = new Grid<>(Ticket.class);
+    private TextField filterText = new TextField();
+    private TicketForm form;
+    private PilotService service;
 
 
     public TicketListView(PilotService service) {
@@ -54,7 +54,7 @@ public class TicketListView extends VerticalLayout {
 
     private void configureForm() {
         form = new TicketForm(service.findAllTickets(), service);
-        form.setWidth("25em");
+        form.setSizeFull();
         form.addSaveListener(this::saveTicket);
         form.addDeleteListener(this::deleteTicket);
         form.addCloseListener(e -> closeEditor());
@@ -79,8 +79,7 @@ public class TicketListView extends VerticalLayout {
         grid.setColumns("ticketName", "ticketPriority", "ticketStatus", "project.projectName", "user");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
-        grid.asSingleSelect().addValueChangeListener(event ->
-                editTicket(event.getValue()));
+        grid.asSingleSelect().addValueChangeListener(event -> editTicket(event.getValue()));
     }
 
     private Component getToolbar() {

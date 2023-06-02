@@ -40,6 +40,7 @@ public class Users extends AbstractEntity {
     @OneToMany(mappedBy = "ticketUser", fetch = FetchType.EAGER)
     private Set<Ticket> userTickets;
 
+    // Getter and Setter methods
     @Override
     public String toString() {
         return firstName + " " + lastName;
@@ -101,7 +102,11 @@ public class Users extends AbstractEntity {
         this.userProjects = project;
     }
 
-    public Set<Ticket> getUserTickets() { return userTickets; }
+    public Set<Ticket> getUserTickets() {
+        return userTickets;
+    }
 
-    public void setUserTickets(Set<Ticket> userTickets) { this.userTickets = userTickets; }
+    public void setUserTickets(Set<Ticket> userTickets) {
+        this.userTickets = userTickets;
+    }
 }

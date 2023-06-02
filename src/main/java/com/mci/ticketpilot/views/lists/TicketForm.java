@@ -3,6 +3,7 @@ package com.mci.ticketpilot.views.lists;
 import com.mci.ticketpilot.data.entity.*;
 import com.mci.ticketpilot.data.service.PilotService;
 import com.mci.ticketpilot.security.SecurityService;
+import com.mci.ticketpilot.security.SecurityUtils;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -14,9 +15,11 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
 
 import java.util.List;
@@ -30,11 +33,13 @@ public class TicketForm extends FormLayout {
     private PilotService service;
     private Project selectedProject;
     private Users selectedUser;
+    private Ticket currentTicket;
     TextField ticketName = new TextField("Title");
     ComboBox<TicketPriority> ticketPriority = new ComboBox<>("Priority");
     ComboBox<TicketStatus> ticketStatus = new ComboBox<>("Status");
     ComboBox<Project> linkedProject = new ComboBox<>("Project");
     ComboBox<Users> linkedUser = new ComboBox<>("User");
+    TextArea ticketDescription = new TextArea("Description");
 
     Button save = new Button("Save");
     Button delete = new Button("Delete");
@@ -51,9 +56,11 @@ public class TicketForm extends FormLayout {
         binder.forField(linkedUser).bind(Ticket::getUser, Ticket::setUser);
         binder.bindInstanceFields(this);
 
+        // Priority
         ticketPriority.setItems(TicketPriority.values());
         ticketStatus.setItems(TicketStatus.values());
 
+        // Linkedproject & Linkeduser
         List<Project> projects = service.findAllProjects();
         List<Users> users = service.findAllUsers();
 
@@ -76,11 +83,20 @@ public class TicketForm extends FormLayout {
             selectedUser = event.getValue();
         });
 
-        add(ticketName, ticketPriority, ticketStatus, linkedProject, linkedUser, createButtonsLayout());
+        // Ticket description
+        ticketDescription.setMaxLength(300);
+        ticketDescription.setValueChangeMode(ValueChangeMode.EAGER);
+        ticketDescription.addValueChangeListener(e -> {
+            e.getSource()
+                    .setHelperText(e.getValue().length() + "/" + 300);
+        });
+
+
+        add(ticketName, ticketDescription, ticketStatus, linkedProject, linkedUser, createButtonsLayout());
     }
 
     private Component createButtonsLayout() {
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        save.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
@@ -112,6 +128,14 @@ public class TicketForm extends FormLayout {
     public void setTicket(Ticket ticket) {
         if(ticket != null){
             binder.setBean(ticket);
+
+            // Assignee can only be changed by Admins, Managers or the current assignee
+            if (SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole() || service.isCurrentUserAssignee(ticket)) {
+                linkedUser.setReadOnly(false);
+            } else {
+                linkedUser.setReadOnly(true);
+            }
+
             logger.info("Set selected Ticket to: " + ticket);
         }
     }

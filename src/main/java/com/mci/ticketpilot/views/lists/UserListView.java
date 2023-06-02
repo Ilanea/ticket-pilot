@@ -23,10 +23,10 @@ import org.springframework.context.annotation.Scope;
 @PageTitle("Users | Ticket Pilot")
 @RolesAllowed({"ADMIN", "MANAGER"})
 public class UserListView extends VerticalLayout {
-    Grid<Users> grid = new Grid<>(Users.class);
-    TextField filterText = new TextField();
-    UserForm form;
-    PilotService service;
+    private Grid<Users> grid = new Grid<>(Users.class);
+    private TextField filterText = new TextField();
+    private UserForm form;
+    private PilotService service;
 
 
     public UserListView(PilotService service) {
@@ -76,8 +76,7 @@ public class UserListView extends VerticalLayout {
         grid.setColumns("firstName", "lastName", "email", "userRole");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
-        grid.asSingleSelect().addValueChangeListener(event ->
-                editUser(event.getValue()));
+        grid.asSingleSelect().addValueChangeListener(event -> editUser(event.getValue()));
     }
 
     private Component getToolbar() {
