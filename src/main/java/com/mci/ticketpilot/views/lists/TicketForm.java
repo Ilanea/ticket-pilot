@@ -15,9 +15,11 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
 
 import java.util.List;
@@ -37,6 +39,7 @@ public class TicketForm extends FormLayout {
     ComboBox<TicketStatus> ticketStatus = new ComboBox<>("Status");
     ComboBox<Project> linkedProject = new ComboBox<>("Project");
     ComboBox<Users> linkedUser = new ComboBox<>("User");
+    TextArea ticketDescription = new TextArea("Description");
 
     Button save = new Button("Save");
     Button delete = new Button("Delete");
@@ -53,9 +56,11 @@ public class TicketForm extends FormLayout {
         binder.forField(linkedUser).bind(Ticket::getUser, Ticket::setUser);
         binder.bindInstanceFields(this);
 
+        // Priority
         ticketPriority.setItems(TicketPriority.values());
         ticketStatus.setItems(TicketStatus.values());
 
+        // Linkedproject & Linkeduser
         List<Project> projects = service.findAllProjects();
         List<Users> users = service.findAllUsers();
 
@@ -78,7 +83,16 @@ public class TicketForm extends FormLayout {
             selectedUser = event.getValue();
         });
 
-        add(ticketName, ticketPriority, ticketStatus, linkedProject, linkedUser, createButtonsLayout());
+        // Ticket description
+        ticketDescription.setMaxLength(300);
+        ticketDescription.setValueChangeMode(ValueChangeMode.EAGER);
+        ticketDescription.addValueChangeListener(e -> {
+            e.getSource()
+                    .setHelperText(e.getValue().length() + "/" + 300);
+        });
+
+
+        add(ticketName, ticketDescription, ticketStatus, linkedProject, linkedUser, createButtonsLayout());
     }
 
     private Component createButtonsLayout() {

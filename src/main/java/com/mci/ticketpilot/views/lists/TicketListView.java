@@ -54,7 +54,7 @@ public class TicketListView extends VerticalLayout {
 
     private void configureForm() {
         form = new TicketForm(service.findAllTickets(), service);
-        form.setWidth("25em");
+        form.setSizeFull();
         form.addSaveListener(this::saveTicket);
         form.addDeleteListener(this::deleteTicket);
         form.addCloseListener(e -> closeEditor());
