@@ -16,9 +16,11 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class ProjectForm extends FormLayout {
     private PilotService service;
     TextField projectName = new TextField("Project");
     ComboBox<Users> projectManager = new ComboBox<>("Project Manager");
+    TextArea projectDescription = new TextArea("Description");
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
@@ -47,8 +50,16 @@ public class ProjectForm extends FormLayout {
         projectManager.setItems(users);
         projectManager.setItemLabelGenerator(user -> user.getFirstName() + " " + user.getLastName());
 
+        projectDescription.setMaxLength(300);
+        projectDescription.setValueChangeMode(ValueChangeMode.EAGER);
+        projectDescription.addValueChangeListener(e -> {
+            e.getSource()
+                    .setHelperText(e.getValue().length() + "/" + 300);
+        });
+
         add(projectName,
                 projectManager,
+                projectDescription,
                 createButtonsLayout());
     }
 
