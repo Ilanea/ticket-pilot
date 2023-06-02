@@ -12,6 +12,7 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -23,6 +24,8 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 public class ProjectForm extends FormLayout {
@@ -31,6 +34,8 @@ public class ProjectForm extends FormLayout {
     TextField projectName = new TextField("Project");
     ComboBox<Users> projectManager = new ComboBox<>("Project Manager");
     TextArea projectDescription = new TextArea("Description");
+    DatePicker projectStartDate = new DatePicker("Start date");
+    DatePicker projectEndDate = new DatePicker("End date");
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
@@ -57,9 +62,15 @@ public class ProjectForm extends FormLayout {
                     .setHelperText(e.getValue().length() + "/" + 300);
         });
 
+        LocalDate now = LocalDate.now(ZoneId.systemDefault());
+        projectStartDate.setMin(now);
+        projectEndDate.setMin(now);
+
         add(projectName,
                 projectManager,
                 projectDescription,
+                projectStartDate,
+                projectEndDate,
                 createButtonsLayout());
     }
 

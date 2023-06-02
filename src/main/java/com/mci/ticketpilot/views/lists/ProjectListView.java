@@ -7,6 +7,7 @@ import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -23,10 +24,10 @@ import org.springframework.context.annotation.Scope;
 @Route(value = "projects", layout = MainLayout.class)
 @PageTitle("Projects | Ticket Pilot")
 public class ProjectListView extends VerticalLayout {
-    Grid<Project> grid = new Grid<>(Project.class);
-    TextField filterText = new TextField();
-    ProjectForm form;
-    PilotService service;
+    private Grid<Project> grid = new Grid<>(Project.class);
+    private TextField filterText = new TextField();
+    private ProjectForm form;
+    private PilotService service;
 
 
     public ProjectListView(PilotService service) {
@@ -52,7 +53,7 @@ public class ProjectListView extends VerticalLayout {
 
     private void configureForm() {
         form = new ProjectForm(service.findAllProjects(), service);
-        form.setWidth("25em");
+        form.setSizeFull();
         form.addSaveListener(this::saveProject);
         form.addDeleteListener(this::deleteProject);
         form.addCloseListener(e -> closeEditor());
@@ -76,8 +77,7 @@ public class ProjectListView extends VerticalLayout {
         grid.setColumns("projectName", "manager");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
-        grid.asSingleSelect().addValueChangeListener(event ->
-                editProject(event.getValue()));
+        grid.asSingleSelect().addValueChangeListener(event -> editProject(event.getValue()));
     }
 
     private Component getToolbar() {
@@ -121,7 +121,6 @@ public class ProjectListView extends VerticalLayout {
         grid.asSingleSelect().clear();
         editProject(new Project());
     }
-
 
     private void updateList() {
         grid.setItems(service.findAllProjects(filterText.getValue()));

@@ -15,6 +15,7 @@ public class Comment extends AbstractEntity{
     @JoinColumn(name = "ticket_id", referencedColumnName = "id", nullable = false)
     private Ticket ticket;
 
+    // Getter and Setter methods
     public Ticket getTicket() {
         return ticket;
     }

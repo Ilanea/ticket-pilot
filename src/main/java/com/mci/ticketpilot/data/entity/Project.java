@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -14,6 +16,10 @@ public class Project extends AbstractEntity {
 
     @Size(max = 300)
     private String projectDescription;
+
+    private LocalDate projectStartDate;
+
+    private LocalDate projectEndDate;
 
     // Each Project can have one Manager
     @ManyToOne(fetch = FetchType.EAGER)
@@ -56,5 +62,21 @@ public class Project extends AbstractEntity {
 
     public void setManager(Users manager) {
         this.projectManager = manager;
+    }
+
+    public LocalDate getProjectStartDate() {
+        return projectStartDate;
+    }
+
+    public void setProjectStartDate(LocalDate projectStartDate) {
+        this.projectStartDate = projectStartDate;
+    }
+
+    public LocalDate getProjectEndDate() {
+        return projectEndDate;
+    }
+
+    public void setProjectEndDate(LocalDate projectEndDate) {
+        this.projectEndDate = projectEndDate;
     }
 }
