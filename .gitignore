@@ -5,6 +5,8 @@
 .project
 .classpath
 
+ticketpilot.properties
+
 *.iml
 .DS_Store
 
