@@ -20,7 +20,7 @@ public class SendMail {
         Content content = new Content("text/plain", ticketdescription);
         Mail mail = new Mail(from, subject, to, content);
 
-        SendGrid sg = new SendGrid("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");
+        SendGrid sg = new SendGrid("ENTERKEY HERE");
         Request request = new Request();
         try {
             request.setMethod(Method.POST);
