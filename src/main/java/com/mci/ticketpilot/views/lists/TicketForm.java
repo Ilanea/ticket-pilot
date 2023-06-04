@@ -186,9 +186,10 @@ public class TicketForm extends FormLayout {
             // Assignee can only be changed by Admins, Managers or the current assignee
             if (SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole() || service.isCurrentUserAssignee(ticket)) {
                 linkedUser.setReadOnly(false);
-
-                commentDisplay = new CommentDisplay(ticket.getComments());
-                add(commentDisplay);
+                if(commentDisplay == null){
+                    commentDisplay = new CommentDisplay(ticket.getComments());
+                    add(commentDisplay);
+                }
             } else {
                 linkedUser.setReadOnly(true);
             }
