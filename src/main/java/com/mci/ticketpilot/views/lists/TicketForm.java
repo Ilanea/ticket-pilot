@@ -1,8 +1,9 @@
 package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.*;
+import com.mci.ticketpilot.data.service.ApplicationContextProvider;
 import com.mci.ticketpilot.data.service.PilotService;
-import com.mci.ticketpilot.data.service.SendMail;
+import com.mci.ticketpilot.data.service.SendMailService;
 import com.mci.ticketpilot.security.SecurityService;
 import com.mci.ticketpilot.security.SecurityUtils;
 import com.vaadin.flow.component.Component;
@@ -25,7 +26,6 @@ import com.vaadin.flow.shared.Registration;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.mail.EmailException;
 import org.slf4j.Logger;
@@ -132,7 +132,7 @@ public class TicketForm extends FormLayout {
                 Notification.show("Please select a project", 2000, Notification.Position.MIDDLE);
             } else {
                 // If the ticket is new, set the current user as the creator
-                SendMail sendMail = new SendMail();
+                SendMailService sendMail = ApplicationContextProvider.getApplicationContext().getBean(SendMailService.class);
                 try {
                     sendMail.send(ticket.getUser().getEmail(), ticket.getUser().getFirstName(), ticket.getUser().getLastName(), ticket.getTicketName(), ticket.getTicketDescription());
                 } catch (IOException e) {
