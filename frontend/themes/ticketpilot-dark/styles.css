@@ -8,3 +8,38 @@ html {
     --lumo-success-color-10pct: rgba(85, 216, 139, 0.1);
     --lumo-success-color: hsl(145, 63%, 59%);
 }
+
+.router-link {
+    color: #337ab7;
+    text-decoration: none;
+    padding: 8px 40px;
+    transition: background-color 0.2s ease;
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-left: -8px;
+    margin-right: -8px;
+
+}
+
+.router-link:hover {
+    background-color: lightskyblue;
+    color: white;
+}
+
+.router-link:active {
+    background-color: #f5f5f5;
+}
+
+.header-class{
+    margin: -10px;
+    padding: -10px;
+}
+
+.drawer-class{
+    margin: -15px;
+    padding: -10px;
+}
+
+.drawer-class {
+    justify-content: space-between;
+}
