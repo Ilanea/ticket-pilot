@@ -13,11 +13,26 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.VaadinResponse;
+import com.vaadin.flow.server.VaadinServletResponse;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.context.annotation.Scope;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.server.StreamResource;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+
+
 
 @SpringComponent
 @Scope("prototype")
@@ -81,7 +96,6 @@ public class TicketListView extends VerticalLayout {
 
         grid.asSingleSelect().addValueChangeListener(event -> editTicket(event.getValue()));
     }
-
     private Component getToolbar() {
         filterText.setPlaceholder("Filter by name...");
         filterText.setClearButtonVisible(true);
@@ -91,12 +105,22 @@ public class TicketListView extends VerticalLayout {
         Button createTicketButton = new Button("Create Ticket");
         createTicketButton.addClickListener(click -> createTicket());
 
+        // Button for Excel export
+        Button exportToExcelButton = new Button("Export to Excel");
+        StreamResource sr = new StreamResource("tickets.xlsx", () -> service.exportToExcel(filterText.getValue()));
+        Anchor downloadLink = new Anchor(sr, "");
+        downloadLink.getElement().setAttribute("download", true);
+        downloadLink.add(exportToExcelButton);
+
+        exportToExcelButton.addClickListener(event -> downloadLink.setHref(sr));
+
         var toolbar = new HorizontalLayout();
         toolbar.addClassName("toolbar");
-        toolbar.add(filterText, createTicketButton);
+        toolbar.add(filterText, createTicketButton, downloadLink); // Add Excel button to the toolbar
 
         return toolbar;
     }
+
 
     public void editTicket(Ticket ticket) {
         if (ticket == null) {

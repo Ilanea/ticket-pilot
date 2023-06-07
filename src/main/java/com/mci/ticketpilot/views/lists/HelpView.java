@@ -2,7 +2,9 @@ package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.entity.Ticket;
+import com.mci.ticketpilot.data.service.ApplicationContextProvider;
 import com.mci.ticketpilot.data.service.PilotService;
+import com.mci.ticketpilot.data.service.SendMailService;
 import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.board.Board;
@@ -14,7 +16,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.textfield.TextArea;
 import jakarta.annotation.security.PermitAll;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 import java.util.List;
 
@@ -23,7 +30,13 @@ import java.util.List;
 @PageTitle("Help | Ticket Pilot")
 public class HelpView extends VerticalLayout {
 
-    public HelpView() {
+    private final SendMailService sendMailService;
+
+
+
+    public HelpView(@Autowired SendMailService sendMailService) {
+
+        this.sendMailService = sendMailService;
         H1 header = new H1("Help");
         Paragraph intro = new Paragraph("Welcome to the Ticket Pilot Help Center. Here, you will find tips and guides on how to use the Ticket Pilot platform.");
 
@@ -49,5 +62,30 @@ public class HelpView extends VerticalLayout {
         Paragraph answer2 = new Paragraph("A: Click on the ticket you want to delete, then click the 'Delete' button. Note that this action is irreversible.");
 
         add(header, intro, ticketSection, ticketText, projectSection, projectText, userSection, userText, searchSection, searchText, notificationSection, notificationText, faqSection, question1, answer1, question2, answer2);
+
+        H2 feedbackSection = new H2("Submit Feedback");
+        Paragraph feedbackText = new Paragraph("We value your feedback. Please provide your comments and suggestions below.");
+
+// Create a text area for feedback submission
+        TextArea feedbackArea = new TextArea();
+        feedbackArea.setPlaceholder("Write your feedback here...");
+        feedbackArea.setWidthFull();
+
+// Create a button to submit feedback
+        Button submitButton = new Button("Submit", event -> {
+            String feedback = feedbackArea.getValue();
+            if (!feedback.trim().isEmpty()) {
+                SendMailService sendMail = ApplicationContextProvider.getApplicationContext().getBean(SendMailService.class);
+
+                //sendMail.send(ticket.getUser().getEmail(), ticket.getUser().getFirstName(), ticket.getUser().getLastName(), ticket.getTicketName(), ticket.getTicketDescription());
+                Notification.show("Your feedback has been submitted. Thank you!");
+                feedbackArea.clear(); // clear the text area
+            } else {
+                Notification.show("Feedback area cannot be empty.");
+            }
+        });
+// Add feedback section components to the view
+        add(feedbackSection, feedbackText, feedbackArea, submitButton);
+
     }
 }

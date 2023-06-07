@@ -12,6 +12,7 @@ import com.vaadin.flow.component.board.Board;
 import com.vaadin.flow.component.board.Row;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -46,14 +47,17 @@ public class MainLayout extends AppLayout {
                 LumoUtility.FontSize.LARGE,
                 LumoUtility.Margin.MEDIUM);
 
+        Image logoImage = new Image( "frontend/images/Unbenannt.jpg", "Company Logo");
+        logoImage.setHeight("40px"); // adjust size as needed
+
         HorizontalLayout header;
         if (securityService.getAuthenticatedUser() != null) {
             Button logout = new Button("Logout", click ->
                     securityService.logout());
-            header = new HorizontalLayout(logo, logout);
+            header = new HorizontalLayout(logo,logoImage, logout);
             header.addClassName("header-class");
         } else {
-            header = new HorizontalLayout(logo);
+            header = new HorizontalLayout(logo, logoImage);
             header.addClassName("header-class");
         }
 

@@ -10,11 +10,23 @@ import com.mci.ticketpilot.security.SecurityService;
 import com.mci.ticketpilot.security.SecurityUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+import static org.apache.poi.ss.usermodel.TableStyleType.headerRow;
+
 @Service
 public class PilotService {
     private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
@@ -40,6 +52,49 @@ public class PilotService {
             return userRepository.search(stringFilter);
         }
     }
+
+    public InputStream exportToExcel(String filterText) {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Tickets");
+
+        List<Ticket> tickets = findAllTickets(filterText);
+
+        int rownum = 0;
+        XSSFRow headerRow = sheet.createRow(rownum++);
+        headerRow.createCell(0).setCellValue("Ticket Name");
+        headerRow.createCell(1).setCellValue("Ticket Priority");
+        headerRow.createCell(2).setCellValue("Ticket Status");
+        headerRow.createCell(3).setCellValue("Project Name");
+        headerRow.createCell(4).setCellValue("Person in Charge");
+
+        // Set the width for the columns
+        int numColumns = headerRow.getPhysicalNumberOfCells();
+        for (int i = 0; i < numColumns; i++) {
+            sheet.setColumnWidth(i, 5000);
+        }
+
+        for (Ticket ticket : tickets) {
+            XSSFRow row = sheet.createRow(rownum++);
+            row.createCell(0).setCellValue(ticket.getTicketName());
+            row.createCell(1).setCellValue(ticket.getTicketPriority().ordinal());
+            row.createCell(2).setCellValue(ticket.getTicketStatus().ordinal());
+            row.createCell(3).setCellValue(ticket.getProject().getProjectName());
+            row.createCell(4).setCellValue(ticket.getUser().getFirstName());
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            workbook.write(out);
+            workbook.close();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ByteArrayInputStream(out.toByteArray());
+    }
+
+
+
 
     public List<Users> findAllUsers() { return userRepository.findAll(); }
     public long countUsers() {
