@@ -1,6 +1,7 @@
 package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.*;
+import com.mci.ticketpilot.data.entity.misc.CommentDisplay;
 import com.mci.ticketpilot.data.service.ApplicationContextProvider;
 import com.mci.ticketpilot.data.service.PilotService;
 import com.mci.ticketpilot.data.service.SendMailService;
@@ -23,21 +24,28 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
-
+import java.time.LocalDateTime;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.apache.commons.mail.EmailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.vaadin.flow.component.html.Label;
+
 
 public class TicketForm extends FormLayout {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
     private PilotService service;
     private Project selectedProject;
+    private TextField comment = new TextField("Comment");
     private Users selectedUser;
     private Ticket currentTicket;
+    private TextField newCommentField = new TextField();
+    private CommentDisplay commentDisplay;
+
     TextField ticketName = new TextField("Title");
     ComboBox<TicketPriority> ticketPriority = new ComboBox<>("Priority");
     ComboBox<TicketStatus> ticketStatus = new ComboBox<>("Status");
@@ -48,11 +56,17 @@ public class TicketForm extends FormLayout {
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
+    Button postCommentButton = new Button("Post Comment");
+
+    private List<Ticket> tickets;
+    private Registration saveListener;
 
     Binder<Ticket> binder = new BeanValidationBinder<>(Ticket.class);
 
+
     public TicketForm(List<Ticket> tickets, PilotService service) {
         this.service = service;
+        this.tickets = tickets;
 
         // Bind Form Fields to Object
         addClassName("ticket-form");
@@ -95,14 +109,16 @@ public class TicketForm extends FormLayout {
                     .setHelperText(e.getValue().length() + "/" + 300);
         });
 
-
-        add(ticketName, ticketDescription, ticketStatus, linkedProject, linkedUser, createButtonsLayout());
+        add(ticketName, ticketDescription, ticketStatus, linkedProject, linkedUser, createButtonsLayout(),
+                newCommentField, postCommentButton);
     }
 
     private Component createButtonsLayout() {
         save.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        postCommentButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
 
         save.addClickShortcut(Key.ENTER);
         close.addClickShortcut(Key.ESCAPE);
@@ -118,6 +134,12 @@ public class TicketForm extends FormLayout {
         });
         delete.addClickListener(event -> fireEvent(new TicketForm.DeleteEvent(this, binder.getBean())));
         close.addClickListener(event -> fireEvent(new TicketForm.CloseEvent(this)));
+
+        postCommentButton.addClickListener(e -> {
+            if (currentTicket != null) {
+                addComment(newCommentField.getValue(), currentTicket);
+            }
+        });
 
         binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
         return new HorizontalLayout(save, delete, close);
@@ -138,14 +160,24 @@ public class TicketForm extends FormLayout {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                fireEvent(new TicketForm.SaveEvent(this, ticket));
+                fireEvent(new TicketForm.SaveEvent(this, ticket, tickets));
             }
         }
     }
 
     public void setTicket(Ticket ticket) {
         if(ticket != null){
+            this.currentTicket = ticket;
             binder.setBean(ticket);
+
+            if(currentTicket != null) {
+                if(commentDisplay == null){
+                    commentDisplay = new CommentDisplay(currentTicket.getComments());
+                    add(commentDisplay);
+                } else {
+                    commentDisplay.setComments(currentTicket.getComments());
+                }
+            }
 
             // Assignee can only be changed by Admins, Managers or the current assignee
             if (SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole() || service.isCurrentUserAssignee(ticket)) {
@@ -153,8 +185,23 @@ public class TicketForm extends FormLayout {
             } else {
                 linkedUser.setReadOnly(true);
             }
-
+            
             logger.info("Set selected Ticket to: " + ticket);
+        }
+    }
+
+    private void addComment(String commentText, Ticket ticket) {
+        if (ticket != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            String formattedTime = LocalDateTime.now().format(formatter);
+
+            Comment newComment = new Comment(commentText, SecurityUtils.getLoggedInUser(), formattedTime);// Set the document data
+
+            newComment.setTicket(ticket);  // assuming Comment class has setTicket method
+            ticket.getComments().add(newComment);
+            service.saveTicket(ticket);
+            commentDisplay.add(new Label(newComment.getAuthor() + " " + newComment.getTimestamp() + ": " + newComment.getComment()));
+            newCommentField.clear();
         }
     }
 
@@ -171,9 +218,15 @@ public class TicketForm extends FormLayout {
             return ticket;
         }
     }
+    public void setSaveListener(Registration saveListener) {
+        if (this.saveListener != null) {
+            this.saveListener.remove();
+        }
+        this.saveListener = saveListener;
+    }
 
     public static class SaveEvent extends TicketForm.TicketFormEvent {
-        SaveEvent(TicketForm source, Ticket ticket) {
+        SaveEvent(TicketForm source, Ticket ticket, List<Ticket> tickets) {
             super(source, ticket);
         }
     }
@@ -183,6 +236,12 @@ public class TicketForm extends FormLayout {
             super(source, ticket);
         }
 
+    }
+
+    public static class CommentEvent extends TicketForm.TicketFormEvent {
+        CommentEvent(TicketForm source, Ticket ticket) {
+            super(source, ticket);
+        }
     }
 
     public static class CloseEvent extends TicketForm.TicketFormEvent {
@@ -201,4 +260,5 @@ public class TicketForm extends FormLayout {
     public Registration addCloseListener(ComponentEventListener<TicketForm.CloseEvent> listener) {
         return addListener(TicketForm.CloseEvent.class, listener);
     }
+
 }
