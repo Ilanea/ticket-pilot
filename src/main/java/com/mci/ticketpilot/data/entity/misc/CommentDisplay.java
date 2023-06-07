@@ -11,7 +11,7 @@ public class CommentDisplay extends VerticalLayout {
     public CommentDisplay(List<Comment> comments) {
         if (comments != null) {
             for (Comment comment : comments) {
-                Label label = new Label(comment.getAuthor() + ": " + comment.getComment());
+                Label label = new Label(comment.getAuthor() + "@" + comment.getTimestamp() + ": " + comment.getComment());
                 add(label);
             }
         }
@@ -21,7 +21,7 @@ public class CommentDisplay extends VerticalLayout {
         removeAll();
         if (comments != null) {
             for (Comment comment : comments) {
-                Label label = new Label(comment.getAuthor() + ": " + comment.getComment());
+                Label label = new Label(comment.getAuthor() + "@" + comment.getTimestamp() + ": " + comment.getComment());
                 add(label);
             }
         }

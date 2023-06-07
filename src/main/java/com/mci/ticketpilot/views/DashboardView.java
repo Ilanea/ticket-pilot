@@ -9,7 +9,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.board.Board;
 import com.vaadin.flow.component.board.Row;
 import com.vaadin.flow.component.charts.Chart;
-import com.vaadin.flow.component.charts.model.*;
 import com.vaadin.flow.component.charts.model.style.SolidColor;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -86,11 +85,10 @@ public class DashboardView extends VerticalLayout {
             Ticket newTicket = event.getTicket();
             tickets.add(newTicket);
             refreshUserBoard();
-            updateCharts(); // Update the charts after adding a new ticket
+            updateCharts();
         }));
         add(form);
     }
-    // Rest of the code...
 
     private Component createDownloadButton() {
         Button downloadButton = new Button("Download as PDF");
