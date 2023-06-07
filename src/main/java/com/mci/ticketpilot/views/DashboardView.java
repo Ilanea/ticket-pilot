@@ -2,6 +2,7 @@ package com.mci.ticketpilot.views;
 
 import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.entity.Ticket;
+import com.mci.ticketpilot.data.service.PdfService;
 import com.mci.ticketpilot.data.service.PilotService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.board.Board;
@@ -15,7 +16,15 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.server.StreamResource;
 
 
 @PermitAll
@@ -24,13 +33,26 @@ import java.util.List;
 public class DashboardView extends VerticalLayout {
     private final PilotService service;
 
+    private Component createDownloadButton() {
+        Button downloadButton = new Button("Download as PDF");
+        List<Project> userProjects = service.getUserProjects();
+        List<Ticket> userTickets = service.getUserTickets();
+        byte[] pdfBytes = new PdfService().createPdf(userProjects, userTickets);
+        StreamResource pdfResource = new StreamResource("dashboard.pdf", () -> new ByteArrayInputStream(pdfBytes));
+        Anchor downloadLink = new Anchor(pdfResource, "");
+        downloadLink.getElement().setAttribute("download", true);
+        downloadLink.add(downloadButton);
+        return downloadLink;
+    }
+
     public DashboardView(PilotService service) {
         this.service = service;
         addClassName("dashboard-view");
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
         add(createBoardStats(),
-                createUserBoard());
+                createUserBoard(),
+                createDownloadButton());
     }
 
     private Component getUserStats() {
