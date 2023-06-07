@@ -31,6 +31,8 @@ public class ProjectListView extends VerticalLayout {
     private PilotService service;
     private Div gridContainer;
     private Div formContainer;
+    private Button createProjectButton;
+    private Button backButton;
 
 
     public ProjectListView(PilotService service) {
@@ -95,15 +97,16 @@ public class ProjectListView extends VerticalLayout {
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
 
-        Button createProjectButton = new Button("Create Project");
+        this.createProjectButton = new Button("Create Project");
         createProjectButton.addClickListener(click -> createProject());
 
-        Button backButton = new Button("Back to List");
+        this.backButton = new Button("Back to List");
         backButton.addClickListener(click -> closeEditor());
+        backButton.setVisible(false);
 
         var toolbar = new HorizontalLayout();
         toolbar.addClassName("toolbar");
-        toolbar.add(filterText);
+        toolbar.add(filterText, backButton);
 
         // only add Create Project Button when current authenticated User has MANAGER or ADMIN role
         if (SecurityUtils.userHasManagerRole() || SecurityUtils.userHasAdminRole()) {
@@ -120,6 +123,8 @@ public class ProjectListView extends VerticalLayout {
             form.setProject(project);
             gridContainer.setVisible(false);
             formContainer.setVisible(true);
+            createProjectButton.setVisible(false);
+            backButton.setVisible(true);
             addClassName("editing");
         }
     }
@@ -128,6 +133,8 @@ public class ProjectListView extends VerticalLayout {
         form.setProject(null);
         gridContainer.setVisible(true);
         formContainer.setVisible(false);
+        createProjectButton.setVisible(true);
+        backButton.setVisible(false);
         removeClassName("editing");
     }
 
@@ -135,6 +142,8 @@ public class ProjectListView extends VerticalLayout {
         grid.asSingleSelect().clear();
         formContainer.setVisible(true);
         gridContainer.setVisible(false);
+        createProjectButton.setVisible(false);
+        backButton.setVisible(true);
         editProject(new Project());
     }
 

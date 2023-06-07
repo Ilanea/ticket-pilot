@@ -47,6 +47,9 @@ public class TicketListView extends VerticalLayout {
     private PilotService service;
     private Div gridContainer;
     private Div formContainer;
+    private Button createTicketButton;
+    private Button backButton;
+    private Button exportToExcelButton;
 
 
     public TicketListView(PilotService service) {
@@ -109,11 +112,15 @@ public class TicketListView extends VerticalLayout {
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
 
-        Button createTicketButton = new Button("Create Ticket");
+        this.createTicketButton = new Button("Create Ticket");
         createTicketButton.addClickListener(click -> createTicket());
 
+        this.backButton = new Button("Back to List");
+        backButton.addClickListener(click -> closeEditor());
+        backButton.setVisible(false);
+
         // Button for Excel export
-        Button exportToExcelButton = new Button("Export to Excel");
+        this.exportToExcelButton = new Button("Export to Excel");
         StreamResource sr = new StreamResource("tickets.xlsx", () -> service.exportToExcel(filterText.getValue()));
         Anchor downloadLink = new Anchor(sr, "");
         downloadLink.getElement().setAttribute("download", true);
@@ -123,7 +130,7 @@ public class TicketListView extends VerticalLayout {
 
         var toolbar = new HorizontalLayout();
         toolbar.addClassName("toolbar");
-        toolbar.add(filterText, createTicketButton, downloadLink); // Add Excel button to the toolbar
+        toolbar.add(filterText, createTicketButton, backButton, downloadLink);
 
         return toolbar;
     }
@@ -136,6 +143,9 @@ public class TicketListView extends VerticalLayout {
             form.setTicket(ticket);
             gridContainer.setVisible(false);
             formContainer.setVisible(true);
+            createTicketButton.setVisible(false);
+            backButton.setVisible(true);
+            exportToExcelButton.setVisible(false);
             addClassName("editing");
         }
     }
@@ -144,7 +154,9 @@ public class TicketListView extends VerticalLayout {
         form.setTicket(null);
         gridContainer.setVisible(true);
         formContainer.setVisible(false);
-        form.setTicket(null);
+        createTicketButton.setVisible(true);
+        backButton.setVisible(false);
+        exportToExcelButton.setVisible(true);
         removeClassName("editing");
     }
 
@@ -152,6 +164,9 @@ public class TicketListView extends VerticalLayout {
         grid.asSingleSelect().clear();
         gridContainer.setVisible(false);
         formContainer.setVisible(true);
+        createTicketButton.setVisible(false);
+        backButton.setVisible(true);
+        exportToExcelButton.setVisible(false);
         editTicket(new Ticket());
     }
 
