@@ -16,4 +16,14 @@ public class CommentDisplay extends VerticalLayout {
             }
         }
     }
+
+    public void setComments(List<Comment> comments) {
+        removeAll();
+        if (comments != null) {
+            for (Comment comment : comments) {
+                Label label = new Label(comment.getAuthor() + ": " + comment.getComment());
+                add(label);
+            }
+        }
+    }
 }

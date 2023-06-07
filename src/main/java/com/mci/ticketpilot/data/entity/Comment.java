@@ -15,15 +15,15 @@ public class Comment extends AbstractEntity{
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private Users author; // the author of the comment
+    private Users author;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "ticket_id", referencedColumnName = "id", nullable = false)
     private Ticket ticket;
 
-    private String timestamp; // the time at which the comment was made
+    private String timestamp;
 
-    private byte[] documentData;  // Added field for document data
+    private byte[] documentData;
 
     // Constructor
     public Comment(String comment, Users author, String timestamp) {

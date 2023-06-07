@@ -141,13 +141,6 @@ public class TicketForm extends FormLayout {
             }
         });
 
-        postCommentButton.addClickListener(event-> {
-            if (currentTicket != null) {
-                fireEvent(new TicketForm.CommentEvent(this, binder.getBean()));
-            }
-        });
-
-
         binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
         return new HorizontalLayout(save, delete, close);
     }
@@ -174,8 +167,17 @@ public class TicketForm extends FormLayout {
 
     public void setTicket(Ticket ticket) {
         if(ticket != null){
-            this.currentTicket = ticket;  // Add this line
+            this.currentTicket = ticket;
             binder.setBean(ticket);
+
+            if(currentTicket != null) {
+                if(commentDisplay == null){
+                    commentDisplay = new CommentDisplay(currentTicket.getComments());
+                    add(commentDisplay);
+                } else {
+                    commentDisplay.setComments(currentTicket.getComments());
+                }
+            }
 
             // Assignee can only be changed by Admins, Managers or the current assignee
             if (SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole() || service.isCurrentUserAssignee(ticket)) {
@@ -183,18 +185,9 @@ public class TicketForm extends FormLayout {
             } else {
                 linkedUser.setReadOnly(true);
             }
-
-            if(commentDisplay == null){
-                commentDisplay = new CommentDisplay(ticket.getComments());
-                add(commentDisplay);
-            }
             
             logger.info("Set selected Ticket to: " + ticket);
         }
-    }
-
-    public void setTickets(List<Ticket> tickets) {
-        this.tickets = tickets;
     }
 
     private void addComment(String commentText, Ticket ticket) {
@@ -268,6 +261,4 @@ public class TicketForm extends FormLayout {
         return addListener(TicketForm.CloseEvent.class, listener);
     }
 
-    public Registration addCommentListener(ComponentEventListener<TicketForm.CommentEvent> listener) {
-        return addListener(TicketForm.CommentEvent.class, listener);
-}}
+}
