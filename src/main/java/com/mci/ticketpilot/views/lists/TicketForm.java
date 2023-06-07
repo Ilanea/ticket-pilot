@@ -118,7 +118,7 @@ public class TicketForm extends VerticalLayout {
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-        save.addClickShortcut(Key.ENTER);
+        //save.addClickShortcut(Key.ENTER);
         close.addClickShortcut(Key.ESCAPE);
 
         save.addClickListener(event -> {
