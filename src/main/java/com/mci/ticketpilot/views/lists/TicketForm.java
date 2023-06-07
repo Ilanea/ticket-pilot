@@ -260,5 +260,4 @@ public class TicketForm extends FormLayout {
     public Registration addCloseListener(ComponentEventListener<TicketForm.CloseEvent> listener) {
         return addListener(TicketForm.CloseEvent.class, listener);
     }
-
 }
