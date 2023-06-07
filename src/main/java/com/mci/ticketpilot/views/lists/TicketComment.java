@@ -51,6 +51,7 @@ public class TicketComment extends VerticalLayout {
 
         newCommentField.setLabel("New Comment");
         newCommentField.setPlaceholder("Enter your comment here");
+        newCommentField.getStyle().set("width", "100%");
 
         add(newCommentField, postCommentButton);
     }
