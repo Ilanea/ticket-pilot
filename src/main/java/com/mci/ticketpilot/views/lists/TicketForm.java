@@ -154,13 +154,17 @@ public class TicketForm extends FormLayout {
                 Notification.show("Please select a project", 2000, Notification.Position.MIDDLE);
             } else {
                 // If the ticket is new, set the current user as the creator
-                SendMailService sendMail = ApplicationContextProvider.getApplicationContext().getBean(SendMailService.class);
-                try {
-                    sendMail.send(ticket.getUser().getEmail(), ticket.getUser().getFirstName(), ticket.getUser().getLastName(), ticket.getTicketName(), ticket.getTicketDescription());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if(ticket.getUser() == null){
+                    fireEvent(new TicketForm.SaveEvent(this, ticket, tickets));
+                } else {
+                    SendMailService sendMail = ApplicationContextProvider.getApplicationContext().getBean(SendMailService.class);
+                    try {
+                        sendMail.send(ticket.getUser().getEmail(), ticket.getUser().getFirstName(), ticket.getUser().getLastName(), ticket.getTicketName(), ticket.getTicketDescription());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    fireEvent(new TicketForm.SaveEvent(this, ticket, tickets));
                 }
-                fireEvent(new TicketForm.SaveEvent(this, ticket, tickets));
             }
         }
     }
@@ -260,5 +264,4 @@ public class TicketForm extends FormLayout {
     public Registration addCloseListener(ComponentEventListener<TicketForm.CloseEvent> listener) {
         return addListener(TicketForm.CloseEvent.class, listener);
     }
-
 }
