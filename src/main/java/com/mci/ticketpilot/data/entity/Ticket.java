@@ -35,7 +35,7 @@ public class Ticket extends AbstractEntity {
     private Users ticketUser;
 
     // One ticket can have multiple comments
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "ticket", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private List<Comment> comments = new ArrayList<>();
 
 
