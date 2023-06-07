@@ -2,13 +2,11 @@ package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.Ticket;
 import com.mci.ticketpilot.data.service.PilotService;
-import com.mci.ticketpilot.security.SecurityUtils;
 import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -16,25 +14,10 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
-import com.vaadin.flow.server.VaadinResponse;
-import com.vaadin.flow.server.VaadinServletResponse;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.context.annotation.Scope;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.server.StreamResource;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
-
-
+import com.vaadin.flow.component.html.Anchor;
 
 @SpringComponent
 @Scope("prototype")

@@ -1,7 +1,6 @@
 package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.*;
-import com.mci.ticketpilot.data.entity.misc.CommentDisplay;
 import com.mci.ticketpilot.data.service.ApplicationContextProvider;
 import com.mci.ticketpilot.data.service.PilotService;
 import com.mci.ticketpilot.data.service.SendMailService;
@@ -25,15 +24,12 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
-import java.time.LocalDateTime;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.apache.commons.mail.EmailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.vaadin.flow.component.html.Label;
 
 
 public class TicketForm extends VerticalLayout {

@@ -6,7 +6,9 @@ import com.mci.ticketpilot.data.entity.misc.CommentDisplay;
 import com.mci.ticketpilot.data.service.PilotService;
 import com.mci.ticketpilot.security.SecurityUtils;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
@@ -19,6 +21,7 @@ public class TicketComment extends VerticalLayout {
     private Ticket currentTicket;
     private TextField newCommentField = new TextField();
     private CommentDisplay commentDisplay;
+    private Div commentDisplayContainer = new Div();
     Button postCommentButton = new Button("Post Comment");
 
 
@@ -26,13 +29,16 @@ public class TicketComment extends VerticalLayout {
         this.service = service;
         this.currentTicket = ticket;
 
-        if(currentTicket != null) {
-            if(commentDisplay == null){
-                commentDisplay = new CommentDisplay(currentTicket.getComments());
-                add(commentDisplay);
-            } else {
-                commentDisplay.setComments(currentTicket.getComments());
-            }
+        if(commentDisplay == null){
+            commentDisplay = new CommentDisplay(currentTicket.getComments());
+            commentDisplayContainer.setWidthFull();
+            commentDisplayContainer.getStyle().set("margin-top", "20px");
+            commentDisplayContainer.getStyle().set("overflow-y", "auto");
+            commentDisplayContainer.getStyle().set("height", "400px");
+            commentDisplayContainer.add(commentDisplay);
+            add(commentDisplayContainer);
+        } else {
+            commentDisplay.setComments(currentTicket.getComments());
         }
 
         postCommentButton.addClickListener(e -> {
@@ -40,6 +46,8 @@ public class TicketComment extends VerticalLayout {
                 addComment(newCommentField.getValue(), currentTicket);
             }
         });
+
+        setAlignItems(FlexComponent.Alignment.CENTER);
 
         newCommentField.setLabel("New Comment");
         newCommentField.setPlaceholder("Enter your comment here");
