@@ -7,6 +7,7 @@ import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -28,6 +29,8 @@ public class ProjectListView extends VerticalLayout {
     private TextField filterText = new TextField();
     private ProjectForm form;
     private PilotService service;
+    private Div gridContainer;
+    private Div formContainer;
 
 
     public ProjectListView(PilotService service) {
@@ -37,18 +40,24 @@ public class ProjectListView extends VerticalLayout {
         configureGrid();
         configureForm();
 
-        add(getToolbar(), getContent());
+        add(getToolbar(), getGridContainer(), getFormContainer());
         updateList();
         closeEditor();
     }
 
-    private HorizontalLayout getContent() {
-        HorizontalLayout content = new HorizontalLayout(grid, form);
-        content.setFlexGrow(2, grid);
-        content.setFlexGrow(1, form);
-        content.addClassNames("content");
-        content.setSizeFull();
-        return content;
+    private Div getGridContainer() {
+        gridContainer = new Div(grid);
+        gridContainer.addClassName("grid-container");
+        gridContainer.setSizeFull();
+        return gridContainer;
+    }
+
+    private Div getFormContainer() {
+        formContainer = new Div(form);
+        formContainer.addClassName("form-container");
+        formContainer.setVisible(false);
+        formContainer.setSizeFull();
+        return formContainer;
     }
 
     private void configureForm() {
@@ -89,6 +98,9 @@ public class ProjectListView extends VerticalLayout {
         Button createProjectButton = new Button("Create Project");
         createProjectButton.addClickListener(click -> createProject());
 
+        Button backButton = new Button("Back to List");
+        backButton.addClickListener(click -> closeEditor());
+
         var toolbar = new HorizontalLayout();
         toolbar.addClassName("toolbar");
         toolbar.add(filterText);
@@ -106,19 +118,23 @@ public class ProjectListView extends VerticalLayout {
             closeEditor();
         } else {
             form.setProject(project);
-            form.setVisible(true);
+            gridContainer.setVisible(false);
+            formContainer.setVisible(true);
             addClassName("editing");
         }
     }
 
     private void closeEditor() {
         form.setProject(null);
-        form.setVisible(false);
+        gridContainer.setVisible(true);
+        formContainer.setVisible(false);
         removeClassName("editing");
     }
 
     private void createProject() {
         grid.asSingleSelect().clear();
+        formContainer.setVisible(true);
+        gridContainer.setVisible(false);
         editProject(new Project());
     }
 

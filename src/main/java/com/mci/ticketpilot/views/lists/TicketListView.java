@@ -7,6 +7,7 @@ import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -44,6 +45,8 @@ public class TicketListView extends VerticalLayout {
     private TextField filterText = new TextField();
     private TicketForm form;
     private PilotService service;
+    private Div gridContainer;
+    private Div formContainer;
 
 
     public TicketListView(PilotService service) {
@@ -53,18 +56,23 @@ public class TicketListView extends VerticalLayout {
         configureGrid();
         configureForm();
 
-        add(getToolbar(), getContent());
+        add(getToolbar(), getGridContainer(), getFormContainer());
         updateList();
         closeEditor();
     }
 
-    private HorizontalLayout getContent() {
-        HorizontalLayout content = new HorizontalLayout(grid, form);
-        content.setFlexGrow(2, grid);
-        content.setFlexGrow(1, form);
-        content.addClassNames("content");
-        content.setSizeFull();
-        return content;
+    private Div getGridContainer() {
+        gridContainer = new Div(grid);
+        gridContainer.addClassName("grid-container");
+        gridContainer.setSizeFull();
+        return gridContainer;
+    }
+
+    private Div getFormContainer() {
+        formContainer = new Div(form);
+        formContainer.addClassName("form-container");
+        formContainer.setVisible(false);
+        return formContainer;
     }
 
     private void configureForm() {
@@ -73,7 +81,6 @@ public class TicketListView extends VerticalLayout {
         form.addSaveListener(this::saveTicket);
         form.addDeleteListener(this::deleteTicket);
         form.addCloseListener(e -> closeEditor());
-
     }
 
     private void saveTicket(TicketForm.SaveEvent event) {
@@ -127,19 +134,24 @@ public class TicketListView extends VerticalLayout {
             closeEditor();
         } else {
             form.setTicket(ticket);
-            form.setVisible(true);
+            gridContainer.setVisible(false);
+            formContainer.setVisible(true);
             addClassName("editing");
         }
     }
 
     private void closeEditor() {
         form.setTicket(null);
-        form.setVisible(false);
+        gridContainer.setVisible(true);
+        formContainer.setVisible(false);
+        form.setTicket(null);
         removeClassName("editing");
     }
 
     private void createTicket() {
         grid.asSingleSelect().clear();
+        gridContainer.setVisible(false);
+        formContainer.setVisible(true);
         editTicket(new Ticket());
     }
 
