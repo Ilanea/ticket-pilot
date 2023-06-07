@@ -79,7 +79,7 @@ public class PilotService {
             row.createCell(1).setCellValue(ticket.getTicketPriority().ordinal());
             row.createCell(2).setCellValue(ticket.getTicketStatus().ordinal());
             row.createCell(3).setCellValue(ticket.getProject().getProjectName());
-            row.createCell(4).setCellValue(ticket.getUser().getFirstName());
+            row.createCell(4).setCellValue(ticket.getUser().getFirstName() + " " + ticket.getUser().getLastName());
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();

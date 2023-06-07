@@ -15,14 +15,11 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -35,14 +32,7 @@ import java.util.List;
 import org.apache.commons.mail.EmailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.vaadin.flow.component.html.Label;import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.NotificationVariant;
-
-
+import com.vaadin.flow.component.html.Label;
 
 
 public class TicketForm extends FormLayout {
@@ -68,11 +58,15 @@ public class TicketForm extends FormLayout {
     Button close = new Button("Cancel");
     Button postCommentButton = new Button("Post Comment");
 
+    private List<Ticket> tickets;
+    private Registration saveListener;
+
     Binder<Ticket> binder = new BeanValidationBinder<>(Ticket.class);
 
 
     public TicketForm(List<Ticket> tickets, PilotService service) {
         this.service = service;
+        this.tickets = tickets;
 
         // Bind Form Fields to Object
         addClassName("ticket-form");
@@ -173,7 +167,7 @@ public class TicketForm extends FormLayout {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                fireEvent(new TicketForm.SaveEvent(this, ticket));
+                fireEvent(new TicketForm.SaveEvent(this, ticket, tickets));
             }
         }
     }
@@ -197,6 +191,10 @@ public class TicketForm extends FormLayout {
             
             logger.info("Set selected Ticket to: " + ticket);
         }
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
     }
 
     private void addComment(String commentText, Ticket ticket) {
@@ -227,9 +225,15 @@ public class TicketForm extends FormLayout {
             return ticket;
         }
     }
+    public void setSaveListener(Registration saveListener) {
+        if (this.saveListener != null) {
+            this.saveListener.remove();
+        }
+        this.saveListener = saveListener;
+    }
 
     public static class SaveEvent extends TicketForm.TicketFormEvent {
-        SaveEvent(TicketForm source, Ticket ticket) {
+        SaveEvent(TicketForm source, Ticket ticket, List<Ticket> tickets) {
             super(source, ticket);
         }
     }
