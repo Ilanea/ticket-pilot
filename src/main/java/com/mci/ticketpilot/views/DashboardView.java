@@ -86,11 +86,10 @@ public class DashboardView extends VerticalLayout {
             Ticket newTicket = event.getTicket();
             tickets.add(newTicket);
             refreshUserBoard();
-            updateCharts(); // Update the charts after adding a new ticket
+            updateCharts();
         }));
         add(form);
     }
-    // Rest of the code...
 
     private Component createDownloadButton() {
         Button downloadButton = new Button("Download as PDF");
