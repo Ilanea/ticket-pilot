@@ -42,9 +42,8 @@ public class TicketListView extends VerticalLayout {
         this.service = service;
         addClassName("list-view");
         setSizeFull();
-        configureGrid();
         configureForm();
-
+        configureGrid();
 
         add(getToolbar(), getGridContainer(), getFormAndCommentsLayout());
         updateList();
