@@ -10,6 +10,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 
 import java.time.LocalDateTime;
@@ -32,7 +33,7 @@ public class TicketComment extends VerticalLayout {
         if(commentDisplay == null){
             commentDisplay = new CommentDisplay(currentTicket.getComments());
             commentDisplayContainer.setWidthFull();
-            commentDisplayContainer.getStyle().set("margin-top", "20px");
+            commentDisplayContainer.getStyle().set("margin-top", "10px");
             commentDisplayContainer.getStyle().set("overflow-y", "auto");
             commentDisplayContainer.getStyle().set("height", "400px");
             commentDisplayContainer.add(commentDisplay);
@@ -43,7 +44,9 @@ public class TicketComment extends VerticalLayout {
 
         postCommentButton.addClickListener(e -> {
             if (currentTicket != null) {
-                addComment(newCommentField.getValue(), currentTicket);
+                if(!newCommentField.getValue().isEmpty()){
+                    addComment(newCommentField.getValue(), currentTicket);
+                }
             }
         });
 
@@ -70,7 +73,12 @@ public class TicketComment extends VerticalLayout {
 
             service.saveTicket(ticket);
 
-            commentDisplay.add(new Label(newComment.getAuthor() + "@" + newComment.getTimestamp() + ": " + newComment.getComment()));
+            TextArea label = new TextArea(newComment.getAuthor() + "@" + newComment.getTimestamp());
+            label.setValue(newComment.getComment());
+            label.setWidthFull();
+            label.setEnabled(false);
+
+            commentDisplay.add(label);
             newCommentField.clear();
         }
     }
