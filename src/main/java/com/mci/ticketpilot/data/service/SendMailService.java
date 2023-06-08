@@ -16,12 +16,13 @@ import org.slf4j.LoggerFactory;
 public class SendMailService {
     private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
     private String sendgridApiKey;
+    private String senderEmail = ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("sendgrid.sender.email");
     public SendMailService() {
         sendgridApiKey = ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("sendgrid.api.key");
     }
 
     public void send(String Email, String firstname, String lastname, String ticketname, String ticketdescription) throws IOException {
-        Email from = new Email("TicketPilot1337@gmail.com");
+        Email from = new Email(senderEmail);
         String subject = "A new Ticket for you " + firstname + " " + lastname + "!";
         Email to = new Email(Email);
 
