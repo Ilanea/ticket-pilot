@@ -38,47 +38,12 @@ public class Ticket extends AbstractEntity {
     // Each Ticket can be assigned to one User
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id", referencedColumnName = "id")
-    private Users ticketUser;
+    private Users assignee;
 
     // One ticket can have multiple comments
     @OneToMany(mappedBy = "ticket", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    private Users assignee; // 'assignee' field of type 'Users'
-
-    public LocalDate getTicketCreationDate() {
-        // or any other default value
-        return Objects.requireNonNullElseGet(ticketCreationDate, LocalDate::now);
-    }
-
-    public void setTicketCreationDate(LocalDate ticketCreationDate) {
-        this.ticketCreationDate = ticketCreationDate;
-    }
-
-    public Project getTicketProject() {
-        return ticketProject;
-    }
-
-    public void setTicketProject(Project ticketProject) {
-        this.ticketProject = ticketProject;
-    }
-
-    public Users getTicketUser() {
-        return ticketUser;
-    }
-
-    public void setTicketUser(Users ticketUser) {
-        this.ticketUser = ticketUser;
-    }
-
-    public Users getAssignee() {
-        return assignee;
-    }
-
-    public void setAssignee(Users assignee) {
-        this.assignee = assignee;
-    }
 
     // Getter and Setter methods
     public String getTicketName() {
@@ -121,12 +86,12 @@ public class Ticket extends AbstractEntity {
         this.ticketProject = project;
     }
 
-    public Users getUser() {
-        return ticketUser;
+    public Users getAssignee() {
+        return assignee;
     }
 
-    public void setUser(Users user) {
-        this.ticketUser = user;
+    public void setAssignee(Users user) {
+        this.assignee = user;
     }
 
     public List<Comment> getComments() {
@@ -135,6 +100,15 @@ public class Ticket extends AbstractEntity {
 
     public void addComment(Comment comment) {
         this.comments.add(comment);
+    }
+
+    public LocalDate getTicketCreationDate() {
+        // or any other default value
+        return Objects.requireNonNullElseGet(ticketCreationDate, LocalDate::now);
+    }
+
+    public void setTicketCreationDate(LocalDate ticketCreationDate) {
+        this.ticketCreationDate = ticketCreationDate;
     }
 }
 

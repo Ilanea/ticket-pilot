@@ -62,7 +62,7 @@ public class TicketForm extends VerticalLayout {
         // Bind Form Fields to Object
         addClassName("ticket-form");
         binder.forField(linkedProject).bind(Ticket::getProject, Ticket::setProject);
-        binder.forField(linkedUser).bind(Ticket::getUser, Ticket::setUser);
+        binder.forField(linkedUser).bind(Ticket::getAssignee, Ticket::setAssignee);
         binder.bindInstanceFields(this);
 
         // Priority
@@ -154,12 +154,12 @@ public class TicketForm extends VerticalLayout {
                 Notification.show("Please select a project", 2000, Notification.Position.MIDDLE);
             } else {
                 // If the ticket is new, set the current user as the creator
-                if(ticket.getUser() == null){
+                if(ticket.getAssignee() == null){
                     fireEvent(new TicketForm.SaveEvent(this, ticket, tickets));
                 } else {
                     SendMailService sendMail = ApplicationContextProvider.getApplicationContext().getBean(SendMailService.class);
                     try {
-                        sendMail.send(ticket.getUser().getEmail(), ticket.getUser().getFirstName(), ticket.getUser().getLastName(), ticket.getTicketName(), ticket.getTicketDescription());
+                        sendMail.send(ticket.getAssignee().getEmail(), ticket.getAssignee().getFirstName(), ticket.getAssignee().getLastName(), ticket.getTicketName(), ticket.getTicketDescription());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

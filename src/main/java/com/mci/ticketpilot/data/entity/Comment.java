@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDateTime;
 
 @Entity
 public class Comment extends AbstractEntity{
@@ -19,12 +20,12 @@ public class Comment extends AbstractEntity{
     @JoinColumn(name = "ticket_id", referencedColumnName = "id", nullable = false)
     private Ticket ticket;
 
-    private String timestamp;
+    private LocalDateTime timestamp;
 
     private byte[] documentData;
 
     // Constructor
-    public Comment(String comment, Users author, String timestamp) {
+    public Comment(String comment, Users author, LocalDateTime timestamp) {
         this.comment = comment;
         this.author = author;
         this.timestamp = timestamp;
@@ -59,11 +60,11 @@ public class Comment extends AbstractEntity{
         this.author = author;
     }
 
-    public String getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 

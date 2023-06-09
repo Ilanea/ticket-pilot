@@ -27,4 +27,4 @@ INSERT INTO users (id, version, first_name, last_name, user_status, user_role, e
 VALUES (7, 0, 'Florian', 'Test', 0, 2, 'lf9600@mci4me.at', '$2a$10$NO54IlIvFio4Gu5GRgEyMuKr1hHtvm8xyf/L/LtAUPKDwQ2KIWuae');
 
 INSERT INTO users (id, version, first_name, last_name, user_status, user_role, email, password)
-VALUES (8, 0, 'Christine', 'Lackinger', 0, 2, 'che.lackinger@mci4me.at', '$2a$10$NO54IlIvFio4Gu5GRgEyMuKr1hHtvm8xyf/L/LtAUPKDwQ2KIWuae');
+VALUES (8, 0, 'Christine', 'Test', 0, 2, 'che.lackinger@mci4me.at', '$2a$10$NO54IlIvFio4Gu5GRgEyMuKr1hHtvm8xyf/L/LtAUPKDwQ2KIWuae');

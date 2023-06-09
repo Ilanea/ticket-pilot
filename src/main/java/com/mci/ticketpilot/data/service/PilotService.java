@@ -152,9 +152,18 @@ public class PilotService {
         return Collections.emptyList();
     }
 
+    public List<Ticket> getUserTickets(){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        //logger.info("Current user: " + currentUser);
+        if (currentUser != null) {
+            return ticketRepository.findByAssignee(currentUser);
+        }
+        return Collections.emptyList();
+    }
+
     public boolean isCurrentUserAssignee(Ticket ticket){
         Users currentUser = SecurityUtils.getLoggedInUser();
-        return currentUser != null && currentUser.equals(ticket.getUser());
+        return currentUser != null && currentUser.equals(ticket.getAssignee());
     }
 
     public boolean isCurrentUserManager(Project project){
@@ -188,7 +197,7 @@ public class PilotService {
             row.createCell(1).setCellValue(ticket.getTicketPriority().ordinal());
             row.createCell(2).setCellValue(ticket.getTicketStatus().ordinal());
             row.createCell(3).setCellValue(ticket.getProject().getProjectName());
-            row.createCell(4).setCellValue(ticket.getUser().getFirstName() + " " + ticket.getUser().getLastName());
+            row.createCell(4).setCellValue(ticket.getAssignee().getFirstName() + " " + ticket.getAssignee().getLastName());
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -14,6 +14,7 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -72,15 +73,15 @@ public class TicketComment extends VerticalLayout {
     private void addComment(String commentText, Ticket ticket) {
         if (ticket != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-            String formattedTime = LocalDateTime.now().format(formatter);
 
-            Comment newComment = new Comment(commentText, SecurityUtils.getLoggedInUser(), formattedTime);
+            Comment newComment = new Comment(commentText, SecurityUtils.getLoggedInUser(), LocalDateTime.now());
 
             newComment.setTicket(ticket);
 
             service.saveComment(ticket, newComment);
 
-            TextArea label = new TextArea(newComment.getAuthor() + "@" + newComment.getTimestamp());
+            String formattedTime = newComment.getTimestamp().format(formatter);
+            TextArea label = new TextArea(newComment.getAuthor() + "@" + formattedTime);
             label.setValue(newComment.getComment());
             label.setWidthFull();
             label.setReadOnly(true);

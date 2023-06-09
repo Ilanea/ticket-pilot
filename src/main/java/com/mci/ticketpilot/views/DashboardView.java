@@ -294,14 +294,18 @@ chartLayout.add(createTicketsbyDayBarChart);
     private Chart createTicketsByUserBarChart() {
         Map<String, Integer> ticketCountByUser = new HashMap<>();
         for (Ticket ticket : service.findAllTickets()) {
-            String userName = ticket.getUser().getFirstName() + " " + ticket.getUser().getLastName();
-            ticketCountByUser.put(userName, ticketCountByUser.getOrDefault(userName, 0) + 1);
+            if(ticket.getAssignee() != null){
+                ticketCountByUser.put(ticket.getAssignee().toString(), ticketCountByUser.getOrDefault(ticket.getAssignee().toString(), 0) + 1);
+            } else {
+                ticketCountByUser.put("Unassigned", ticketCountByUser.getOrDefault("Unassigned", 0) + 1);
+            }
+
         }
 
         DataSeries series = new DataSeries();
         for (Map.Entry<String, Integer> entry : ticketCountByUser.entrySet()) {
             DataSeriesItem item = new DataSeriesItem(entry.getKey(), entry.getValue());
-            item.setColor(random()); // Assign a random color
+            item.setColor(random());
             series.add(item);
         }
 
