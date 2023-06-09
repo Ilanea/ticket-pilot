@@ -9,6 +9,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.board.Board;
 import com.vaadin.flow.component.board.Row;
 import com.vaadin.flow.component.charts.Chart;
+import com.vaadin.flow.component.charts.model.*;
 import com.vaadin.flow.component.charts.model.style.SolidColor;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.*;
@@ -35,11 +36,6 @@ import java.util.stream.IntStream;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.server.StreamResource;
-import com.vaadin.flow.component.charts.model.ChartType;
-import com.vaadin.flow.component.charts.model.Configuration;
-import com.vaadin.flow.component.charts.model.DataSeries;
-import com.vaadin.flow.component.charts.model.DataSeriesItem;
-import com.vaadin.flow.component.charts.model.XAxis;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @PermitAll

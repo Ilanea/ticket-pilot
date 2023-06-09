@@ -25,18 +25,11 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import javassist.expr.NewArray;
 import org.apache.commons.mail.EmailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.vaadin.flow.component.html.Label;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 
 
 public class TicketForm extends VerticalLayout {
@@ -56,10 +49,11 @@ public class TicketForm extends VerticalLayout {
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
 
-    private List<Ticket> tickets = new ArrayList<>();
+    private List<Ticket> tickets;
     private Registration saveListener;
 
     Binder<Ticket> binder = new BeanValidationBinder<>(Ticket.class);
+
 
     public TicketForm(List<Ticket> tickets, PilotService service) {
         this.service = service;
@@ -140,16 +134,15 @@ public class TicketForm extends VerticalLayout {
         close.addClickListener(event -> fireEvent(new TicketForm.CloseEvent(this)));
 
 
-        postCommentButton.addClickListener(event-> {
-            if (currentTicket != null) {
-                fireEvent(new TicketForm.CommentEvent(this, binder.getBean()));
-            }
-        });
-
-
         binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
 
-        return new HorizontalLayout(save, delete, close);
+        Div buttonContainer = new Div(save, delete, close);
+
+        save.getStyle().set("width", "150px").set("margin-right", "20px");
+        delete.getStyle().set("width", "150px").set("margin-right", "20px");
+        close.getStyle().set("width", "150px");
+
+        return buttonContainer;
     }
 
     private void validateAndSave() throws EmailException, IOException {
@@ -161,14 +154,17 @@ public class TicketForm extends VerticalLayout {
                 Notification.show("Please select a project", 2000, Notification.Position.MIDDLE);
             } else {
                 // If the ticket is new, set the current user as the creator
-                SendMailService sendMail = ApplicationContextProvider.getApplicationContext().getBean(SendMailService.class);
-                System.out.println("Creating date: " + ticket.getTicketCreationDate());
-                try {
-                    sendMail.send(ticket.getUser().getEmail(), ticket.getUser().getFirstName(), ticket.getUser().getLastName(), ticket.getTicketName(), ticket.getTicketDescription());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if(ticket.getUser() == null){
+                    fireEvent(new TicketForm.SaveEvent(this, ticket, tickets));
+                } else {
+                    SendMailService sendMail = ApplicationContextProvider.getApplicationContext().getBean(SendMailService.class);
+                    try {
+                        sendMail.send(ticket.getUser().getEmail(), ticket.getUser().getFirstName(), ticket.getUser().getLastName(), ticket.getTicketName(), ticket.getTicketDescription());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    fireEvent(new TicketForm.SaveEvent(this, ticket, tickets));
                 }
-                fireEvent(new TicketForm.SaveEvent(this, ticket, tickets));
             }
         }
     }
@@ -184,32 +180,7 @@ public class TicketForm extends VerticalLayout {
                 linkedUser.setReadOnly(true);
             }
 
-            if(commentDisplay == null){
-                commentDisplay = new CommentDisplay(ticket.getComments());
-                add(commentDisplay);
-            }
-            
             logger.info("Set selected Ticket to: " + ticket);
-        }
-    }
-
-
-    public void setTickets(List<Ticket> tickets) {
-        this.tickets = tickets;
-    }
-
-    private void addComment(String commentText, Ticket ticket) {
-        if (ticket != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-            String formattedTime = LocalDateTime.now().format(formatter);
-
-            Comment newComment = new Comment(commentText, SecurityUtils.getLoggedInUser(), formattedTime);// Set the document data
-
-            newComment.setTicket(ticket);  // assuming Comment class has setTicket method
-            ticket.getComments().add(newComment);
-            service.saveTicket(ticket);
-            commentDisplay.add(new Label(newComment.getAuthor() + " " + newComment.getTimestamp() + ": " + newComment.getComment()));
-            newCommentField.clear();
         }
     }
 
@@ -226,11 +197,6 @@ public class TicketForm extends VerticalLayout {
             return ticket;
         }
     }
-
-    public List<Ticket> getTickets() {
-        return tickets;
-    }
-
     public void setSaveListener(Registration saveListener) {
         if (this.saveListener != null) {
             this.saveListener.remove();
