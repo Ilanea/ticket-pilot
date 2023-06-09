@@ -19,7 +19,7 @@ public class Ticket extends AbstractEntity {
     @Size(max = 300)
     private String ticketDescription;
 
-    @Column(nullable = true, columnDefinition = "DATE default CURRENT_DATE")
+    @Column(columnDefinition = "DATE")
     private LocalDate ticketCreationDate;
 
     @Enumerated(EnumType.STRING)

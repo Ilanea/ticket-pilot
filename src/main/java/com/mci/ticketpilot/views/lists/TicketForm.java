@@ -25,6 +25,7 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.commons.mail.EmailException;
@@ -148,6 +149,7 @@ public class TicketForm extends VerticalLayout {
     private void validateAndSave() throws EmailException, IOException {
         if (binder.isValid()) {
             Ticket ticket = binder.getBean();
+            ticket.setTicketCreationDate(LocalDate.now());
             // Saving a ticket without a project gets a NullPointerException
             // This hack is to circumvent this issue
             if (ticket.getProject() == null) {
