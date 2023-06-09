@@ -1,6 +1,7 @@
 package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.UserRole;
+import com.mci.ticketpilot.data.entity.UserStatus;
 import com.mci.ticketpilot.data.entity.Users;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
@@ -26,8 +27,8 @@ public class UserForm extends FormLayout {
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
     EmailField email = new EmailField("Email");
+    ComboBox<UserStatus> userStatus = new ComboBox<>("Status");
     ComboBox<UserRole> userRole = new ComboBox<>("Role");
-    // Does not work, only shows BCrypt encrypted passwords and takes BCrypt encrypted Passwords for them to work
     PasswordField password = new PasswordField("Password");
     Button save = new Button("Save");
     Button delete = new Button("Delete");
@@ -37,11 +38,13 @@ public class UserForm extends FormLayout {
 
     public UserForm(List<Users> users) {
 
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
         addClassName("contact-form");
         binder.bindInstanceFields(this);
 
         userRole.setItems(UserRole.values());
-        //userRole.setReadOnly(true);
+        userStatus.setItems(UserStatus.values());
 
         password.setRevealButtonVisible(false);
 
@@ -50,6 +53,7 @@ public class UserForm extends FormLayout {
             add(firstName,
                     lastName,
                     email,
+                    userStatus,
                     userRole,
                     password,
                     createButtonsLayout());
