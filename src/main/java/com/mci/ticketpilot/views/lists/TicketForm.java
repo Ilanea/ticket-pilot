@@ -183,6 +183,11 @@ public class TicketForm extends VerticalLayout {
             } else {
                 linkedUser.setReadOnly(true);
             }
+
+            if(commentDisplay == null){
+                commentDisplay = new CommentDisplay(ticket.getComments());
+                add(commentDisplay);
+            }
             
             logger.info("Set selected Ticket to: " + ticket);
         }
@@ -262,4 +267,4 @@ public class TicketForm extends VerticalLayout {
     public Registration addCloseListener(ComponentEventListener<TicketForm.CloseEvent> listener) {
         return addListener(TicketForm.CloseEvent.class, listener);
     }
-}}
+}
