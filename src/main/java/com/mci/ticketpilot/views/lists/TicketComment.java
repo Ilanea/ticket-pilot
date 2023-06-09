@@ -12,6 +12,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -35,7 +36,7 @@ public class TicketComment extends VerticalLayout {
             commentDisplayContainer.setWidthFull();
             commentDisplayContainer.getStyle().set("margin-top", "10px");
             commentDisplayContainer.getStyle().set("overflow-y", "auto");
-            commentDisplayContainer.getStyle().set("height", "400px");
+            commentDisplayContainer.getStyle().set("height", "250px");
             commentDisplayContainer.add(commentDisplay);
             add(commentDisplayContainer);
         } else {
@@ -56,6 +57,13 @@ public class TicketComment extends VerticalLayout {
         newCommentField.setPlaceholder("Enter your comment here");
         newCommentField.getStyle().set("width", "100%");
 
+        newCommentField.setMaxLength(300);
+        newCommentField.setValueChangeMode(ValueChangeMode.EAGER);
+        newCommentField.addValueChangeListener(e -> {
+            e.getSource()
+                    .setHelperText(e.getValue().length() + "/" + 300);
+        });
+
         add(newCommentField, postCommentButton);
     }
 
@@ -69,14 +77,13 @@ public class TicketComment extends VerticalLayout {
             Comment newComment = new Comment(commentText, SecurityUtils.getLoggedInUser(), formattedTime);
 
             newComment.setTicket(ticket);
-            ticket.getComments().add(newComment);
 
-            service.saveTicket(ticket);
+            service.saveComment(ticket, newComment);
 
             TextArea label = new TextArea(newComment.getAuthor() + "@" + newComment.getTimestamp());
             label.setValue(newComment.getComment());
             label.setWidthFull();
-            label.setEnabled(false);
+            label.setReadOnly(true);
 
             commentDisplay.add(label);
             newCommentField.clear();

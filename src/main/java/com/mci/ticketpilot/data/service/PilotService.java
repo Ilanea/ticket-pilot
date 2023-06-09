@@ -1,5 +1,6 @@
 package com.mci.ticketpilot.data.service;
 
+import com.mci.ticketpilot.data.entity.Comment;
 import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.entity.Ticket;
 import com.mci.ticketpilot.data.entity.Users;
@@ -123,6 +124,16 @@ public class PilotService {
             return;
         }
         logger.info("Saving ticket to DB: " + ticket);
+        ticketRepository.saveAndFlush(ticket);
+    }
+
+    public void saveComment(Ticket ticket, Comment comment) {
+        if (ticket == null || comment == null) {
+            System.err.println("Ticket/Comment is null.");
+            return;
+        }
+        ticket.addComment(comment);
+        logger.info("Saving Comment to Ticket in DB: " + ticket);
         ticketRepository.saveAndFlush(ticket);
     }
 

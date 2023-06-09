@@ -14,7 +14,7 @@ public class CommentDisplay extends VerticalLayout {
                 TextArea label = new TextArea(comment.getAuthor() + "@" + comment.getTimestamp());
                 label.setValue(comment.getComment());
                 label.setWidthFull();
-                label.setEnabled(false);
+                label.setReadOnly(true);
                 add(label);
             }
         }
@@ -27,7 +27,7 @@ public class CommentDisplay extends VerticalLayout {
                 TextArea label = new TextArea(comment.getAuthor() + "@" + comment.getTimestamp());
                 label.setValue(comment.getComment());
                 label.setWidthFull();
-                label.setEnabled(false);
+                label.setReadOnly(true);
                 add(label);
             }
         }
