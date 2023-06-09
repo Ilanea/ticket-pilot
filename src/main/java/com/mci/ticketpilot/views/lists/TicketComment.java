@@ -10,7 +10,9 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,9 +34,9 @@ public class TicketComment extends VerticalLayout {
         if(commentDisplay == null){
             commentDisplay = new CommentDisplay(currentTicket.getComments());
             commentDisplayContainer.setWidthFull();
-            commentDisplayContainer.getStyle().set("margin-top", "20px");
+            commentDisplayContainer.getStyle().set("margin-top", "10px");
             commentDisplayContainer.getStyle().set("overflow-y", "auto");
-            commentDisplayContainer.getStyle().set("height", "400px");
+            commentDisplayContainer.getStyle().set("height", "250px");
             commentDisplayContainer.add(commentDisplay);
             add(commentDisplayContainer);
         } else {
@@ -43,7 +45,9 @@ public class TicketComment extends VerticalLayout {
 
         postCommentButton.addClickListener(e -> {
             if (currentTicket != null) {
-                addComment(newCommentField.getValue(), currentTicket);
+                if(!newCommentField.getValue().isEmpty()){
+                    addComment(newCommentField.getValue(), currentTicket);
+                }
             }
         });
 
@@ -52,6 +56,13 @@ public class TicketComment extends VerticalLayout {
         newCommentField.setLabel("New Comment");
         newCommentField.setPlaceholder("Enter your comment here");
         newCommentField.getStyle().set("width", "100%");
+
+        newCommentField.setMaxLength(300);
+        newCommentField.setValueChangeMode(ValueChangeMode.EAGER);
+        newCommentField.addValueChangeListener(e -> {
+            e.getSource()
+                    .setHelperText(e.getValue().length() + "/" + 300);
+        });
 
         add(newCommentField, postCommentButton);
     }
@@ -66,11 +77,15 @@ public class TicketComment extends VerticalLayout {
             Comment newComment = new Comment(commentText, SecurityUtils.getLoggedInUser(), formattedTime);
 
             newComment.setTicket(ticket);
-            ticket.getComments().add(newComment);
 
-            service.saveTicket(ticket);
+            service.saveComment(ticket, newComment);
 
-            commentDisplay.add(new Label(newComment.getAuthor() + "@" + newComment.getTimestamp() + ": " + newComment.getComment()));
+            TextArea label = new TextArea(newComment.getAuthor() + "@" + newComment.getTimestamp());
+            label.setValue(newComment.getComment());
+            label.setWidthFull();
+            label.setReadOnly(true);
+
+            commentDisplay.add(label);
             newCommentField.clear();
         }
     }

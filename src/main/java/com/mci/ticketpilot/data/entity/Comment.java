@@ -11,12 +11,11 @@ public class Comment extends AbstractEntity{
     @Size(max = 300)
     private String comment;
 
-
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private Users author;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "ticket_id", referencedColumnName = "id", nullable = false)
     private Ticket ticket;
 
