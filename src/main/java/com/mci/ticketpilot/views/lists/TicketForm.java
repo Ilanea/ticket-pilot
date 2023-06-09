@@ -27,12 +27,17 @@ import com.vaadin.flow.shared.Registration;
 import java.time.LocalDateTime;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import javassist.expr.NewArray;
 import org.apache.commons.mail.EmailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.vaadin.flow.component.html.Label;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 
 
 public class TicketForm extends FormLayout {
@@ -58,11 +63,10 @@ public class TicketForm extends FormLayout {
     Button close = new Button("Cancel");
     Button postCommentButton = new Button("Post Comment");
 
-    private List<Ticket> tickets;
+    private List<Ticket> tickets = new ArrayList<>();
     private Registration saveListener;
 
     Binder<Ticket> binder = new BeanValidationBinder<>(Ticket.class);
-
 
     public TicketForm(List<Ticket> tickets, PilotService service) {
         this.service = service;
@@ -141,7 +145,15 @@ public class TicketForm extends FormLayout {
             }
         });
 
+        postCommentButton.addClickListener(event-> {
+            if (currentTicket != null) {
+                fireEvent(new TicketForm.CommentEvent(this, binder.getBean()));
+            }
+        });
+
+
         binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
+
         return new HorizontalLayout(save, delete, close);
     }
 
@@ -154,34 +166,22 @@ public class TicketForm extends FormLayout {
                 Notification.show("Please select a project", 2000, Notification.Position.MIDDLE);
             } else {
                 // If the ticket is new, set the current user as the creator
-                if(ticket.getUser() == null){
-                    fireEvent(new TicketForm.SaveEvent(this, ticket, tickets));
-                } else {
-                    SendMailService sendMail = ApplicationContextProvider.getApplicationContext().getBean(SendMailService.class);
-                    try {
-                        sendMail.send(ticket.getUser().getEmail(), ticket.getUser().getFirstName(), ticket.getUser().getLastName(), ticket.getTicketName(), ticket.getTicketDescription());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    fireEvent(new TicketForm.SaveEvent(this, ticket, tickets));
+                SendMailService sendMail = ApplicationContextProvider.getApplicationContext().getBean(SendMailService.class);
+                System.out.println("Creating date: " + ticket.getTicketCreationDate());
+                try {
+                    sendMail.send(ticket.getUser().getEmail(), ticket.getUser().getFirstName(), ticket.getUser().getLastName(), ticket.getTicketName(), ticket.getTicketDescription());
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+                fireEvent(new TicketForm.SaveEvent(this, ticket, tickets));
             }
         }
     }
 
     public void setTicket(Ticket ticket) {
         if(ticket != null){
-            this.currentTicket = ticket;
+            this.currentTicket = ticket;  // Add this line
             binder.setBean(ticket);
-
-            if(currentTicket != null) {
-                if(commentDisplay == null){
-                    commentDisplay = new CommentDisplay(currentTicket.getComments());
-                    add(commentDisplay);
-                } else {
-                    commentDisplay.setComments(currentTicket.getComments());
-                }
-            }
 
             // Assignee can only be changed by Admins, Managers or the current assignee
             if (SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole() || service.isCurrentUserAssignee(ticket)) {
@@ -189,9 +189,18 @@ public class TicketForm extends FormLayout {
             } else {
                 linkedUser.setReadOnly(true);
             }
+
+            if(commentDisplay == null){
+                commentDisplay = new CommentDisplay(ticket.getComments());
+                add(commentDisplay);
+            }
             
             logger.info("Set selected Ticket to: " + ticket);
         }
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
     }
 
     private void addComment(String commentText, Ticket ticket) {
@@ -222,6 +231,11 @@ public class TicketForm extends FormLayout {
             return ticket;
         }
     }
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
     public void setSaveListener(Registration saveListener) {
         if (this.saveListener != null) {
             this.saveListener.remove();
@@ -264,4 +278,7 @@ public class TicketForm extends FormLayout {
     public Registration addCloseListener(ComponentEventListener<TicketForm.CloseEvent> listener) {
         return addListener(TicketForm.CloseEvent.class, listener);
     }
-}
+
+    public Registration addCommentListener(ComponentEventListener<TicketForm.CommentEvent> listener) {
+        return addListener(TicketForm.CommentEvent.class, listener);
+}}

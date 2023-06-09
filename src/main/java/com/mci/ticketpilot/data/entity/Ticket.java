@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Ticket extends AbstractEntity {
@@ -15,6 +18,9 @@ public class Ticket extends AbstractEntity {
 
     @Size(max = 300)
     private String ticketDescription;
+
+    @Column(nullable = true, columnDefinition = "DATE default CURRENT_DATE")
+    private LocalDate ticketCreationDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "varchar(255) default 'OPEN'")
@@ -38,6 +44,41 @@ public class Ticket extends AbstractEntity {
     @OneToMany(mappedBy = "ticket", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private List<Comment> comments = new ArrayList<>();
 
+    @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    private Users assignee; // 'assignee' field of type 'Users'
+
+    public LocalDate getTicketCreationDate() {
+        // or any other default value
+        return Objects.requireNonNullElseGet(ticketCreationDate, LocalDate::now);
+    }
+
+    public void setTicketCreationDate(LocalDate ticketCreationDate) {
+        this.ticketCreationDate = ticketCreationDate;
+    }
+
+    public Project getTicketProject() {
+        return ticketProject;
+    }
+
+    public void setTicketProject(Project ticketProject) {
+        this.ticketProject = ticketProject;
+    }
+
+    public Users getTicketUser() {
+        return ticketUser;
+    }
+
+    public void setTicketUser(Users ticketUser) {
+        this.ticketUser = ticketUser;
+    }
+
+    public Users getAssignee() {
+        return assignee;
+    }
+
+    public void setAssignee(Users assignee) {
+        this.assignee = assignee;
+    }
 
     // Getter and Setter methods
     public String getTicketName() {

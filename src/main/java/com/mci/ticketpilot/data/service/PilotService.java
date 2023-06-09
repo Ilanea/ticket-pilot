@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,10 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
-import static org.apache.poi.ss.usermodel.TableStyleType.headerRow;
 
 @Service
 public class PilotService {
@@ -152,6 +149,11 @@ public class PilotService {
     public List<Ticket> findAllTickets(){
         return ticketRepository.findAll();
     }
+
+    public List<Ticket> getTicketsperDate(LocalDate fromDate, LocalDate toDate){
+        return ticketRepository.findByAssigneeAndCreationDateBetween(fromDate, toDate);
+
+    }
     public long countTickets() { return ticketRepository.count(); }
 
     public void deleteTicket(Ticket ticket) {
@@ -169,19 +171,6 @@ public class PilotService {
 
     public Project findProjectToTicket(Ticket ticket) {
         return ticketRepository.findProjectToTicket(ticket);
-    }
-
-
-    ////////////////////////////////////////////////////////////////////
-    // Data Retrieving Services
-    ////////////////////////////////////////////////////////////////////
-    public List<Ticket> getUserTickets(){
-        Users currentUser = SecurityUtils.getLoggedInUser();
-        //logger.info("Current user: " + currentUser);
-        if (currentUser != null) {
-            return ticketRepository.findByAssignee(currentUser);
-        }
-        return Collections.emptyList();
     }
 
     public List<Project> getUserProjects(){
