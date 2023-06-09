@@ -1,7 +1,6 @@
 package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.*;
-import com.mci.ticketpilot.data.entity.misc.CommentDisplay;
 import com.mci.ticketpilot.data.service.ApplicationContextProvider;
 import com.mci.ticketpilot.data.service.PilotService;
 import com.mci.ticketpilot.data.service.SendMailService;
@@ -15,16 +14,16 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
-import java.time.LocalDateTime;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -40,28 +39,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 
 
-public class TicketForm extends FormLayout {
+public class TicketForm extends VerticalLayout {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
     private PilotService service;
     private Project selectedProject;
-    private TextField comment = new TextField("Comment");
     private Users selectedUser;
-    private Ticket currentTicket;
-    private TextField newCommentField = new TextField();
-    private CommentDisplay commentDisplay;
-
     TextField ticketName = new TextField("Title");
     ComboBox<TicketPriority> ticketPriority = new ComboBox<>("Priority");
     ComboBox<TicketStatus> ticketStatus = new ComboBox<>("Status");
     ComboBox<Project> linkedProject = new ComboBox<>("Project");
-    ComboBox<Users> linkedUser = new ComboBox<>("User");
+    ComboBox<Users> linkedUser = new ComboBox<>("Assigned User");
     TextArea ticketDescription = new TextArea("Description");
 
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
-    Button postCommentButton = new Button("Post Comment");
 
     private List<Ticket> tickets = new ArrayList<>();
     private Registration saveListener;
@@ -87,6 +80,7 @@ public class TicketForm extends FormLayout {
         List<Users> users = service.findAllUsers();
 
         linkedProject.setClearButtonVisible(true);
+        linkedProject.setRequiredIndicatorVisible(true);
         linkedProject.setPrefixComponent(VaadinIcon.SEARCH.create());
         linkedUser.setClearButtonVisible(true);
         linkedUser.setPrefixComponent(VaadinIcon.SEARCH.create());
@@ -113,18 +107,24 @@ public class TicketForm extends FormLayout {
                     .setHelperText(e.getValue().length() + "/" + 300);
         });
 
-        add(ticketName, ticketDescription, ticketStatus, linkedProject, linkedUser, createButtonsLayout(),
-                newCommentField, postCommentButton);
+        FormLayout formLayout = new FormLayout();
+        formLayout.add(ticketName, ticketStatus, ticketPriority ,ticketDescription, linkedProject, linkedUser);
+        formLayout.setColspan(ticketName, 2);
+        formLayout.setColspan(ticketDescription, 2);
+
+        Component buttonContainer = createButtonsLayout();
+        setHorizontalComponentAlignment(Alignment.CENTER, buttonContainer);
+
+        add(formLayout, buttonContainer);
+
     }
 
     private Component createButtonsLayout() {
         save.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        postCommentButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-
-        save.addClickShortcut(Key.ENTER);
+        //save.addClickShortcut(Key.ENTER);
         close.addClickShortcut(Key.ESCAPE);
 
         save.addClickListener(event -> {
@@ -139,11 +139,6 @@ public class TicketForm extends FormLayout {
         delete.addClickListener(event -> fireEvent(new TicketForm.DeleteEvent(this, binder.getBean())));
         close.addClickListener(event -> fireEvent(new TicketForm.CloseEvent(this)));
 
-        postCommentButton.addClickListener(e -> {
-            if (currentTicket != null) {
-                addComment(newCommentField.getValue(), currentTicket);
-            }
-        });
 
         postCommentButton.addClickListener(event-> {
             if (currentTicket != null) {
@@ -180,7 +175,6 @@ public class TicketForm extends FormLayout {
 
     public void setTicket(Ticket ticket) {
         if(ticket != null){
-            this.currentTicket = ticket;  // Add this line
             binder.setBean(ticket);
 
             // Assignee can only be changed by Admins, Managers or the current assignee
@@ -198,6 +192,7 @@ public class TicketForm extends FormLayout {
             logger.info("Set selected Ticket to: " + ticket);
         }
     }
+
 
     public void setTickets(List<Ticket> tickets) {
         this.tickets = tickets;
@@ -254,12 +249,6 @@ public class TicketForm extends FormLayout {
             super(source, ticket);
         }
 
-    }
-
-    public static class CommentEvent extends TicketForm.TicketFormEvent {
-        CommentEvent(TicketForm source, Ticket ticket) {
-            super(source, ticket);
-        }
     }
 
     public static class CloseEvent extends TicketForm.TicketFormEvent {

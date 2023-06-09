@@ -31,17 +31,17 @@ public class Ticket extends AbstractEntity {
     private TicketPriority ticketPriority = TicketPriority.DEFAULT;
 
     // Each Ticket can be assigned to one Project
-    @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinColumn(name="project_id", referencedColumnName = "id", nullable=true, insertable=true, updatable=true)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="project_id", referencedColumnName = "id")
     private Project ticketProject;
 
     // Each Ticket can be assigned to one User
-    @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinColumn(name="user_id", referencedColumnName = "id", nullable=true, insertable=true, updatable=true)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="user_id", referencedColumnName = "id")
     private Users ticketUser;
 
     // One ticket can have multiple comments
-    @OneToMany(mappedBy = "ticket", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "ticket", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
     @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
@@ -133,8 +133,8 @@ public class Ticket extends AbstractEntity {
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
     }
 }
 

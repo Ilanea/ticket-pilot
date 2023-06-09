@@ -1,5 +1,6 @@
 package com.mci.ticketpilot.data.service;
 
+import com.mci.ticketpilot.data.entity.Comment;
 import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.entity.Ticket;
 import com.mci.ticketpilot.data.entity.Users;
@@ -50,6 +51,117 @@ public class PilotService {
         }
     }
 
+    public List<Users> findAllUsers() { return userRepository.findAll(); }
+    public long countUsers() {
+        return userRepository.count();
+    }
+    public void deleteUser(Users user) {
+        userRepository.delete(user);
+    }
+
+
+    public void saveUser(Users user) {
+        if (user == null) {
+            System.err.println("Contact is null.");
+            return;
+        }
+        logger.info("Saving user to DB: " + user);
+        userRepository.saveAndFlush(user);
+    }
+
+    ////////////////////////////////////////////////////////////////////
+    // Projects
+    ////////////////////////////////////////////////////////////////////
+    public List<Project> findAllProjects(String stringFilter) {
+        if (stringFilter == null || stringFilter.isEmpty()) {
+            return projectRepository.findAll();
+        } else {
+            return projectRepository.search(stringFilter);
+        }
+    }
+
+    public List<Project> findAllProjects(){ return projectRepository.findAll(); }
+    public long countProjects() { return projectRepository.count(); }
+    public void deleteProject(Project project) {
+        projectRepository.delete(project);
+    }
+
+    public void saveProject(Project project) {
+        if (project == null) {
+            System.err.println("Project is null.");
+            return;
+        }
+        logger.info("Saving project to DB: " + project);
+        projectRepository.saveAndFlush(project);
+    }
+
+    ////////////////////////////////////////////////////////////////////
+    // Tickets
+    ////////////////////////////////////////////////////////////////////
+    public List<Ticket> findAllTickets(String stringFilter) {
+        if (stringFilter == null || stringFilter.isEmpty()) {
+            return ticketRepository.findAll();
+        } else {
+            return ticketRepository.search(stringFilter);
+        }
+    }
+
+    public List<Ticket> findAllTickets(){
+        return ticketRepository.findAll();
+    }
+
+    public List<Ticket> getTicketsperDate(LocalDate fromDate, LocalDate toDate){
+        return ticketRepository.findByAssigneeAndCreationDateBetween(fromDate, toDate);
+
+    }
+    public long countTickets() { return ticketRepository.count(); }
+
+    public void deleteTicket(Ticket ticket) {
+        ticketRepository.delete(ticket);
+    }
+
+    public void saveTicket(Ticket ticket) {
+        if (ticket == null) {
+            System.err.println("Ticket is null.");
+            return;
+        }
+        logger.info("Saving ticket to DB: " + ticket);
+        ticketRepository.saveAndFlush(ticket);
+    }
+
+    public void saveComment(Ticket ticket, Comment comment) {
+        if (ticket == null || comment == null) {
+            System.err.println("Ticket/Comment is null.");
+            return;
+        }
+        ticket.addComment(comment);
+        logger.info("Saving Comment to Ticket in DB: " + ticket);
+        ticketRepository.saveAndFlush(ticket);
+    }
+
+    public Project findProjectToTicket(Ticket ticket) {
+        return ticketRepository.findProjectToTicket(ticket);
+    }
+
+    public List<Project> getUserProjects(){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        //logger.info("Current user: " + currentUser);
+        if (currentUser != null) {
+            return projectRepository.findByUser(currentUser);
+        }
+        return Collections.emptyList();
+    }
+
+    public boolean isCurrentUserAssignee(Ticket ticket){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        return currentUser != null && currentUser.equals(ticket.getUser());
+    }
+
+    public boolean isCurrentUserManager(Project project){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        return currentUser != null && currentUser.equals(project.getManager());
+    }
+
     public InputStream exportToExcel(String filterText) {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Tickets");
@@ -88,108 +200,6 @@ public class PilotService {
             e.printStackTrace();
         }
         return new ByteArrayInputStream(out.toByteArray());
-    }
-
-
-
-
-    public List<Users> findAllUsers() { return userRepository.findAll(); }
-    public long countUsers() {
-        return userRepository.count();
-    }
-    public void deleteUser(Users user) {
-        userRepository.delete(user);
-    }
-
-
-    public void saveUser(Users user) {
-        if (user == null) {
-            System.err.println("Contact is null.");
-            return;
-        }
-        userRepository.saveAndFlush(user);
-    }
-
-    ////////////////////////////////////////////////////////////////////
-    // Projects
-    ////////////////////////////////////////////////////////////////////
-    public List<Project> findAllProjects(String stringFilter) {
-        if (stringFilter == null || stringFilter.isEmpty()) {
-            return projectRepository.findAll();
-        } else {
-            return projectRepository.search(stringFilter);
-        }
-    }
-
-    public List<Project> findAllProjects(){ return projectRepository.findAll(); }
-    public long countProjects() { return projectRepository.count(); }
-    public void deleteProject(Project project) {
-        projectRepository.delete(project);
-    }
-
-    public void saveProject(Project project) {
-        if (project == null) {
-            System.err.println("Project is null.");
-            return;
-        }
-        projectRepository.saveAndFlush(project);
-    }
-
-    ////////////////////////////////////////////////////////////////////
-    // Tickets
-    ////////////////////////////////////////////////////////////////////
-    public List<Ticket> findAllTickets(String stringFilter) {
-        if (stringFilter == null || stringFilter.isEmpty()) {
-            return ticketRepository.findAll();
-        } else {
-            return ticketRepository.search(stringFilter);
-        }
-    }
-
-    public List<Ticket> findAllTickets(){
-        return ticketRepository.findAll();
-    }
-
-    public List<Ticket> getTicketsperDate(LocalDate fromDate, LocalDate toDate){
-        return ticketRepository.findByAssigneeAndCreationDateBetween(fromDate, toDate);
-
-    }
-    public long countTickets() { return ticketRepository.count(); }
-
-    public void deleteTicket(Ticket ticket) {
-        ticketRepository.delete(ticket);
-    }
-
-    public void saveTicket(Ticket ticket) {
-        if (ticket == null) {
-            System.err.println("Ticket is null.");
-            return;
-        }
-        logger.info("Saving ticket to DB: " + ticket);
-        ticketRepository.saveAndFlush(ticket);
-    }
-
-    public Project findProjectToTicket(Ticket ticket) {
-        return ticketRepository.findProjectToTicket(ticket);
-    }
-
-    public List<Project> getUserProjects(){
-        Users currentUser = SecurityUtils.getLoggedInUser();
-        //logger.info("Current user: " + currentUser);
-        if (currentUser != null) {
-            return projectRepository.findByUser(currentUser);
-        }
-        return Collections.emptyList();
-    }
-
-    public boolean isCurrentUserAssignee(Ticket ticket){
-        Users currentUser = SecurityUtils.getLoggedInUser();
-        return currentUser != null && currentUser.equals(ticket.getUser());
-    }
-
-    public boolean isCurrentUserManager(Project project){
-        Users currentUser = SecurityUtils.getLoggedInUser();
-        return currentUser != null && currentUser.equals(project.getManager());
     }
 
 }

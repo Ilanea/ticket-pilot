@@ -4,7 +4,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
 
 @Entity
 public class Comment extends AbstractEntity{
@@ -12,12 +11,11 @@ public class Comment extends AbstractEntity{
     @Size(max = 300)
     private String comment;
 
-
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private Users author;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "ticket_id", referencedColumnName = "id", nullable = false)
     private Ticket ticket;
 

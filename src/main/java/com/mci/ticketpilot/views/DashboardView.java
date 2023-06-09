@@ -9,7 +9,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.board.Board;
 import com.vaadin.flow.component.board.Row;
 import com.vaadin.flow.component.charts.Chart;
-import com.vaadin.flow.component.charts.model.*;
 import com.vaadin.flow.component.charts.model.style.SolidColor;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.*;
@@ -108,7 +107,6 @@ public class DashboardView extends VerticalLayout {
     }
 
 
-
     private VerticalLayout chartLayout; // Assuming you are adding charts to this layout
 
     // Update charts method
@@ -131,8 +129,17 @@ public class DashboardView extends VerticalLayout {
         createTicketsbyDayBarChart = newCreateTicketsbyDayBarChart;
     }
 
-
-
+    private void refreshUserBoard() {
+        remove(form);
+        form = new TicketForm(tickets, service);
+        form.setSaveListener(form.addSaveListener(event -> {
+            Ticket newTicket = event.getTicket();
+            tickets.add(newTicket);
+            refreshUserBoard();
+            updateCharts();
+        }));
+        add(form);
+    }
 
     private Component createDownloadButton() {
         Button downloadButton = new Button("Download as PDF");
