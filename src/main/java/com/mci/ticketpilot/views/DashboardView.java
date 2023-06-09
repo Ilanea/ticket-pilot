@@ -72,7 +72,7 @@ public class DashboardView extends VerticalLayout {
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
 
-        add(createBoardStats(), createUserBoard(),createDownloadButton());
+        add(createUserBoard(),createDownloadButton());
     }
 
 
@@ -125,18 +125,6 @@ public class DashboardView extends VerticalLayout {
         createTicketsbyDayBarChart = newCreateTicketsbyDayBarChart;
     }
 
-    private void refreshUserBoard() {
-        remove(form);
-        form = new TicketForm(tickets, service);
-        form.setSaveListener(form.addSaveListener(event -> {
-            Ticket newTicket = event.getTicket();
-            tickets.add(newTicket);
-            refreshUserBoard();
-            updateCharts();
-        }));
-        add(form);
-    }
-
     private Component createDownloadButton() {
         Button downloadButton = new Button("Download as PDF");
         List<Project> userProjects = service.getUserProjects();
@@ -149,47 +137,6 @@ public class DashboardView extends VerticalLayout {
         return downloadLink;
     }
 
-
-
-    private Component getUserStats() {
-        Span stats = new Span(service.countUsers() + " contacts");
-        stats.addClassNames(
-                LumoUtility.FontSize.XLARGE,
-                LumoUtility.Margin.Top.MEDIUM);
-        return stats;
-    }
-
-    private Component getTicketStats() {
-        Span stats = new Span(service.countTickets() + " tickets");
-        stats.addClassNames(
-                LumoUtility.FontSize.XLARGE,
-                LumoUtility.Margin.Top.MEDIUM);
-        return stats;
-    }
-
-    private Component getProjectStats() {
-        Span stats = new Span(service.countProjects() + " projects");
-        stats.addClassNames(
-                LumoUtility.FontSize.XLARGE,
-                LumoUtility.Margin.Top.MEDIUM);
-        return stats;
-    }
-
-    private Component createBoardStats() {
-        Row rootRow = new Row();
-        rootRow.add(new H1("Stats"), 1);
-
-        Row nestedRow = new Row(
-                getUserStats(),
-                getTicketStats(),
-                getProjectStats());
-        rootRow.addNestedRow(nestedRow);
-
-        Board board = new Board();
-        board.add(rootRow);
-
-        return board;
-    }
 
     private Component createUserBoard() {
         VerticalLayout userLayout = new VerticalLayout();
@@ -212,20 +159,17 @@ public class DashboardView extends VerticalLayout {
         userLayout.add(new H1("Charts"));
 
 
-
-
         HorizontalLayout filters = new HorizontalLayout();
         filters.addClassName("filters");
         filters.add(fromFilter, toFilter, applyFilterButton);
-        ChartsTitelLayout.add(new H2("Filter:"));
         ChartsTitelLayout.add(filters);
 
 
 
         barLayout.add(statusPieChart);
         barLayout.add(ticketsByUserBarChart);
-//chartLayout.add(boardChart);
-chartLayout.add(createTicketsbyDayBarChart);
+        //chartLayout.add(boardChart);
+        chartLayout.add(createTicketsbyDayBarChart);
 
 
         userLayout.add(ChartsTitelLayout, chartLayout , barLayout);
@@ -254,11 +198,11 @@ chartLayout.add(createTicketsbyDayBarChart);
             }
         }
         Style titleStyle = new Style();
-        titleStyle.setColor(new SolidColor("#FFFFFF")); // Set color to white
+        titleStyle.setColor(new SolidColor("#FFFFFF"));
         titleStyle.setFontSize("24px");
 
         Style axisLabelStyle = new Style();
-        axisLabelStyle.setColor(new SolidColor("#FFFFFF")); // Set color to white
+        axisLabelStyle.setColor(new SolidColor("#FFFFFF"));
 
         Chart chart = new Chart(ChartType.PIE);
         Configuration configuration = chart.getConfiguration();
@@ -279,14 +223,11 @@ chartLayout.add(createTicketsbyDayBarChart);
         series.add(new DataSeriesItem("Reopened", reopenedCount));
         series.add(new DataSeriesItem("On Hold", onHoldCount));
 
-// Add the data series to the chart configuration
         configuration.setSeries(series);
 
         Div chartContainer = new Div();
-        chartContainer.getStyle().set("width", "500px"); // Set the desired width
+        chartContainer.getStyle().set("width", "500px");
 
-
-// Return the chart
         return chart;
     }
 
@@ -313,12 +254,11 @@ chartLayout.add(createTicketsbyDayBarChart);
         Configuration configuration = chart.getConfiguration();
         configuration.setTitle("Tickets by User");
         Style titleStyle = new Style();
-        titleStyle.setColor(new SolidColor("#FFFFFF")); // Set color to white
+        titleStyle.setColor(new SolidColor("#FFFFFF"));
         titleStyle.setFontSize("24px");
         configuration.getTitle().setStyle(titleStyle);
         configuration.getChart().setBackgroundColor(new SolidColor(20, 48, 72));
 
-        // Set the background color of the plot area
         configuration.getChart().setPlotBackgroundColor(new SolidColor(20, 48, 72));
 
         XAxis xAxis = new XAxis();
@@ -327,7 +267,7 @@ chartLayout.add(createTicketsbyDayBarChart);
 
         YAxis yAxis = new YAxis();
         yAxis.setTitle("Ticket Count");
-        yAxis.setTickInterval(1);  // Set tick interval to 1
+        yAxis.setTickInterval(1);
         configuration.addyAxis(yAxis);
 
         configuration.setSeries(series);
@@ -351,7 +291,6 @@ chartLayout.add(createTicketsbyDayBarChart);
 
         Row projectRow = board.addRow(projectHeader, projectContent);
 
-        // Second row for tickets
         Div ticketHeader = new Div();
         ticketHeader.setText("Tickets");
         ticketHeader.addClassName("board-header");
@@ -364,7 +303,6 @@ chartLayout.add(createTicketsbyDayBarChart);
 
         Row ticketRow = board.addRow(ticketHeader, ticketContent);
 
-        // Style the board
         board.addClassName("project-and-ticket-board");
 
         return board;
@@ -381,21 +319,18 @@ chartLayout.add(createTicketsbyDayBarChart);
             series.add(new DataSeriesItem(date.toString(), ticketCountByDay.getOrDefault(date, 0L)));
         }
 
-        // set the series name to be the current month
         series.setName(Month.of(now.getMonthValue()).name());
 
         Chart chart = new Chart(ChartType.COLUMN);
         Configuration configuration = chart.getConfiguration();
         configuration.setTitle("Tickets by Day for Current Month");
         Style titleStyle = new Style();
-        titleStyle.setColor(new SolidColor("#FFFFFF")); // Set color to white
+        titleStyle.setColor(new SolidColor("#FFFFFF"));
         titleStyle.setFontSize("24px");
         configuration.getTitle().setStyle(titleStyle);
         configuration.getChart().setBackgroundColor(new SolidColor(20, 48, 72));
 
-        // Set the background color of the plot area
         configuration.getChart().setPlotBackgroundColor(new SolidColor(20, 48, 72));
-        // Set title style, chart colors, etc here as per your existing code...
 
         XAxis xAxis = new XAxis();
         xAxis.setCategories(IntStream.rangeClosed(1, daysInMonth).mapToObj(Integer::toString).toArray(String[]::new));
@@ -403,7 +338,7 @@ chartLayout.add(createTicketsbyDayBarChart);
 
         YAxis yAxis = new YAxis();
         yAxis.setTitle("Ticket Count");
-        yAxis.setTickInterval(1);  // Set tick interval to 1
+        yAxis.setTickInterval(1);
 
         configuration.addyAxis(yAxis);
 
@@ -411,11 +346,6 @@ chartLayout.add(createTicketsbyDayBarChart);
 
         return chart;
     }
-
-
-
-
-
 
     public static SolidColor random() {
         return new SolidColor(
