@@ -363,6 +363,12 @@ chartLayout.add(createTicketsbyDayBarChart);
         return board;
     }
 
+    /**
+     * Creates a bar chart showing the number of tickets per day for the current month.
+     * @Param fromDate
+     * @Param toDate
+     * @return
+     */
     private Chart createTicketsByDayBarChart() {
         Map<LocalDate, Long> ticketCountByDay = getTicketCountsByDay(service.getTicketsperDate(fromDate, toDate));
 

@@ -24,6 +24,8 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
+
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -38,6 +40,11 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.flow.component.html.Label;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 
 
 public class TicketForm extends FormLayout {
@@ -67,6 +74,12 @@ public class TicketForm extends FormLayout {
     private Registration saveListener;
 
     Binder<Ticket> binder = new BeanValidationBinder<>(Ticket.class);
+
+    // create a MemoryBuffer instance
+    MemoryBuffer buffer = new MemoryBuffer();
+
+    // create an Upload component with the buffer
+    Upload upload = new Upload(buffer);
 
     public TicketForm(List<Ticket> tickets, PilotService service) {
         this.service = service;
@@ -113,8 +126,23 @@ public class TicketForm extends FormLayout {
                     .setHelperText(e.getValue().length() + "/" + 300);
         });
 
+        upload.addSucceededListener(event -> {
+            // Handle the uploaded file in the buffer,
+            // you can save it, send it, etc.
+            InputStream inputStream = buffer.getInputStream();
+
+            // let's assume we have a service method to handle the file
+            service.handleUploadedFile(inputStream, event.getFileName());
+
+            Notification.show("Upload succeeded!", 2000, Position.MIDDLE);
+        });
+
+        upload.addFailedListener(event -> {
+            Notification.show("Upload failed!", 2000, Position.MIDDLE);
+        });
+
         add(ticketName, ticketDescription, ticketStatus, linkedProject, linkedUser, createButtonsLayout(),
-                newCommentField, postCommentButton);
+                newCommentField, postCommentButton, upload);
     }
 
     private Component createButtonsLayout() {

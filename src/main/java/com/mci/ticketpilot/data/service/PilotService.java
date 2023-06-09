@@ -10,10 +10,8 @@ import com.mci.ticketpilot.security.SecurityService;
 import com.mci.ticketpilot.security.SecurityUtils;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +21,11 @@ import org.slf4j.LoggerFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @Service
 public class PilotService {
@@ -158,6 +161,64 @@ public class PilotService {
 
     public void deleteTicket(Ticket ticket) {
         ticketRepository.delete(ticket);
+    }
+
+    /**
+     * This method is used to handle uploaded files.
+     *
+     * @param inputStream the InputStream of the uploaded file
+     * @param fileName the name of the uploaded file
+     */
+    public void handleUploadedFile(InputStream inputStream, String fileName) {
+        try {
+            // Define the path where you want to store the files
+            Path uploadDir = Paths.get("uploads");
+
+            // If the upload directory doesn't exist, create it
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+
+            // Define the target file path
+            Path target = uploadDir.resolve(fileName);
+
+            // Copy the file to the target location (overwriting the existing file if one exists)
+            Files.copy(inputStream, target, StandardCopyOption.REPLACE_EXISTING);
+
+            logger.info("File uploaded successfully. File name: " + fileName);
+        } catch (IOException e) {
+            logger.error("Could not store the file. Error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * This method is used to open and read the contents of an uploaded file.
+     *
+     * @param fileName the name of the file to open
+     */
+    public void openAndReadFile(String fileName) {
+        try {
+            // Define the path where you've stored the file
+            Path uploadDir = Paths.get("uploads");
+
+            // Define the file path
+            Path filePath = uploadDir.resolve(fileName);
+
+            // Open a new InputStream for the file
+            try (InputStream in = Files.newInputStream(filePath);
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+                String line;
+
+                // Read the file line by line
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+            }
+
+            logger.info("File read successfully. File name: " + fileName);
+        } catch (IOException e) {
+            logger.error("Could not read the file. Error: " + e.getMessage());
+        }
     }
 
     public void saveTicket(Ticket ticket) {
