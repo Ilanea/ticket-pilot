@@ -1,5 +1,6 @@
 package com.mci.ticketpilot.security;
 
+import com.mci.ticketpilot.data.entity.UserStatus;
 import com.mci.ticketpilot.data.entity.Users;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -52,7 +53,11 @@ public class PilotUserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        if(user.getUserStatus() == UserStatus.ACTIVE){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public Users getUser() {

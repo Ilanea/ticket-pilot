@@ -1,5 +1,6 @@
 package com.mci.ticketpilot.data.service;
 
+import com.mci.ticketpilot.data.entity.Comment;
 import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.entity.Ticket;
 import com.mci.ticketpilot.data.entity.Users;
@@ -12,6 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -53,49 +58,6 @@ public class PilotService {
         }
     }
 
-    public InputStream exportToExcel(String filterText) {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Tickets");
-
-        List<Ticket> tickets = findAllTickets(filterText);
-
-        int rownum = 0;
-        XSSFRow headerRow = sheet.createRow(rownum++);
-        headerRow.createCell(0).setCellValue("Ticket Name");
-        headerRow.createCell(1).setCellValue("Ticket Priority");
-        headerRow.createCell(2).setCellValue("Ticket Status");
-        headerRow.createCell(3).setCellValue("Project Name");
-        headerRow.createCell(4).setCellValue("Person in Charge");
-
-        // Set the width for the columns
-        int numColumns = headerRow.getPhysicalNumberOfCells();
-        for (int i = 0; i < numColumns; i++) {
-            sheet.setColumnWidth(i, 5000);
-        }
-
-        for (Ticket ticket : tickets) {
-            XSSFRow row = sheet.createRow(rownum++);
-            row.createCell(0).setCellValue(ticket.getTicketName());
-            row.createCell(1).setCellValue(ticket.getTicketPriority().ordinal());
-            row.createCell(2).setCellValue(ticket.getTicketStatus().ordinal());
-            row.createCell(3).setCellValue(ticket.getProject().getProjectName());
-            row.createCell(4).setCellValue(ticket.getUser().getFirstName() + " " + ticket.getUser().getLastName());
-        }
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            workbook.write(out);
-            workbook.close();
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new ByteArrayInputStream(out.toByteArray());
-    }
-
-
-
-
     public List<Users> findAllUsers() { return userRepository.findAll(); }
     public long countUsers() {
         return userRepository.count();
@@ -110,6 +72,7 @@ public class PilotService {
             System.err.println("Contact is null.");
             return;
         }
+        logger.info("Saving user to DB: " + user);
         userRepository.saveAndFlush(user);
     }
 
@@ -135,6 +98,7 @@ public class PilotService {
             System.err.println("Project is null.");
             return;
         }
+        logger.info("Saving project to DB: " + project);
         projectRepository.saveAndFlush(project);
     }
 
@@ -161,6 +125,97 @@ public class PilotService {
 
     public void deleteTicket(Ticket ticket) {
         ticketRepository.delete(ticket);
+    }
+
+    public void saveTicket(Ticket ticket) {
+        if (ticket == null) {
+            System.err.println("Ticket is null.");
+            return;
+        }
+        logger.info("Saving ticket to DB: " + ticket);
+        ticketRepository.saveAndFlush(ticket);
+    }
+
+    public void saveComment(Ticket ticket, Comment comment) {
+        if (ticket == null || comment == null) {
+            System.err.println("Ticket/Comment is null.");
+            return;
+        }
+        ticket.addComment(comment);
+        logger.info("Saving Comment to Ticket in DB: " + ticket);
+        ticketRepository.saveAndFlush(ticket);
+    }
+
+    public Project findProjectToTicket(Ticket ticket) {
+        return ticketRepository.findProjectToTicket(ticket);
+    }
+
+    public List<Project> getUserProjects(){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        //logger.info("Current user: " + currentUser);
+        if (currentUser != null) {
+            return projectRepository.findByUser(currentUser);
+        }
+        return Collections.emptyList();
+    }
+
+    public List<Ticket> getUserTickets(){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        //logger.info("Current user: " + currentUser);
+        if (currentUser != null) {
+            return ticketRepository.findByAssignee(currentUser);
+        }
+        return Collections.emptyList();
+    }
+
+    public boolean isCurrentUserAssignee(Ticket ticket){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        return currentUser != null && currentUser.equals(ticket.getAssignee());
+    }
+
+    public boolean isCurrentUserManager(Project project){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        return currentUser != null && currentUser.equals(project.getManager());
+    }
+
+    public InputStream exportToExcel(String filterText) {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Tickets");
+
+        List<Ticket> tickets = findAllTickets(filterText);
+
+        int rownum = 0;
+        XSSFRow headerRow = sheet.createRow(rownum++);
+        headerRow.createCell(0).setCellValue("Ticket Name");
+        headerRow.createCell(1).setCellValue("Ticket Priority");
+        headerRow.createCell(2).setCellValue("Ticket Status");
+        headerRow.createCell(3).setCellValue("Project Name");
+        headerRow.createCell(4).setCellValue("Person in Charge");
+
+        // Set the width for the columns
+        int numColumns = headerRow.getPhysicalNumberOfCells();
+        for (int i = 0; i < numColumns; i++) {
+            sheet.setColumnWidth(i, 5000);
+        }
+
+        for (Ticket ticket : tickets) {
+            XSSFRow row = sheet.createRow(rownum++);
+            row.createCell(0).setCellValue(ticket.getTicketName());
+            row.createCell(1).setCellValue(ticket.getTicketPriority().ordinal());
+            row.createCell(2).setCellValue(ticket.getTicketStatus().ordinal());
+            row.createCell(3).setCellValue(ticket.getProject().getProjectName());
+            row.createCell(4).setCellValue(ticket.getAssignee().getFirstName() + " " + ticket.getAssignee().getLastName());
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            workbook.write(out);
+            workbook.close();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ByteArrayInputStream(out.toByteArray());
     }
 
     /**
@@ -219,38 +274,6 @@ public class PilotService {
         } catch (IOException e) {
             logger.error("Could not read the file. Error: " + e.getMessage());
         }
-    }
-
-    public void saveTicket(Ticket ticket) {
-        if (ticket == null) {
-            System.err.println("Ticket is null.");
-            return;
-        }
-        logger.info("Saving ticket to DB: " + ticket);
-        ticketRepository.saveAndFlush(ticket);
-    }
-
-    public Project findProjectToTicket(Ticket ticket) {
-        return ticketRepository.findProjectToTicket(ticket);
-    }
-
-    public List<Project> getUserProjects(){
-        Users currentUser = SecurityUtils.getLoggedInUser();
-        //logger.info("Current user: " + currentUser);
-        if (currentUser != null) {
-            return projectRepository.findByUser(currentUser);
-        }
-        return Collections.emptyList();
-    }
-
-    public boolean isCurrentUserAssignee(Ticket ticket){
-        Users currentUser = SecurityUtils.getLoggedInUser();
-        return currentUser != null && currentUser.equals(ticket.getUser());
-    }
-
-    public boolean isCurrentUserManager(Project project){
-        Users currentUser = SecurityUtils.getLoggedInUser();
-        return currentUser != null && currentUser.equals(project.getManager());
     }
 
 }

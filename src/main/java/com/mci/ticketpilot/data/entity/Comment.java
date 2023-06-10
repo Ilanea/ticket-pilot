@@ -12,21 +12,20 @@ public class Comment extends AbstractEntity{
     @Size(max = 300)
     private String comment;
 
-
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private Users author;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "ticket_id", referencedColumnName = "id", nullable = false)
     private Ticket ticket;
 
-    private String timestamp;
+    private LocalDateTime timestamp;
 
     private byte[] documentData;
 
     // Constructor
-    public Comment(String comment, Users author, String timestamp) {
+    public Comment(String comment, Users author, LocalDateTime timestamp) {
         this.comment = comment;
         this.author = author;
         this.timestamp = timestamp;
@@ -61,11 +60,11 @@ public class Comment extends AbstractEntity{
         this.author = author;
     }
 
-    public String getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 

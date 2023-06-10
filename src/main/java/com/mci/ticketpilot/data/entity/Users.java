@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -37,7 +36,7 @@ public class Users extends AbstractEntity {
     private Set<Project> userProjects;
 
     // Each User can have many Tickets
-    @OneToMany(mappedBy = "ticketUser", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "assignee", fetch = FetchType.LAZY)
     private Set<Ticket> userTickets;
 
     // Getter and Setter methods

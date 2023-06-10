@@ -73,7 +73,7 @@ public class UserListView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassNames("contact-grid");
         grid.setSizeFull();
-        grid.setColumns("firstName", "lastName", "email", "userRole");
+        grid.setColumns("firstName", "lastName", "email", "userStatus", "userRole");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(event -> editUser(event.getValue()));

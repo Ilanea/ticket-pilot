@@ -23,10 +23,10 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("SELECT c.ticketProject FROM Ticket c WHERE c = :ticket")
     Project findProjectToTicket(Ticket ticket);
 
-    @Query("SELECT c FROM Ticket c WHERE c.ticketUser = :ticketUser")
-    List<Ticket> findByAssignee(Users ticketUser);
+    @Query("SELECT c FROM Ticket c WHERE c.assignee = :assignee")
+    List<Ticket> findByAssignee(Users assignee);
 
-    @Query("SELECT t FROM Ticket t WHERE t.ticketUser = :assignee AND t.ticketCreationDate = :date")
+    @Query("SELECT t FROM Ticket t WHERE t.assignee = :assignee AND t.ticketCreationDate = :date")
     List<Ticket> findByAssigneeAndCreationDate(@Param("assignee") Users assignee, @Param("date") LocalDate date);
 
     @Query("SELECT t FROM Ticket t WHERE t.ticketCreationDate BETWEEN :fromDate AND :toDate")
