@@ -7,6 +7,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -29,10 +30,13 @@ public class TicketListView extends VerticalLayout {
     private TextField filterText = new TextField();
     private TicketForm form;
     private PilotService service;
-    private HorizontalLayout formAndCommentsLayout;
+    private VerticalLayout formAndDocumentsLayout;
+    private HorizontalLayout commentLayout;
+    private HorizontalLayout contentLayout;
     private Div gridContainer;
     private Div formContainer;
     private Div commentsContainer;
+    private Div documentsContainer;
     private Button createTicketButton;
     private Button backButton;
     private Button exportToExcelButton;
@@ -45,18 +49,31 @@ public class TicketListView extends VerticalLayout {
         configureForm();
         configureGrid();
 
-        add(getToolbar(), getGridContainer(), getFormAndCommentsLayout());
+        contentLayout = new HorizontalLayout(getFormAndDocumentsLayout(), getCommentsLayout());
+        contentLayout.setSizeFull();
+        contentLayout.setVisible(false);
+
+        add(getToolbar(), getGridContainer(), contentLayout);
         updateList();
         closeEditor();
     }
 
-    private HorizontalLayout getFormAndCommentsLayout() {
-        formAndCommentsLayout = new HorizontalLayout(getFormContainer(), getCommentsContainer());
-        formAndCommentsLayout.setSizeFull();
-        formAndCommentsLayout.setFlexGrow(1, formContainer);
-        formAndCommentsLayout.setFlexGrow(1, commentsContainer);
-        formAndCommentsLayout.setVisible(false);
-        return formAndCommentsLayout;
+    private VerticalLayout getFormAndDocumentsLayout() {
+        formAndDocumentsLayout = new VerticalLayout(getFormContainer(), getDocumentContainer());
+        formAndDocumentsLayout.setSizeFull();
+        formAndDocumentsLayout.setFlexGrow(1, formContainer);
+        formAndDocumentsLayout.setFlexGrow(1, documentsContainer);
+        formAndDocumentsLayout.setVisible(false);
+        return formAndDocumentsLayout;
+    }
+
+    private HorizontalLayout getCommentsLayout() {
+        commentLayout = new HorizontalLayout(getCommentsContainer());
+        commentLayout.setSizeFull();
+        commentLayout.setFlexGrow(1, commentsContainer);
+        setHorizontalComponentAlignment(Alignment.CENTER, commentsContainer);
+        commentLayout.setVisible(false);
+        return commentLayout;
     }
 
     private Div getGridContainer() {
@@ -89,6 +106,14 @@ public class TicketListView extends VerticalLayout {
         formContainer.setVisible(false);
         formContainer.setSizeFull();
         return formContainer;
+    }
+
+    private Div getDocumentContainer() {
+        documentsContainer = new Div();
+        documentsContainer.addClassName("document-container");
+        documentsContainer.setVisible(false);
+        documentsContainer.setSizeFull();
+        return documentsContainer;
     }
 
     private void configureForm() {
@@ -147,7 +172,8 @@ public class TicketListView extends VerticalLayout {
         } else {
             form.setTicket(ticket);
 
-            formAndCommentsLayout.setVisible(true);
+            formAndDocumentsLayout.setVisible(true);
+            contentLayout.setVisible(true);
             gridContainer.setVisible(false);
             formContainer.setVisible(true);
             createTicketButton.setVisible(false);
@@ -157,11 +183,18 @@ public class TicketListView extends VerticalLayout {
             addClassName("editing");
 
             if(!isNew){
-                commentsContainer.setVisible(true);
+                commentLayout.setVisible(true);
 
+
+                commentsContainer.setVisible(true);
                 TicketComment ticketComment = new TicketComment(service, ticket);
                 commentsContainer.removeAll();
                 commentsContainer.add(ticketComment);
+
+                documentsContainer.setVisible(true);
+                TicketDocument ticketDocument = new TicketDocument(service, ticket);
+                documentsContainer.removeAll();
+                documentsContainer.add(ticketDocument);
             }
         }
     }
@@ -169,10 +202,13 @@ public class TicketListView extends VerticalLayout {
     private void closeEditor() {
         form.setTicket(null);
 
-        formAndCommentsLayout.setVisible(false);
+        formAndDocumentsLayout.setVisible(false);
+        contentLayout.setVisible(false);
+        commentLayout.setVisible(false);
         gridContainer.setVisible(true);
         formContainer.setVisible(false);
         commentsContainer.setVisible(false);
+        documentsContainer.setVisible(false);
         createTicketButton.setVisible(true);
         backButton.setVisible(false);
         exportToExcelButton.setVisible(true);
@@ -184,10 +220,10 @@ public class TicketListView extends VerticalLayout {
         grid.asSingleSelect().clear();
 
         // Visibilities
-        //formAndCommentsLayout.setVisible(true);
         gridContainer.setVisible(false);
         formContainer.setVisible(true);
         commentsContainer.setVisible(false);
+        documentsContainer.setVisible(false);
         createTicketButton.setVisible(false);
         backButton.setVisible(true);
         exportToExcelButton.setVisible(false);

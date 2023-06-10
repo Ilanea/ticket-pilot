@@ -71,12 +71,6 @@ public class TicketForm extends VerticalLayout {
 
     Binder<Ticket> binder = new BeanValidationBinder<>(Ticket.class);
 
-    // create a MemoryBuffer instance
-    MemoryBuffer buffer = new MemoryBuffer();
-
-    // create an Upload component with the buffer
-    Upload upload = new Upload(buffer);
-
     public TicketForm(List<Ticket> tickets, PilotService service) {
         this.service = service;
         this.tickets = tickets;
@@ -124,23 +118,8 @@ public class TicketForm extends VerticalLayout {
         });
 
 
-        upload.addSucceededListener(event -> {
-            // Handle the uploaded file in the buffer,
-            // you can save it, send it, etc.
-            InputStream inputStream = buffer.getInputStream();
-
-            // let's assume we have a service method to handle the file
-            service.handleUploadedFile(inputStream, event.getFileName());
-
-            Notification.show("Upload succeeded!", 2000, Position.MIDDLE);
-        });
-
-        upload.addFailedListener(event -> {
-            Notification.show("Upload failed!", 2000, Position.MIDDLE);
-        });
-
         FormLayout formLayout = new FormLayout();
-        formLayout.add(ticketName, ticketStatus, ticketPriority ,ticketDescription, linkedProject, linkedUser, upload);
+        formLayout.add(ticketName, ticketStatus, ticketPriority ,ticketDescription, linkedProject, linkedUser);
         formLayout.setColspan(ticketName, 2);
         formLayout.setColspan(ticketDescription, 2);
 

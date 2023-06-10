@@ -214,7 +214,6 @@ public class DashboardView extends VerticalLayout {
         HorizontalLayout filters = new HorizontalLayout();
         filters.addClassName("filters");
         filters.add(fromFilter, toFilter, applyFilterButton);
-        ChartsTitelLayout.add(new H2("Filter:"));
         ChartsTitelLayout.add(filters);
 
 
@@ -291,8 +290,7 @@ chartLayout.add(createTicketsbyDayBarChart);
     private Chart createTicketsByUserBarChart() {
         Map<String, Integer> ticketCountByUser = new HashMap<>();
         for (Ticket ticket : service.findAllTickets()) {
-            String userName = ticket.getUser().getFirstName() + " " + ticket.getUser().getLastName();
-            ticketCountByUser.put(userName, ticketCountByUser.getOrDefault(userName, 0) + 1);
+            ticketCountByUser.put(ticket.getAssignee().toString(), ticketCountByUser.getOrDefault(ticket.getAssignee().toString(), 0) + 1);
         }
 
         DataSeries series = new DataSeries();
