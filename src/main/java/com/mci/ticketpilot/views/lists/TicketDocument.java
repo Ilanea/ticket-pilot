@@ -3,8 +3,11 @@ package com.mci.ticketpilot.views.lists;
 import com.mci.ticketpilot.data.entity.Document;
 import com.mci.ticketpilot.data.entity.Ticket;
 import com.mci.ticketpilot.data.service.PilotService;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.upload.Upload;
@@ -54,10 +57,21 @@ public class TicketDocument extends HorizontalLayout {
 
         uploadedFilesDiv.removeAll();
         for (Document file : uploadedFiles) {
-            Anchor downloadLink = new Anchor(getDownloadLink(file), file.getFileName());
-            downloadLink.setTarget("_blank");
 
-            Div fileInfoDiv = new Div(downloadLink);
+            StreamResource document = getDownloadLink(file);
+
+            Button downloadButton = new Button(file.getFileName(), new Icon(VaadinIcon.DOWNLOAD_ALT));
+            Anchor downloadLink = new Anchor(document, "");
+            downloadLink.getElement().setAttribute("download", true);
+            downloadLink.add(downloadButton);
+
+            Button deleteButton = new Button("Delete");
+            deleteButton.addClickListener(event -> {
+                service.deleteDocument(file);
+                refreshUploadedFiles();
+            });
+
+            Div fileInfoDiv = new Div(downloadLink, deleteButton);
             uploadedFilesDiv.add(fileInfoDiv);
         }
     }
@@ -65,7 +79,6 @@ public class TicketDocument extends HorizontalLayout {
     private StreamResource getDownloadLink(Document file) {
         byte[] documentData = file.getDocumentData();
         String fileName = file.getFileName();
-
 
         StreamResource streamResource = new StreamResource(fileName, () -> new ByteArrayInputStream(documentData));
 
