@@ -22,6 +22,9 @@ public class Ticket extends AbstractEntity {
     @Column(columnDefinition = "DATE")
     private LocalDate ticketCreationDate;
 
+    @Column(columnDefinition = "DATE")
+    private LocalDate ticketLastUpdateDate;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "varchar(255) default 'OPEN'")
     private TicketStatus ticketStatus = TicketStatus.OPEN;
@@ -108,11 +111,19 @@ public class Ticket extends AbstractEntity {
 
     public LocalDate getTicketCreationDate() {
         // or any other default value
-        return Objects.requireNonNullElseGet(ticketCreationDate, LocalDate::now);
+        return ticketCreationDate;
     }
 
     public void setTicketCreationDate(LocalDate ticketCreationDate) {
         this.ticketCreationDate = ticketCreationDate;
+    }
+
+    public LocalDate getTicketLastUpdateDate() {
+        return ticketLastUpdateDate;
+    }
+
+    public void setTicketLastUpdateDate(LocalDate ticketLastUpdateDate) {
+        this.ticketLastUpdateDate = ticketLastUpdateDate;
     }
 
     public List<Document> getDocuments() {

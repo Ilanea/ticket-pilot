@@ -165,7 +165,12 @@ public class TicketForm extends VerticalLayout {
     private void validateAndSave() throws EmailException, IOException {
         if (binder.isValid()) {
             Ticket ticket = binder.getBean();
-            ticket.setTicketCreationDate(LocalDate.now());
+            if(ticket.getTicketCreationDate() == null){
+                ticket.setTicketCreationDate(LocalDate.now());
+                ticket.setTicketLastUpdateDate(LocalDate.now());
+            } else {
+                ticket.setTicketLastUpdateDate(LocalDate.now());
+            }
             // Saving a ticket without a project gets a NullPointerException
             // This hack is to circumvent this issue
             if (ticket.getProject() == null) {
