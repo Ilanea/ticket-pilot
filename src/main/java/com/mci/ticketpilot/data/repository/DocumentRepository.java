@@ -16,4 +16,5 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 
     @Query("SELECT c FROM Document c WHERE c.id = :id")
     Document getDocumentById(Long id);
+
 }

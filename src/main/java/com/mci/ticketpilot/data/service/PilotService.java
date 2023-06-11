@@ -1,10 +1,7 @@
 package com.mci.ticketpilot.data.service;
 
 import com.mci.ticketpilot.data.entity.*;
-import com.mci.ticketpilot.data.repository.DocumentRepository;
-import com.mci.ticketpilot.data.repository.UserRepository;
-import com.mci.ticketpilot.data.repository.ProjectRepository;
-import com.mci.ticketpilot.data.repository.TicketRepository;
+import com.mci.ticketpilot.data.repository.*;
 import com.mci.ticketpilot.security.SecurityService;
 import com.mci.ticketpilot.security.SecurityUtils;
 import org.springframework.stereotype.Service;
@@ -29,15 +26,18 @@ public class PilotService {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final TicketRepository ticketRepository;
+    private final CommentRepository commentRepository;
     private final DocumentRepository documentRepository;
 
     public PilotService(UserRepository userRepository,
                         ProjectRepository projectRepository,
                         TicketRepository ticketRepository,
+                        CommentRepository commentRepository,
                         DocumentRepository documentRepository) {
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.ticketRepository = ticketRepository;
+        this.commentRepository = commentRepository;
         this.documentRepository = documentRepository;
 
     }
@@ -142,12 +142,12 @@ public class PilotService {
 
     public void saveComment(Ticket ticket, Comment comment) {
         if (ticket == null || comment == null) {
-            System.err.println("Ticket/Comment is null.");
+            System.err.println("Comment is null.");
             return;
         }
         ticket.addComment(comment);
-        logger.info("Saving Comment to Ticket in DB: " + ticket);
-        ticketRepository.saveAndFlush(ticket);
+        logger.info("Saving Comment to Comment in DB: " + ticket);
+        commentRepository.saveAndFlush(comment);
     }
 
     public Project findProjectToTicket(Ticket ticket) {
@@ -237,4 +237,7 @@ public class PilotService {
         return documentRepository.findByTicket(currentTicket);
     }
 
+    public void deleteDocument(Document file) {
+        documentRepository.delete(file);
+    }
 }
