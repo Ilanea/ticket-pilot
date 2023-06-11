@@ -24,13 +24,29 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
+
+import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.io.IOException;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
+import javassist.expr.NewArray;
 import org.apache.commons.mail.EmailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.vaadin.flow.component.html.Label;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 
 
 public class TicketForm extends VerticalLayout {
@@ -50,11 +66,10 @@ public class TicketForm extends VerticalLayout {
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
 
-    private List<Ticket> tickets;
+    private List<Ticket> tickets = new ArrayList<>();
     private Registration saveListener;
 
     Binder<Ticket> binder = new BeanValidationBinder<>(Ticket.class);
-
 
     public TicketForm(List<Ticket> tickets, PilotService service) {
         this.service = service;
@@ -101,6 +116,7 @@ public class TicketForm extends VerticalLayout {
             e.getSource()
                     .setHelperText(e.getValue().length() + "/" + 300);
         });
+
 
         FormLayout formLayout = new FormLayout();
         formLayout.add(ticketName, ticketStatus, ticketPriority ,ticketDescription, linkedProject, linkedUser);
@@ -149,7 +165,12 @@ public class TicketForm extends VerticalLayout {
     private void validateAndSave() throws EmailException, IOException {
         if (binder.isValid()) {
             Ticket ticket = binder.getBean();
-            ticket.setTicketCreationDate(LocalDate.now());
+            if(ticket.getTicketCreationDate() == null){
+                ticket.setTicketCreationDate(LocalDate.now());
+                ticket.setTicketLastUpdateDate(LocalDate.now());
+            } else {
+                ticket.setTicketLastUpdateDate(LocalDate.now());
+            }
             // Saving a ticket without a project gets a NullPointerException
             // This hack is to circumvent this issue
             if (ticket.getProject() == null) {
@@ -181,9 +202,12 @@ public class TicketForm extends VerticalLayout {
             } else {
                 linkedUser.setReadOnly(true);
             }
-
             logger.info("Set selected Ticket to: " + ticket);
         }
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
     }
 
     // Events
@@ -199,6 +223,11 @@ public class TicketForm extends VerticalLayout {
             return ticket;
         }
     }
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
     public void setSaveListener(Registration saveListener) {
         if (this.saveListener != null) {
             this.saveListener.remove();
@@ -236,3 +265,4 @@ public class TicketForm extends VerticalLayout {
         return addListener(TicketForm.CloseEvent.class, listener);
     }
 }
+

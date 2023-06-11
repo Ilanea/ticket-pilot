@@ -1,12 +1,7 @@
 package com.mci.ticketpilot.data.service;
 
-import com.mci.ticketpilot.data.entity.Comment;
-import com.mci.ticketpilot.data.entity.Project;
-import com.mci.ticketpilot.data.entity.Ticket;
-import com.mci.ticketpilot.data.entity.Users;
-import com.mci.ticketpilot.data.repository.UserRepository;
-import com.mci.ticketpilot.data.repository.ProjectRepository;
-import com.mci.ticketpilot.data.repository.TicketRepository;
+import com.mci.ticketpilot.data.entity.*;
+import com.mci.ticketpilot.data.repository.*;
 import com.mci.ticketpilot.security.SecurityService;
 import com.mci.ticketpilot.security.SecurityUtils;
 import org.springframework.stereotype.Service;
@@ -31,13 +26,20 @@ public class PilotService {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final TicketRepository ticketRepository;
+    private final CommentRepository commentRepository;
+    private final DocumentRepository documentRepository;
 
     public PilotService(UserRepository userRepository,
                         ProjectRepository projectRepository,
-                        TicketRepository ticketRepository) {
+                        TicketRepository ticketRepository,
+                        CommentRepository commentRepository,
+                        DocumentRepository documentRepository) {
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.ticketRepository = ticketRepository;
+        this.commentRepository = commentRepository;
+        this.documentRepository = documentRepository;
+
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -95,6 +97,15 @@ public class PilotService {
         projectRepository.saveAndFlush(project);
     }
 
+    public List<Project> getUserProjects(){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        //logger.info("Current user: " + currentUser);
+        if (currentUser != null) {
+            return projectRepository.findByUser(currentUser);
+        }
+        return Collections.emptyList();
+    }
+
     ////////////////////////////////////////////////////////////////////
     // Tickets
     ////////////////////////////////////////////////////////////////////
@@ -112,8 +123,8 @@ public class PilotService {
 
     public List<Ticket> getTicketsperDate(LocalDate fromDate, LocalDate toDate){
         return ticketRepository.findByAssigneeAndCreationDateBetween(fromDate, toDate);
-
     }
+
     public long countTickets() { return ticketRepository.count(); }
 
     public void deleteTicket(Ticket ticket) {
@@ -131,25 +142,16 @@ public class PilotService {
 
     public void saveComment(Ticket ticket, Comment comment) {
         if (ticket == null || comment == null) {
-            System.err.println("Ticket/Comment is null.");
+            System.err.println("Comment is null.");
             return;
         }
         ticket.addComment(comment);
-        logger.info("Saving Comment to Ticket in DB: " + ticket);
-        ticketRepository.saveAndFlush(ticket);
+        logger.info("Saving Comment to Comment in DB: " + ticket);
+        commentRepository.saveAndFlush(comment);
     }
 
     public Project findProjectToTicket(Ticket ticket) {
         return ticketRepository.findProjectToTicket(ticket);
-    }
-
-    public List<Project> getUserProjects(){
-        Users currentUser = SecurityUtils.getLoggedInUser();
-        //logger.info("Current user: " + currentUser);
-        if (currentUser != null) {
-            return projectRepository.findByUser(currentUser);
-        }
-        return Collections.emptyList();
     }
 
     public List<Ticket> getUserTickets(){
@@ -211,4 +213,31 @@ public class PilotService {
         return new ByteArrayInputStream(out.toByteArray());
     }
 
+    public void handleUploadedFile(InputStream inputStream, String fileName, Ticket ticket) {
+        try {
+
+            Document document = new Document();
+            document.setFileName(fileName);
+            document.setAuthor(SecurityUtils.getLoggedInUser());
+            document.setDocumentCreationDate(LocalDate.now());
+            document.setFileTypeFromFileName();
+            document.setTicket(ticket);
+            byte[] documentData = inputStream.readAllBytes();
+            document.setDocumentData(documentData);
+
+            documentRepository.saveAndFlush(document);
+
+            logger.info("File uploaded successfully. File name: " + fileName);
+        } catch (IOException e) {
+            logger.error("Could not store the file. Error: " + e.getMessage());
+        }
+    }
+
+    public List<Document> getUploadedFilesForTicket(Ticket currentTicket) {
+        return documentRepository.findByTicket(currentTicket);
+    }
+
+    public void deleteDocument(Document file) {
+        documentRepository.delete(file);
+    }
 }

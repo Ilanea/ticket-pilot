@@ -36,6 +36,11 @@ import java.util.stream.IntStream;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.component.charts.model.ChartType;
+import com.vaadin.flow.component.charts.model.Configuration;
+import com.vaadin.flow.component.charts.model.DataSeries;
+import com.vaadin.flow.component.charts.model.DataSeriesItem;
+import com.vaadin.flow.component.charts.model.XAxis;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @PermitAll
@@ -72,7 +77,7 @@ public class DashboardView extends VerticalLayout {
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
 
-        add(createUserBoard(),createDownloadButton());
+        add(createBoardStats(), createUserBoard(),createDownloadButton());
     }
 
 
@@ -103,6 +108,7 @@ public class DashboardView extends VerticalLayout {
     }
 
 
+
     private VerticalLayout chartLayout; // Assuming you are adding charts to this layout
 
     // Update charts method
@@ -125,6 +131,9 @@ public class DashboardView extends VerticalLayout {
         createTicketsbyDayBarChart = newCreateTicketsbyDayBarChart;
     }
 
+
+
+
     private Component createDownloadButton() {
         Button downloadButton = new Button("Download as PDF");
         List<Project> userProjects = service.getUserProjects();
@@ -137,6 +146,47 @@ public class DashboardView extends VerticalLayout {
         return downloadLink;
     }
 
+
+
+    private Component getUserStats() {
+        Span stats = new Span(service.countUsers() + " contacts");
+        stats.addClassNames(
+                LumoUtility.FontSize.XLARGE,
+                LumoUtility.Margin.Top.MEDIUM);
+        return stats;
+    }
+
+    private Component getTicketStats() {
+        Span stats = new Span(service.countTickets() + " tickets");
+        stats.addClassNames(
+                LumoUtility.FontSize.XLARGE,
+                LumoUtility.Margin.Top.MEDIUM);
+        return stats;
+    }
+
+    private Component getProjectStats() {
+        Span stats = new Span(service.countProjects() + " projects");
+        stats.addClassNames(
+                LumoUtility.FontSize.XLARGE,
+                LumoUtility.Margin.Top.MEDIUM);
+        return stats;
+    }
+
+    private Component createBoardStats() {
+        Row rootRow = new Row();
+        rootRow.add(new H1("Stats"), 1);
+
+        Row nestedRow = new Row(
+                getUserStats(),
+                getTicketStats(),
+                getProjectStats());
+        rootRow.addNestedRow(nestedRow);
+
+        Board board = new Board();
+        board.add(rootRow);
+
+        return board;
+    }
 
     private Component createUserBoard() {
         VerticalLayout userLayout = new VerticalLayout();
@@ -159,6 +209,8 @@ public class DashboardView extends VerticalLayout {
         userLayout.add(new H1("Charts"));
 
 
+
+
         HorizontalLayout filters = new HorizontalLayout();
         filters.addClassName("filters");
         filters.add(fromFilter, toFilter, applyFilterButton);
@@ -168,8 +220,8 @@ public class DashboardView extends VerticalLayout {
 
         barLayout.add(statusPieChart);
         barLayout.add(ticketsByUserBarChart);
-        //chartLayout.add(boardChart);
-        chartLayout.add(createTicketsbyDayBarChart);
+//chartLayout.add(boardChart);
+chartLayout.add(createTicketsbyDayBarChart);
 
 
         userLayout.add(ChartsTitelLayout, chartLayout , barLayout);
@@ -198,11 +250,11 @@ public class DashboardView extends VerticalLayout {
             }
         }
         Style titleStyle = new Style();
-        titleStyle.setColor(new SolidColor("#FFFFFF"));
+        titleStyle.setColor(new SolidColor("#FFFFFF")); // Set color to white
         titleStyle.setFontSize("24px");
 
         Style axisLabelStyle = new Style();
-        axisLabelStyle.setColor(new SolidColor("#FFFFFF"));
+        axisLabelStyle.setColor(new SolidColor("#FFFFFF")); // Set color to white
 
         Chart chart = new Chart(ChartType.PIE);
         Configuration configuration = chart.getConfiguration();
@@ -223,11 +275,14 @@ public class DashboardView extends VerticalLayout {
         series.add(new DataSeriesItem("Reopened", reopenedCount));
         series.add(new DataSeriesItem("On Hold", onHoldCount));
 
+// Add the data series to the chart configuration
         configuration.setSeries(series);
 
         Div chartContainer = new Div();
-        chartContainer.getStyle().set("width", "500px");
+        chartContainer.getStyle().set("width", "500px"); // Set the desired width
 
+
+// Return the chart
         return chart;
     }
 
@@ -235,18 +290,13 @@ public class DashboardView extends VerticalLayout {
     private Chart createTicketsByUserBarChart() {
         Map<String, Integer> ticketCountByUser = new HashMap<>();
         for (Ticket ticket : service.findAllTickets()) {
-            if(ticket.getAssignee() != null){
-                ticketCountByUser.put(ticket.getAssignee().toString(), ticketCountByUser.getOrDefault(ticket.getAssignee().toString(), 0) + 1);
-            } else {
-                ticketCountByUser.put("Unassigned", ticketCountByUser.getOrDefault("Unassigned", 0) + 1);
-            }
-
+            ticketCountByUser.put(ticket.getAssignee().toString(), ticketCountByUser.getOrDefault(ticket.getAssignee().toString(), 0) + 1);
         }
 
         DataSeries series = new DataSeries();
         for (Map.Entry<String, Integer> entry : ticketCountByUser.entrySet()) {
             DataSeriesItem item = new DataSeriesItem(entry.getKey(), entry.getValue());
-            item.setColor(random());
+            item.setColor(random()); // Assign a random color
             series.add(item);
         }
 
@@ -254,11 +304,12 @@ public class DashboardView extends VerticalLayout {
         Configuration configuration = chart.getConfiguration();
         configuration.setTitle("Tickets by User");
         Style titleStyle = new Style();
-        titleStyle.setColor(new SolidColor("#FFFFFF"));
+        titleStyle.setColor(new SolidColor("#FFFFFF")); // Set color to white
         titleStyle.setFontSize("24px");
         configuration.getTitle().setStyle(titleStyle);
         configuration.getChart().setBackgroundColor(new SolidColor(20, 48, 72));
 
+        // Set the background color of the plot area
         configuration.getChart().setPlotBackgroundColor(new SolidColor(20, 48, 72));
 
         XAxis xAxis = new XAxis();
@@ -267,7 +318,7 @@ public class DashboardView extends VerticalLayout {
 
         YAxis yAxis = new YAxis();
         yAxis.setTitle("Ticket Count");
-        yAxis.setTickInterval(1);
+        yAxis.setTickInterval(1);  // Set tick interval to 1
         configuration.addyAxis(yAxis);
 
         configuration.setSeries(series);
@@ -291,6 +342,7 @@ public class DashboardView extends VerticalLayout {
 
         Row projectRow = board.addRow(projectHeader, projectContent);
 
+        // Second row for tickets
         Div ticketHeader = new Div();
         ticketHeader.setText("Tickets");
         ticketHeader.addClassName("board-header");
@@ -303,11 +355,18 @@ public class DashboardView extends VerticalLayout {
 
         Row ticketRow = board.addRow(ticketHeader, ticketContent);
 
+        // Style the board
         board.addClassName("project-and-ticket-board");
 
         return board;
     }
 
+    /**
+     * Creates a bar chart showing the number of tickets per day for the current month.
+     * @Param fromDate
+     * @Param toDate
+     * @return
+     */
     private Chart createTicketsByDayBarChart() {
         Map<LocalDate, Long> ticketCountByDay = getTicketCountsByDay(service.getTicketsperDate(fromDate, toDate));
 
@@ -319,18 +378,21 @@ public class DashboardView extends VerticalLayout {
             series.add(new DataSeriesItem(date.toString(), ticketCountByDay.getOrDefault(date, 0L)));
         }
 
+        // set the series name to be the current month
         series.setName(Month.of(now.getMonthValue()).name());
 
         Chart chart = new Chart(ChartType.COLUMN);
         Configuration configuration = chart.getConfiguration();
         configuration.setTitle("Tickets by Day for Current Month");
         Style titleStyle = new Style();
-        titleStyle.setColor(new SolidColor("#FFFFFF"));
+        titleStyle.setColor(new SolidColor("#FFFFFF")); // Set color to white
         titleStyle.setFontSize("24px");
         configuration.getTitle().setStyle(titleStyle);
         configuration.getChart().setBackgroundColor(new SolidColor(20, 48, 72));
 
+        // Set the background color of the plot area
         configuration.getChart().setPlotBackgroundColor(new SolidColor(20, 48, 72));
+        // Set title style, chart colors, etc here as per your existing code...
 
         XAxis xAxis = new XAxis();
         xAxis.setCategories(IntStream.rangeClosed(1, daysInMonth).mapToObj(Integer::toString).toArray(String[]::new));
@@ -338,7 +400,7 @@ public class DashboardView extends VerticalLayout {
 
         YAxis yAxis = new YAxis();
         yAxis.setTitle("Ticket Count");
-        yAxis.setTickInterval(1);
+        yAxis.setTickInterval(1);  // Set tick interval to 1
 
         configuration.addyAxis(yAxis);
 
@@ -346,6 +408,11 @@ public class DashboardView extends VerticalLayout {
 
         return chart;
     }
+
+
+
+
+
 
     public static SolidColor random() {
         return new SolidColor(
