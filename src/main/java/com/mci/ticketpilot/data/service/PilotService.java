@@ -1,9 +1,7 @@
 package com.mci.ticketpilot.data.service;
 
-import com.mci.ticketpilot.data.entity.Comment;
-import com.mci.ticketpilot.data.entity.Project;
-import com.mci.ticketpilot.data.entity.Ticket;
-import com.mci.ticketpilot.data.entity.Users;
+import com.mci.ticketpilot.data.entity.*;
+import com.mci.ticketpilot.data.repository.DocumentRepository;
 import com.mci.ticketpilot.data.repository.UserRepository;
 import com.mci.ticketpilot.data.repository.ProjectRepository;
 import com.mci.ticketpilot.data.repository.TicketRepository;
@@ -11,8 +9,6 @@ import com.mci.ticketpilot.security.SecurityService;
 import com.mci.ticketpilot.security.SecurityUtils;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,24 +23,23 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-
 @Service
 public class PilotService {
     private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final TicketRepository ticketRepository;
+    private final DocumentRepository documentRepository;
 
     public PilotService(UserRepository userRepository,
                         ProjectRepository projectRepository,
-                        TicketRepository ticketRepository) {
+                        TicketRepository ticketRepository,
+                        DocumentRepository documentRepository) {
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.ticketRepository = ticketRepository;
+        this.documentRepository = documentRepository;
+
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -102,6 +97,15 @@ public class PilotService {
         projectRepository.saveAndFlush(project);
     }
 
+    public List<Project> getUserProjects(){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        //logger.info("Current user: " + currentUser);
+        if (currentUser != null) {
+            return projectRepository.findByUser(currentUser);
+        }
+        return Collections.emptyList();
+    }
+
     ////////////////////////////////////////////////////////////////////
     // Tickets
     ////////////////////////////////////////////////////////////////////
@@ -119,8 +123,8 @@ public class PilotService {
 
     public List<Ticket> getTicketsperDate(LocalDate fromDate, LocalDate toDate){
         return ticketRepository.findByAssigneeAndCreationDateBetween(fromDate, toDate);
-
     }
+
     public long countTickets() { return ticketRepository.count(); }
 
     public void deleteTicket(Ticket ticket) {
@@ -148,15 +152,6 @@ public class PilotService {
 
     public Project findProjectToTicket(Ticket ticket) {
         return ticketRepository.findProjectToTicket(ticket);
-    }
-
-    public List<Project> getUserProjects(){
-        Users currentUser = SecurityUtils.getLoggedInUser();
-        //logger.info("Current user: " + currentUser);
-        if (currentUser != null) {
-            return projectRepository.findByUser(currentUser);
-        }
-        return Collections.emptyList();
     }
 
     public List<Ticket> getUserTickets(){
@@ -218,27 +213,19 @@ public class PilotService {
         return new ByteArrayInputStream(out.toByteArray());
     }
 
-    /**
-     * This method is used to handle uploaded files.
-     *
-     * @param inputStream the InputStream of the uploaded file
-     * @param fileName the name of the uploaded file
-     */
-    public void handleUploadedFile(InputStream inputStream, String fileName) {
+    public void handleUploadedFile(InputStream inputStream, String fileName, Ticket ticket) {
         try {
-            // Define the path where you want to store the files
-            Path uploadDir = Paths.get("uploads");
 
-            // If the upload directory doesn't exist, create it
-            if (!Files.exists(uploadDir)) {
-                Files.createDirectories(uploadDir);
-            }
+            Document document = new Document();
+            document.setFileName(fileName);
+            document.setAuthor(SecurityUtils.getLoggedInUser());
+            document.setDocumentCreationDate(LocalDate.now());
+            document.setFileTypeFromFileName();
+            document.setTicket(ticket);
+            byte[] documentData = inputStream.readAllBytes();
+            document.setDocumentData(documentData);
 
-            // Define the target file path
-            Path target = uploadDir.resolve(fileName);
-
-            // Copy the file to the target location (overwriting the existing file if one exists)
-            Files.copy(inputStream, target, StandardCopyOption.REPLACE_EXISTING);
+            documentRepository.saveAndFlush(document);
 
             logger.info("File uploaded successfully. File name: " + fileName);
         } catch (IOException e) {
@@ -246,34 +233,8 @@ public class PilotService {
         }
     }
 
-    /**
-     * This method is used to open and read the contents of an uploaded file.
-     *
-     * @param fileName the name of the file to open
-     */
-    public void openAndReadFile(String fileName) {
-        try {
-            // Define the path where you've stored the file
-            Path uploadDir = Paths.get("uploads");
-
-            // Define the file path
-            Path filePath = uploadDir.resolve(fileName);
-
-            // Open a new InputStream for the file
-            try (InputStream in = Files.newInputStream(filePath);
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-                String line;
-
-                // Read the file line by line
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
-            }
-
-            logger.info("File read successfully. File name: " + fileName);
-        } catch (IOException e) {
-            logger.error("Could not read the file. Error: " + e.getMessage());
-        }
+    public List<Document> getUploadedFilesForTicket(Ticket currentTicket) {
+        return documentRepository.findByTicket(currentTicket);
     }
 
 }

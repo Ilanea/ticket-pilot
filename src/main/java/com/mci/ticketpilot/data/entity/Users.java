@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -38,6 +39,9 @@ public class Users extends AbstractEntity {
     // Each User can have many Tickets
     @OneToMany(mappedBy = "assignee", fetch = FetchType.LAZY)
     private Set<Ticket> userTickets;
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    private List<Document> documents;
 
     // Getter and Setter methods
     @Override
@@ -107,5 +111,13 @@ public class Users extends AbstractEntity {
 
     public void setUserTickets(Set<Ticket> userTickets) {
         this.userTickets = userTickets;
+    }
+
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(Document document) {
+        this.documents.add(document);
     }
 }

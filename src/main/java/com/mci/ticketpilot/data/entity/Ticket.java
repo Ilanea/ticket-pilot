@@ -44,6 +44,9 @@ public class Ticket extends AbstractEntity {
     @OneToMany(mappedBy = "ticket", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "ticket", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Document> documents = new ArrayList<>();
+
 
 
     // Getter and Setter methods
@@ -110,6 +113,14 @@ public class Ticket extends AbstractEntity {
 
     public void setTicketCreationDate(LocalDate ticketCreationDate) {
         this.ticketCreationDate = ticketCreationDate;
+    }
+
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(Document document) {
+        this.documents.add(document);
     }
 }
 
