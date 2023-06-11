@@ -20,16 +20,16 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
 import com.vaadin.flow.component.charts.model.style.Style;
+import java.time.Year;
+
 
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.List;
+import java.util.*;
 
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -52,24 +52,36 @@ public class DashboardView extends VerticalLayout {
     private List<Project> projects;
     private DatePicker fromFilter;
     private DatePicker toFilter;
-    private LocalDate fromDate;
-    private LocalDate toDate;
+    private LocalDate fromDate = LocalDate.now();
+    private LocalDate toDate = LocalDate.now();
 
 
     private TicketForm form;
     private Chart statusPieChart;
-    private Chart ticketsByUserBarChart;
+    private Chart createTicketsbyDayBarChart;
+
+    private Chart createTicketsByMonthLineChart;
 
     private Board boardChart;
 
-    private Chart createTicketsbyDayBarChart;
+    private Chart createTicketsByUserBarChart;
 
-    private Component userLayout;
+    private VerticalLayout userLayout = new VerticalLayout();
+    private Component oldUserlayout;
     private Button applyFilterButton;
 
     @Autowired
     public DashboardView(PilotService service) {
         this.service = service;
+        // Initialize the DatePicker
+        this.fromFilter = new DatePicker();
+        this.fromFilter.setLabel("From date");
+        this.fromFilter.setValue(LocalDate.now());
+        // Do the same for toDate if it's not initialized yet
+        this.toFilter = new DatePicker();
+        this.toFilter.setLabel("To date");
+        this.toFilter.setValue(LocalDate.now());
+
 
         initCharts();
 
@@ -77,62 +89,35 @@ public class DashboardView extends VerticalLayout {
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
 
-        add(createBoardStats(), createUserBoard(),createDownloadButton());
+        add(createBoardStats(), createUserBoard());
     }
 
 
 
     private void initCharts() {
+        createTicketsbyDayBarChart = createTicketsbyDayBarChart();
+        createTicketsByMonthLineChart = createTicketsByMonthLineChart(); // add this line
         statusPieChart = createStatusPieChart();
-        ticketsByUserBarChart = createTicketsByUserBarChart();
-        createTicketsbyDayBarChart = createTicketsByDayBarChart();
+        createTicketsByUserBarChart = createTicketsByUserBarChart();
+
+        fromDate = fromFilter.getValue();
+        toDate = toFilter.getValue();
 
         statusPieChart.setHeight("400px");
         statusPieChart.setWidth("850px");
-        ticketsByUserBarChart.setHeight("400px");
-        ticketsByUserBarChart.setWidth("850px");
         createTicketsbyDayBarChart.setHeight("400px");
         createTicketsbyDayBarChart.setWidth("850px");
-    }
-
-    private void updateUserBoard() {
-        remove(userLayout);
-        userLayout = createUserBoard();
-        add(userLayout);
+        createTicketsByUserBarChart.setHeight("400px");
+        createTicketsByUserBarChart.setWidth("850px");
+        createTicketsByMonthLineChart.setHeight("400px"); // add this line
+        createTicketsByMonthLineChart.setWidth("850px"); // add this line
     }
 
     private void updateContent() {
         this.tickets = service.getTicketsperDate(fromDate, toDate);
-        updateCharts();
-        updateUserBoard();
+        initCharts();
+        createUserBoard();
     }
-
-
-
-    private VerticalLayout chartLayout; // Assuming you are adding charts to this layout
-
-    // Update charts method
-    private void updateCharts() {
-        // Create new charts
-        Chart newStatusPieChart = createStatusPieChart();
-        Chart newTicketsByUserBarChart = createTicketsByUserBarChart();
-        Chart newCreateTicketsbyDayBarChart = createTicketsByDayBarChart();
-
-
-        // Remove old charts
-        chartLayout.remove(statusPieChart, ticketsByUserBarChart, boardChart, createTicketsbyDayBarChart);
-
-        // Replace old charts with new ones
-        chartLayout.add(newStatusPieChart, newTicketsByUserBarChart, newCreateTicketsbyDayBarChart);
-
-        // Update reference to charts
-        statusPieChart = newStatusPieChart;
-        ticketsByUserBarChart = newTicketsByUserBarChart;
-        createTicketsbyDayBarChart = newCreateTicketsbyDayBarChart;
-    }
-
-
-
 
     private Component createDownloadButton() {
         Button downloadButton = new Button("Download as PDF");
@@ -189,14 +174,17 @@ public class DashboardView extends VerticalLayout {
     }
 
     private Component createUserBoard() {
-        VerticalLayout userLayout = new VerticalLayout();
+        userLayout.removeAll(); // clears the layout
+
         HorizontalLayout barLayout = new HorizontalLayout();
         HorizontalLayout chartLayout = new HorizontalLayout();
         HorizontalLayout ChartsTitelLayout = new HorizontalLayout();
         // Move the initialization of the variables before their usage
         fromFilter = new DatePicker();
+        fromFilter.setValue(LocalDate.now().minusDays(30));
         fromFilter.setLabel("Filter From Date");
         toFilter = new DatePicker();
+        toFilter.setValue(LocalDate.now().plusDays(1));
         toFilter.setLabel("Filter To Date");
 
         applyFilterButton = new Button("Apply Filter");
@@ -216,15 +204,13 @@ public class DashboardView extends VerticalLayout {
         filters.add(fromFilter, toFilter, applyFilterButton);
         ChartsTitelLayout.add(filters);
 
-
-
-        barLayout.add(statusPieChart);
-        barLayout.add(ticketsByUserBarChart);
-//chartLayout.add(boardChart);
-chartLayout.add(createTicketsbyDayBarChart);
-
+        chartLayout.add(createTicketsbyDayBarChart, createTicketsByMonthLineChart);
+        barLayout.add(statusPieChart, createTicketsByUserBarChart);
 
         userLayout.add(ChartsTitelLayout, chartLayout , barLayout);
+
+        add(userLayout); // add userLayout to the current layout
+
 
         return userLayout;
     }
@@ -236,9 +222,8 @@ chartLayout.add(createTicketsbyDayBarChart);
         int closedCount = 0;
         int reopenedCount = 0;
         int onHoldCount = 0;
-        int anythingelse = 1;
 
-        for (Ticket ticket : service.findAllTickets()) {
+        for (Ticket ticket : service.getTicketsperDate(fromDate, toDate)) {
             switch (ticket.getTicketStatus()) {
                 case OPEN -> openCount++;
                 case IN_PROGRESS -> inProgressCount++;
@@ -246,7 +231,6 @@ chartLayout.add(createTicketsbyDayBarChart);
                 case CLOSED -> closedCount++;
                 case REOPENED -> reopenedCount++;
                 case ON_HOLD -> onHoldCount++;
-                default -> anythingelse++;
             }
         }
         Style titleStyle = new Style();
@@ -287,9 +271,47 @@ chartLayout.add(createTicketsbyDayBarChart);
     }
 
     // ...
+    private Chart createTicketsbyDayBarChart() {
+        Map<LocalDate, Long> ticketCountByDay = getTicketCountsByDay(service.getTicketsperDate(fromDate, toDate));
+        DataSeries series = new DataSeries();
+        int daysBetween = (int) (toDate.toEpochDay() - fromDate.toEpochDay());
+        for (int i = 0; i <= daysBetween; i++) {
+            LocalDate date = fromDate.plusDays(i);
+            series.add(new DataSeriesItem(date.toString(), ticketCountByDay.getOrDefault(date, 0L)));
+        }
+
+        series.setName(String.format("Tickets from %s to %s", fromDate, toDate));
+
+        Chart chart = new Chart(ChartType.COLUMN);
+        Configuration configuration = chart.getConfiguration();
+        configuration.setTitle("Tickets by Day for Selected Date Range");
+        Style titleStyle = new Style();
+        titleStyle.setColor(new SolidColor("#FFFFFF")); // Set color to white
+        titleStyle.setFontSize("24px");
+        configuration.getTitle().setStyle(titleStyle);
+        configuration.getChart().setBackgroundColor(new SolidColor(20, 48, 72));
+
+        // Set the background color of the plot area
+        configuration.getChart().setPlotBackgroundColor(new SolidColor(20, 48, 72));
+
+        XAxis xAxis = new XAxis();
+        xAxis.setCategories(
+                IntStream.rangeClosed(0, daysBetween)
+                        .mapToObj(i -> fromDate.plusDays(i).toString())
+                        .toArray(String[]::new)
+        );
+        configuration.addxAxis(xAxis);
+
+        // remaining code...
+
+        configuration.setSeries(series);
+
+        return chart;
+    }
+
     private Chart createTicketsByUserBarChart() {
         Map<String, Integer> ticketCountByUser = new HashMap<>();
-        for (Ticket ticket : service.findAllTickets()) {
+        for (Ticket ticket : service.getTicketsperDate(fromDate, toDate)) {
             ticketCountByUser.put(ticket.getAssignee().toString(), ticketCountByUser.getOrDefault(ticket.getAssignee().toString(), 0) + 1);
         }
 
@@ -325,6 +347,7 @@ chartLayout.add(createTicketsbyDayBarChart);
 
         return chart;
     }
+
 
 
     private Board createProjectAndTicketBoard() {
@@ -367,23 +390,40 @@ chartLayout.add(createTicketsbyDayBarChart);
      * @Param toDate
      * @return
      */
-    private Chart createTicketsByDayBarChart() {
-        Map<LocalDate, Long> ticketCountByDay = getTicketCountsByDay(service.getTicketsperDate(fromDate, toDate));
 
-        DataSeries series = new DataSeries();
-        LocalDate now = LocalDate.now();
-        int daysInMonth = now.lengthOfMonth();
-        for (int i = 1; i <= daysInMonth; i++) {
-            LocalDate date = now.withDayOfMonth(i);
-            series.add(new DataSeriesItem(date.toString(), ticketCountByDay.getOrDefault(date, 0L)));
+    /**
+     * Creates a line chart showing the number of tickets per month for the current year.
+     * @return
+     */
+    private Chart createTicketsByMonthLineChart() {
+        // Get dates from the DatePicker components
+        LocalDate fromDate = fromFilter.getValue();
+        LocalDate toDate = toFilter.getValue();
+
+        // If fromDate or toDate is null, set them to defaults (optional)
+        if (fromDate == null) {
+            fromDate = LocalDate.of(Year.now().getValue(), 1, 1); // start of current year
+        }
+        if (toDate == null) {
+            toDate = LocalDate.now(); // current date
         }
 
-        // set the series name to be the current month
-        series.setName(Month.of(now.getMonthValue()).name());
+        Map<Month, Long> ticketCountByMonth = getTicketCountsByMonth(service.getTicketsperDate(fromDate, toDate));
 
-        Chart chart = new Chart(ChartType.COLUMN);
+        DataSeries series = new DataSeries();
+        LocalDate dateIterator = fromDate;
+        while (!dateIterator.isAfter(toDate)) {
+            Month currentMonth = dateIterator.getMonth();
+            series.add(new DataSeriesItem(currentMonth.name(), ticketCountByMonth.getOrDefault(currentMonth, 0L)));
+            dateIterator = dateIterator.plusMonths(1);
+        }
+
+        // set the series name to be the year range
+        series.setName(fromDate.getYear() + " - " + toDate.getYear());
+
+        Chart chart = new Chart(ChartType.LINE);
         Configuration configuration = chart.getConfiguration();
-        configuration.setTitle("Tickets by Day for Current Month");
+        configuration.setTitle("Tickets by Month");
         Style titleStyle = new Style();
         titleStyle.setColor(new SolidColor("#FFFFFF")); // Set color to white
         titleStyle.setFontSize("24px");
@@ -392,16 +432,20 @@ chartLayout.add(createTicketsbyDayBarChart);
 
         // Set the background color of the plot area
         configuration.getChart().setPlotBackgroundColor(new SolidColor(20, 48, 72));
-        // Set title style, chart colors, etc here as per your existing code...
 
         XAxis xAxis = new XAxis();
-        xAxis.setCategories(IntStream.rangeClosed(1, daysInMonth).mapToObj(Integer::toString).toArray(String[]::new));
+        // Get unique months within the date range in the correct order
+        List<String> monthNames = new ArrayList<>();
+        dateIterator = fromDate;
+        while (!dateIterator.isAfter(toDate)) {
+            monthNames.add(dateIterator.getMonth().name());
+            dateIterator = dateIterator.plusMonths(1);
+        }
+        xAxis.setCategories(monthNames.toArray(new String[0]));
         configuration.addxAxis(xAxis);
 
         YAxis yAxis = new YAxis();
         yAxis.setTitle("Ticket Count");
-        yAxis.setTickInterval(1);  // Set tick interval to 1
-
         configuration.addyAxis(yAxis);
 
         configuration.setSeries(series);
@@ -438,6 +482,20 @@ chartLayout.add(createTicketsbyDayBarChart);
             return new HashMap<>();
         }
     }
+
+    private Map<Month, Long> getTicketCountsByMonth(List<Ticket> tickets) {
+        if (tickets != null) {
+            return tickets.stream()
+                    .filter(ticket -> ticket.getTicketCreationDate().getYear() == LocalDate.now().getYear())
+                    .collect(Collectors.groupingBy(
+                            ticket -> ticket.getTicketCreationDate().getMonth(),
+                            Collectors.counting()
+                    ));
+        } else {
+            return new HashMap<>();
+        }
+    }
+
 }
 
 
