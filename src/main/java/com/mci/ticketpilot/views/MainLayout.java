@@ -47,14 +47,35 @@ public class MainLayout extends AppLayout {
                 LumoUtility.FontSize.LARGE,
                 LumoUtility.Margin.MEDIUM);
 
-        Image logoImage = new Image( "frontend/images/Unbenannt.jpg", "Company Logo");
+        Image logoImage = new Image( "images/Unbenannt.jpg", "Company Logo");
+
+
         logoImage.setHeight("40px"); // adjust size as needed
+        logoImage.setWidth("40px"); // adjust size as needed
+
+
 
         HorizontalLayout header;
         if (securityService.getAuthenticatedUser() != null) {
             Button logout = new Button("Logout", click ->
                     securityService.logout());
-            header = new HorizontalLayout(logo,logoImage, logout);
+
+            Button themeswitch = new Button("Switch Theme", click -> {
+                getUI().ifPresent(ui -> {
+                    String theme = ui.getElement().getAttribute("theme");
+                    if ("dark".equals(theme)) {
+                        ui.getElement().setAttribute("theme", "light");
+                    } else {
+                        ui.getElement().setAttribute("theme", "dark");
+                    }
+                });
+            });
+
+
+
+
+            header = new HorizontalLayout(logo,logoImage, themeswitch, logout);
+
             header.addClassName("header-class");
         } else {
             header = new HorizontalLayout(logo, logoImage);
