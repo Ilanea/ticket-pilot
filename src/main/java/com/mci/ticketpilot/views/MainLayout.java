@@ -47,8 +47,8 @@ public class MainLayout extends AppLayout {
                 LumoUtility.FontSize.LARGE,
                 LumoUtility.Margin.MEDIUM);
 
-        Image logoImage = new Image( "frontend/images/Unbenannt.jpg", "Company Logo");
-        logoImage.setHeight("40px"); // adjust size as needed
+        Image logoImage = new Image("images/Unbenannt.jpg ","Company Logo");
+        logoImage.setHeight("100px"); // adjust size as needed
 
         HorizontalLayout header;
         if (securityService.getAuthenticatedUser() != null) {
