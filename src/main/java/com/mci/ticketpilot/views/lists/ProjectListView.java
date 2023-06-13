@@ -83,14 +83,22 @@ public class ProjectListView extends VerticalLayout {
     }
 
     private void deleteProject(ProjectForm.DeleteEvent event) {
-        service.deleteProject(event.getProject());
-        updateList();
-        closeEditor();
-        // Benachrichtigung erstellen und anzeigen
-        Notification notification = new Notification("Projekt wurde gelöscht", 3000);
-        notification.setPosition(Notification.Position.BOTTOM_END);
-        notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
-        notification.open();
+        if(event.getProject().getTickets().size() > 0) {
+            // Benachrichtigung erstellen und anzeigen
+            Notification notification = new Notification("Projekt kann nicht gelöscht werden, da noch Tickets vorhanden sind", 3000);
+            notification.setPosition(Notification.Position.BOTTOM_END);
+            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            notification.open();
+        } else {
+            service.deleteProject(event.getProject());
+            updateList();
+            closeEditor();
+            // Benachrichtigung erstellen und anzeigen
+            Notification notification = new Notification("Projekt wurde gelöscht", 3000);
+            notification.setPosition(Notification.Position.BOTTOM_END);
+            notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+            notification.open();
+        }
     }
 
     private void configureGrid() {
