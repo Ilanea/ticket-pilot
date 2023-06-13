@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Ticket extends AbstractEntity {
@@ -16,6 +19,12 @@ public class Ticket extends AbstractEntity {
     @Size(max = 300)
     private String ticketDescription;
 
+    @Column(columnDefinition = "DATE")
+    private LocalDate ticketCreationDate;
+
+    @Column(columnDefinition = "DATE")
+    private LocalDate ticketLastUpdateDate;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "varchar(255) default 'OPEN'")
     private TicketStatus ticketStatus = TicketStatus.OPEN;
@@ -25,18 +34,22 @@ public class Ticket extends AbstractEntity {
     private TicketPriority ticketPriority = TicketPriority.DEFAULT;
 
     // Each Ticket can be assigned to one Project
-    @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinColumn(name="project_id", referencedColumnName = "id", nullable=true, insertable=true, updatable=true)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="project_id", referencedColumnName = "id")
     private Project ticketProject;
 
     // Each Ticket can be assigned to one User
-    @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinColumn(name="user_id", referencedColumnName = "id", nullable=true, insertable=true, updatable=true)
-    private Users ticketUser;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="user_id", referencedColumnName = "id")
+    private Users assignee;
 
     // One ticket can have multiple comments
-    @OneToMany(mappedBy = "ticket", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "ticket", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "ticket", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private List<Document> documents = new ArrayList<>();
+
 
 
     // Getter and Setter methods
@@ -80,20 +93,45 @@ public class Ticket extends AbstractEntity {
         this.ticketProject = project;
     }
 
-    public Users getUser() {
-        return ticketUser;
+    public Users getAssignee() {
+        return assignee;
     }
 
-    public void setUser(Users user) {
-        this.ticketUser = user;
+    public void setAssignee(Users user) {
+        this.assignee = user;
     }
 
     public List<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+    }
+
+    public LocalDate getTicketCreationDate() {
+        // or any other default value
+        return ticketCreationDate;
+    }
+
+    public void setTicketCreationDate(LocalDate ticketCreationDate) {
+        this.ticketCreationDate = ticketCreationDate;
+    }
+
+    public LocalDate getTicketLastUpdateDate() {
+        return ticketLastUpdateDate;
+    }
+
+    public void setTicketLastUpdateDate(LocalDate ticketLastUpdateDate) {
+        this.ticketLastUpdateDate = ticketLastUpdateDate;
+    }
+
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(Document document) {
+        this.documents.add(document);
     }
 }
 

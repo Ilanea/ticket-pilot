@@ -17,7 +17,7 @@ import org.springframework.context.annotation.PropertySource;
  */
 @SpringBootApplication
 @PropertySource("classpath:ticketpilot.properties")
-@Theme(value = "ticketpilot-dark", variant= Lumo.DARK)
+@Theme("ticketpilot")
 @Import(AppConfig.class)
 public class Application implements AppShellConfigurator {
 

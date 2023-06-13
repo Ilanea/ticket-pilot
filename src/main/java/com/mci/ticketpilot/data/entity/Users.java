@@ -37,8 +37,11 @@ public class Users extends AbstractEntity {
     private Set<Project> userProjects;
 
     // Each User can have many Tickets
-    @OneToMany(mappedBy = "ticketUser", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "assignee", fetch = FetchType.LAZY)
     private Set<Ticket> userTickets;
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    private List<Document> documents;
 
     // Getter and Setter methods
     @Override
@@ -108,5 +111,13 @@ public class Users extends AbstractEntity {
 
     public void setUserTickets(Set<Ticket> userTickets) {
         this.userTickets = userTickets;
+    }
+
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(Document document) {
+        this.documents.add(document);
     }
 }
