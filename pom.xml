@@ -199,6 +199,10 @@
             <artifactId>layout</artifactId>
             <version>7.1.16</version>
         </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-notification-flow</artifactId>
+        </dependency>
 
     </dependencies>
 

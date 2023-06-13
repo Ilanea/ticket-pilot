@@ -43,12 +43,13 @@ public class MainLayout extends AppLayout {
         //logger.info("Building header");
 
         H1 logo = new H1("Ticket Pilot | goes brrrrr");
-        logo.addClassNames(
-                LumoUtility.FontSize.LARGE,
-                LumoUtility.Margin.MEDIUM);
-
+        //logo.addClassNames(
+               // LumoUtility.FontSize.LARGE,
+               // LumoUtility.Margin.MEDIUM);
+        logo.addClassName("logo-heading");//H1 neu
         Image logoImage = new Image("images/Unbenannt.jpg ","Company Logo");
         logoImage.setHeight("100px"); // adjust size as needed
+        logoImage.addClassName("logo-frame");
 
         HorizontalLayout header;
         if (securityService.getAuthenticatedUser() != null) {

@@ -43,3 +43,18 @@ html {
 .drawer-class {
     justify-content: space-between;
 }
+.logo-frame {
+    border: 2px solid black;
+    padding: 5px;
+}
+/*H1 Schriftgröße und Schriftart*/
+@font-face {
+    font-family: "Lobster-Regular";
+    src: url("fonts/Lobster-Regular.ttf");
+}
+.logo-heading {
+    font-size: 40px; /* Beispiel für die Schriftgröße */
+    font-family: "Lobster-Regular", serif;
+
+}
+
