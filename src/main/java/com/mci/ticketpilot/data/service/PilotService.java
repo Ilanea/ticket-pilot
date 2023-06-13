@@ -125,6 +125,11 @@ public class PilotService {
         return ticketRepository.findAll();
     }
 
+    public List<Ticket> findUserTickets(){
+        logger.info("Finding tickets for user: " + SecurityUtils.getLoggedInUser());
+        return ticketRepository.findByAssignee(SecurityUtils.getLoggedInUser());
+    }
+
     public List<Ticket> getTicketsperDate(LocalDate fromDate, LocalDate toDate){
         return ticketRepository.findByAssigneeAndCreationDateBetween(fromDate, toDate);
     }

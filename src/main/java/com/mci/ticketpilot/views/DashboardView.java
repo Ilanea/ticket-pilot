@@ -6,29 +6,32 @@ import com.mci.ticketpilot.data.service.PdfService;
 import com.mci.ticketpilot.data.service.PilotService;
 import com.mci.ticketpilot.views.lists.TicketForm;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.board.Board;
 import com.vaadin.flow.component.board.Row;
 import com.vaadin.flow.component.charts.Chart;
 import com.vaadin.flow.component.charts.model.*;
 import com.vaadin.flow.component.charts.model.style.SolidColor;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.details.DetailsVariant;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
 import com.vaadin.flow.component.charts.model.style.Style;
 import java.time.Year;
 
-
-
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
-
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -54,21 +57,15 @@ public class DashboardView extends VerticalLayout {
     private DatePicker toFilter;
     private LocalDate fromDate = LocalDate.now();
     private LocalDate toDate = LocalDate.now();
-
-
-    private TicketForm form;
     private Chart statusPieChart;
     private Chart createTicketsbyDayBarChart;
-
     private Chart createTicketsByMonthLineChart;
-
-    private Board boardChart;
-
     private Chart createTicketsByUserBarChart;
-
     private VerticalLayout userLayout = new VerticalLayout();
-    private Component oldUserlayout;
     private Button applyFilterButton;
+    private Grid<Ticket> ticketGrid = new Grid<>(Ticket.class);
+    private Grid<Project> projectGrid = new Grid<>(Project.class);
+    private Accordion accordion = new Accordion();
 
     @Autowired
     public DashboardView(PilotService service) {
@@ -82,21 +79,51 @@ public class DashboardView extends VerticalLayout {
         this.toFilter.setLabel("To date");
         this.toFilter.setValue(LocalDate.now());
 
-
         initCharts();
 
         addClassName("dashboard-view");
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
+        accordion.open(0);
+        accordion.setSizeFull();
+        AccordionPanel projects = accordion.add("Projects", createProjectsBoard());
+        projects.addThemeVariants(DetailsVariant.FILLED);
+        AccordionPanel tickets = accordion.add("Tickets", createTicketsBoard());
+        tickets.addThemeVariants(DetailsVariant.FILLED);
+        AccordionPanel stats = accordion.add("Stats", createBoardStats());
+        stats.addThemeVariants(DetailsVariant.FILLED);
+        AccordionPanel analytics = accordion.add("Analytics", createUserBoard());
+        analytics.addThemeVariants(DetailsVariant.FILLED);
 
-        add(createBoardStats(), createUserBoard());
+        setAlignItems(FlexComponent.Alignment.BASELINE);
+
+        add(accordion);
     }
 
 
+    private Grid createTicketsBoard(){
+        ticketGrid.addClassNames("dashboard-ticket-grid");
+        ticketGrid.setSizeFull();
+        ticketGrid.setItems(service.findUserTickets());
+        ticketGrid.setColumns("ticketName", "ticketPriority", "ticketStatus", "project.projectName", "ticketCreationDate");
+        ticketGrid.getColumns().forEach(col -> col.setAutoWidth(true));
+
+        return ticketGrid;
+    }
+
+    private Grid createProjectsBoard(){
+        projectGrid.addClassNames("dashboard-ticket-grid");
+        projectGrid.setSizeFull();
+        projectGrid.setItems(service.getUserProjects());
+        projectGrid.setColumns("projectName", "manager");
+        projectGrid.getColumns().forEach(col -> col.setAutoWidth(true));
+
+        return projectGrid;
+    }
 
     private void initCharts() {
         createTicketsbyDayBarChart = createTicketsbyDayBarChart();
-        createTicketsByMonthLineChart = createTicketsByMonthLineChart(); // add this line
+        createTicketsByMonthLineChart = createTicketsByMonthLineChart();
         statusPieChart = createStatusPieChart();
         createTicketsByUserBarChart = createTicketsByUserBarChart();
 
@@ -159,8 +186,6 @@ public class DashboardView extends VerticalLayout {
 
     private Component createBoardStats() {
         Row rootRow = new Row();
-        rootRow.add(new H1("Stats"), 1);
-
         Row nestedRow = new Row(
                 getUserStats(),
                 getTicketStats(),
@@ -194,10 +219,6 @@ public class DashboardView extends VerticalLayout {
             toDate = toFilter.getValue();
             updateContent();
         });
-        userLayout.add(new H1("Charts"));
-
-
-
 
         HorizontalLayout filters = new HorizontalLayout();
         filters.addClassName("filters");
