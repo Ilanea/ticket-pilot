@@ -3,10 +3,8 @@ package com.mci.ticketpilot.views;
 import com.mci.ticketpilot.security.SecurityService;
 import com.mci.ticketpilot.security.SecurityUtils;
 import com.mci.ticketpilot.views.lists.*;
+import com.vaadin.componentfactory.ToggleButton;
 import com.vaadin.flow.component.applayout.AppLayout;
-import com.vaadin.flow.component.applayout.DrawerToggle;
-import com.vaadin.flow.component.board.Board;
-import com.vaadin.flow.component.board.Row;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
@@ -16,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.theme.lumo.Lumo;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,6 +34,12 @@ public class MainLayout extends AppLayout {
         createHeaderAndDrawer();
     }
 
+    private void setTheme(boolean dark) {
+        var js = "document.documentElement.setAttribute('theme', $0)";
+
+        getElement().executeJs(js, dark ? Lumo.DARK : Lumo.LIGHT);
+    }
+
     private void createHeaderAndDrawer() {
 
         //logger.info("Building header");
@@ -47,40 +52,29 @@ public class MainLayout extends AppLayout {
         Image logoImage = new Image( "images/Unbenannt.jpg", "Company Logo");
 
 
-        logoImage.setHeight("40px"); // adjust size as needed
-        logoImage.setWidth("40px"); // adjust size as needed
+        logoImage.setHeight("40px");
+        logoImage.setWidth("40px");
 
 
 
         HorizontalLayout header;
+
+        ToggleButton themeToggle = new ToggleButton("Dark Mode");
+        themeToggle.addClassName("theme-toggle");
+        themeToggle.addValueChangeListener(evt -> setTheme(evt.getValue()));
+
+
         if (securityService.getAuthenticatedUser() != null) {
-            Button logout = new Button("Logout", click ->
-                    securityService.logout());
-
-            Button themeswitch = new Button("Switch Theme", click -> {
-                getUI().ifPresent(ui -> {
-                    String theme = ui.getElement().getAttribute("theme");
-                    if ("dark".equals(theme)) {
-                        ui.getElement().setAttribute("theme", "light");
-                    } else {
-                        ui.getElement().setAttribute("theme", "dark");
-                    }
-                });
-            });
-
-
-
-
-            header = new HorizontalLayout(logo,logoImage, themeswitch, logout);
-
+            Button logout = new Button("Logout", click -> securityService.logout());
+            header = new HorizontalLayout(logoImage, logo, themeToggle, logout);
             header.addClassName("header-class");
         } else {
-            header = new HorizontalLayout(logo, logoImage);
+            header = new HorizontalLayout(logoImage, logo, themeToggle);
             header.addClassName("header-class");
         }
 
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-        header.expand(logo); // <4>
+        header.expand(logo);
         header.setWidthFull();
 
         RouterLink dashboard = new RouterLink("Dashboard", DashboardView.class);
@@ -113,7 +107,7 @@ public class MainLayout extends AppLayout {
         linksLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
         linksLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
 
-// add Userlist only if ADMIN or MANAGER
+        // add Userlist only if ADMIN or MANAGER
         if(SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole()){
             linksLayout.add(userlist);
         }
@@ -124,10 +118,10 @@ public class MainLayout extends AppLayout {
         helpLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
         helpLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
 
-        FlexLayout drawer = new FlexLayout(); // Change to FlexLayout
+        FlexLayout drawer = new FlexLayout();
         drawer.addClassName("drawer-class");
-        drawer.add(linksLayout, helpLayout); // Add both layouts to the drawer
-        drawer.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN); // Distribute space between layouts
+        drawer.add(linksLayout, helpLayout);
+        drawer.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
         drawer.setWidthFull();
 
         VerticalLayout navbar = new VerticalLayout(header, drawer);

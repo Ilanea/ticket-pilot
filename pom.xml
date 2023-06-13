@@ -213,6 +213,11 @@
             <artifactId>layout</artifactId>
             <version>7.1.16</version>
         </dependency>
+        <dependency>
+            <groupId>com.vaadin.componentfactory</groupId>
+            <artifactId>togglebutton</artifactId>
+            <version>3.0.0</version>
+        </dependency>
 
     </dependencies>
 

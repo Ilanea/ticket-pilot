@@ -18,7 +18,6 @@ html {
     font-size: 1.2em;
     margin-left: -8px;
     margin-right: -8px;
-
 }
 
 .router-link:hover {
@@ -45,7 +44,7 @@ html {
 }
 
 .applybutton-class {
-    margin-top: 36px;
+    margin-top: 37px;
     width: 30%;
 }
 
@@ -53,20 +52,6 @@ html {
     margin: -10px;
     padding: -10px;
     width: 50%;
-}
-
-html[theme="mytheme-dark"] {
-    --lumo-base-color: hsl(214, 35%, 21%);
-    --lumo-tint-color: hsl(214, 65%, 85%);
-    --lumo-shade-color: hsl(214, 35%, 15%);
-    /* Fügen Sie hier weitere Farbdefinitionen hinzu */
-}
-
-html[theme="mytheme-light"] {
-    --lumo-base-color: hsl(214, 90%, 52%);
-    --lumo-tint-color: hsl(214, 100%, 98%);
-    --lumo-shade-color: hsl(214, 53%, 32%);
-    /* Fügen Sie hier weitere Farbdefinitionen hinzu */
 }
 
 .kanban-column {

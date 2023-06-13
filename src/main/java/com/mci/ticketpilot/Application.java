@@ -17,7 +17,7 @@ import org.springframework.context.annotation.PropertySource;
  */
 @SpringBootApplication
 @PropertySource("classpath:ticketpilot.properties")
-
+@Theme("ticketpilot")
 @Import(AppConfig.class)
 public class Application implements AppShellConfigurator {
 
