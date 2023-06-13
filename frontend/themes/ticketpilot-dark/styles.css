@@ -54,6 +54,7 @@ html {
     padding: -10px;
     width: 50%;
 }
+
 html[theme="mytheme-dark"] {
     --lumo-base-color: hsl(214, 35%, 21%);
     --lumo-tint-color: hsl(214, 65%, 85%);
@@ -67,3 +68,53 @@ html[theme="mytheme-light"] {
     --lumo-shade-color: hsl(214, 53%, 32%);
     /* Fügen Sie hier weitere Farbdefinitionen hinzu */
 }
+
+.kanban-column {
+    margin: 10px;
+    padding: 10px;
+    width: 400px;
+    height: 400px;
+    font-size: large;
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 5px;
+    font-weight: bold;
+    overflow: auto;
+}
+
+.ticket {
+    margin: 10px;
+    padding: 10px;
+    font-size: large;
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 2px;
+    font-weight: bold;
+    overflow: auto;
+    cursor: pointer;
+}
+
+.ticket:hover {
+    background-color: steelblue;
+}
+
+.ticket-name {
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.ticket-description {
+    font-size: 0.9em;
+}
+
+.ticket-priority {
+    color: red;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.ticket-assignee {
+    font-style: italic;
+    font-size: 0.9em;
+}
+
