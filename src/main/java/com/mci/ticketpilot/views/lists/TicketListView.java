@@ -6,8 +6,9 @@ import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -128,12 +129,22 @@ public class TicketListView extends VerticalLayout {
         service.saveTicket(event.getTicket());
         updateList();
         closeEditor();
+        // Benachrichtigung erstellen und anzeigen
+        Notification notification = new Notification("Ticket wurde erstellt!", 3000);
+        notification.setPosition(Notification.Position.BOTTOM_END);
+        notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+        notification.open();
     }
 
     private void deleteTicket(TicketForm.DeleteEvent event) {
         service.deleteTicket(event.getTicket());
         updateList();
         closeEditor();
+        // Benachrichtigung erstellen und anzeigen
+        Notification notification = new Notification("Ticket wurde gelöscht!", 3000);
+        notification.setPosition(Notification.Position.BOTTOM_END);
+        notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+        notification.open();
     }
 
     private Component getToolbar() {
