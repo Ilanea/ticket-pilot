@@ -85,7 +85,11 @@ public class PilotService {
     public List<Project> findAllProjects(){ return projectRepository.findAll(); }
     public long countProjects() { return projectRepository.count(); }
     public void deleteProject(Project project) {
-        projectRepository.delete(project);
+        if(project.getTickets() == null || project.getTickets().isEmpty()) {
+            projectRepository.delete(project);
+        } else {
+            System.err.println("Project has tickets. Cannot delete.");
+        }
     }
 
     public void saveProject(Project project) {

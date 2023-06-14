@@ -7,6 +7,8 @@ import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -73,12 +75,30 @@ public class ProjectListView extends VerticalLayout {
         service.saveProject(event.getProject());
         updateList();
         closeEditor();
+        // Benachrichtigung erstellen und anzeigen
+        Notification notification = new Notification("Neues Projekt wurde erstellt", 3000);
+        notification.setPosition(Notification.Position.BOTTOM_END);
+        notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+        notification.open();
     }
 
     private void deleteProject(ProjectForm.DeleteEvent event) {
-        service.deleteProject(event.getProject());
-        updateList();
-        closeEditor();
+        if(event.getProject().getTickets().size() > 0) {
+            // Benachrichtigung erstellen und anzeigen
+            Notification notification = new Notification("Projekt kann nicht gelöscht werden, da noch Tickets vorhanden sind", 3000);
+            notification.setPosition(Notification.Position.BOTTOM_END);
+            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            notification.open();
+        } else {
+            service.deleteProject(event.getProject());
+            updateList();
+            closeEditor();
+            // Benachrichtigung erstellen und anzeigen
+            Notification notification = new Notification("Projekt wurde gelöscht", 3000);
+            notification.setPosition(Notification.Position.BOTTOM_END);
+            notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+            notification.open();
+        }
     }
 
     private void configureGrid() {

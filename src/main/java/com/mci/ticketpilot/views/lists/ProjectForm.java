@@ -116,6 +116,7 @@ public class ProjectForm extends VerticalLayout {
                 Notification.show("Please select a project manager", 2000, Notification.Position.MIDDLE);
             } else {
                 fireEvent(new ProjectForm.SaveEvent(this, project));
+
             }
         }
     }

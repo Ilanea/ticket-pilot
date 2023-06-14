@@ -7,6 +7,7 @@ import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -16,7 +17,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.context.annotation.Scope;
-
+import com.vaadin.flow.component.notification.Notification;
 @SpringComponent
 @Scope("prototype")
 @Route(value = "users", layout = MainLayout.class)
@@ -62,12 +63,22 @@ public class UserListView extends VerticalLayout {
         service.saveUser(event.getUser());
         updateList();
         closeEditor();
+        // Benachrichtigung erstellen und anzeigen
+        Notification notification = new Notification("Neuer User wurde erstellt!", 3000);
+        notification.setPosition(Notification.Position.BOTTOM_END);
+        notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+        notification.open();
     }
 
     private void deleteUser(UserForm.DeleteEvent event) {
         service.deleteUser(event.getUser());
         updateList();
         closeEditor();
+        // Benachrichtigung erstellen und anzeigen
+        Notification notification = new Notification("User wurde entfernt!", 3000);
+        notification.setPosition(Notification.Position.BOTTOM_END);
+        notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+        notification.open();
     }
 
     private void configureGrid() {
@@ -86,8 +97,11 @@ public class UserListView extends VerticalLayout {
         filterText.addValueChangeListener(e -> updateList());
 
         Button createUserButton = new Button("Create User");
-        createUserButton.addClickListener(click -> createUser());
+        createUserButton.addClickListener(click -> {
+            // createUser-Funktion aufrufen
+            createUser();
 
+        });
         var toolbar = new HorizontalLayout();
         toolbar.addClassName("toolbar");
         toolbar.add(filterText);

@@ -18,7 +18,6 @@ html {
     font-size: 1.2em;
     margin-left: -8px;
     margin-right: -8px;
-
 }
 
 .router-link:hover {
@@ -45,7 +44,7 @@ html {
 }
 
 .applybutton-class {
-    margin-top: 36px;
+    margin-top: 37px;
     width: 30%;
 }
 

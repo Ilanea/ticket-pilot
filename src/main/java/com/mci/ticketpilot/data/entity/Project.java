@@ -27,7 +27,7 @@ public class Project extends AbstractEntity {
     private Users projectManager;
 
     // Each Project can have many Tickets
-    @OneToMany(mappedBy = "ticketProject", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ticketProject", fetch = FetchType.EAGER)
     private Set<Ticket> projectTickets;
 
 

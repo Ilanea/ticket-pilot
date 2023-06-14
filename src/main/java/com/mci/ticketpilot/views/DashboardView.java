@@ -312,7 +312,11 @@ public class DashboardView extends VerticalLayout {
     private Chart createTicketsByUserBarChart() {
         Map<String, Integer> ticketCountByUser = new HashMap<>();
         for (Ticket ticket : service.getTicketsperDate(fromDate, toDate)) {
-            ticketCountByUser.put(ticket.getAssignee().toString(), ticketCountByUser.getOrDefault(ticket.getAssignee().toString(), 0) + 1);
+            if(ticket.getAssignee() != null){
+                ticketCountByUser.put(ticket.getAssignee().toString(), ticketCountByUser.getOrDefault(ticket.getAssignee().toString(), 0) + 1);
+            } else {
+                ticketCountByUser.put("Unassigned", ticketCountByUser.getOrDefault("Unassigned", 0) + 1);
+            }
         }
 
         DataSeries series = new DataSeries();
