@@ -125,11 +125,6 @@ public class PilotService {
         return ticketRepository.findAll();
     }
 
-    public List<Ticket> findUserTickets(){
-        logger.info("Finding tickets for user: " + SecurityUtils.getLoggedInUser());
-        return ticketRepository.findByAssignee(SecurityUtils.getLoggedInUser());
-    }
-
     public List<Ticket> getTicketsperDate(LocalDate fromDate, LocalDate toDate){
         return ticketRepository.findByAssigneeAndCreationDateBetween(fromDate, toDate);
     }
@@ -168,6 +163,15 @@ public class PilotService {
         //logger.info("Current user: " + currentUser);
         if (currentUser != null) {
             return ticketRepository.findByAssignee(currentUser);
+        }
+        return Collections.emptyList();
+    }
+
+    public List<Ticket> getStatusUserTickets(List<TicketStatus> status){
+        Users currentUser = SecurityUtils.getLoggedInUser();
+        //logger.info("Current user: " + currentUser);
+        if (currentUser != null) {
+            return ticketRepository.findByAssigneeStatus(currentUser, status);
         }
         return Collections.emptyList();
     }

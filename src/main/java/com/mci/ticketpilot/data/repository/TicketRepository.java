@@ -2,6 +2,7 @@ package com.mci.ticketpilot.data.repository;
 
 import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.entity.Ticket;
+import com.mci.ticketpilot.data.entity.TicketStatus;
 import com.mci.ticketpilot.data.entity.Users;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,6 +26,9 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     @Query("SELECT c FROM Ticket c WHERE c.assignee = :assignee")
     List<Ticket> findByAssignee(Users assignee);
+
+    @Query("SELECT c FROM Ticket c WHERE c.assignee = :assignee AND c.ticketStatus IN :status")
+    List<Ticket> findByAssigneeStatus(Users assignee, List<TicketStatus> status);
 
     @Query("SELECT t FROM Ticket t WHERE t.assignee = :assignee AND t.ticketCreationDate = :date")
     List<Ticket> findByAssigneeAndCreationDate(@Param("assignee") Users assignee, @Param("date") LocalDate date);

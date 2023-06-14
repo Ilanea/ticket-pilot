@@ -2,9 +2,11 @@ package com.mci.ticketpilot.views;
 
 import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.entity.Ticket;
+import com.mci.ticketpilot.data.entity.TicketStatus;
+import com.mci.ticketpilot.data.repository.TicketRepository;
 import com.mci.ticketpilot.data.service.PdfService;
 import com.mci.ticketpilot.data.service.PilotService;
-import com.mci.ticketpilot.views.lists.TicketForm;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
@@ -45,7 +47,10 @@ import com.vaadin.flow.component.charts.model.DataSeries;
 import com.vaadin.flow.component.charts.model.DataSeriesItem;
 import com.vaadin.flow.component.charts.model.XAxis;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 
+@SpringComponent
+@Scope("prototype")
 @PermitAll
 @Route(value = "", layout = MainLayout.class)
 @PageTitle("Dashboard | Ticket Pilot")
@@ -63,8 +68,8 @@ public class DashboardView extends VerticalLayout {
     private Chart createTicketsByUserBarChart;
     private VerticalLayout userLayout = new VerticalLayout();
     private Button applyFilterButton;
-    private Grid<Ticket> ticketGrid = new Grid<>(Ticket.class);
-    private Grid<Project> projectGrid = new Grid<>(Project.class);
+    private Grid<Project> projectGrid;
+    private Grid<Ticket> ticketGrid;
     private Accordion accordion = new Accordion();
 
     @Autowired
@@ -79,6 +84,15 @@ public class DashboardView extends VerticalLayout {
         this.toFilter.setLabel("To date");
         this.toFilter.setValue(LocalDate.now());
 
+        projectGrid = new Grid<>(Project.class);
+        projectGrid.setItems(this.service.getUserProjects());
+        projectGrid.setColumns("projectName", "projectDescription", "projectStartDate", "projectEndDate");
+
+        ticketGrid = new Grid<>(Ticket.class);
+        List<TicketStatus> ticketStatusList = Arrays.asList(TicketStatus.OPEN, TicketStatus.IN_PROGRESS, TicketStatus.REOPENED, TicketStatus.ON_HOLD);
+        ticketGrid.setItems(this.service.getStatusUserTickets(ticketStatusList));
+        ticketGrid.setColumns("ticketName", "ticketDescription", "ticketCreationDate", "ticketStatus", "ticketPriority");
+
         initCharts();
 
         addClassName("dashboard-view");
@@ -86,9 +100,9 @@ public class DashboardView extends VerticalLayout {
 
         accordion.open(0);
         accordion.setSizeFull();
-        AccordionPanel projects = accordion.add("Projects", createProjectsBoard());
+        AccordionPanel projects = accordion.add("Projects", projectGrid);
         projects.addThemeVariants(DetailsVariant.FILLED);
-        AccordionPanel tickets = accordion.add("Tickets", createTicketsBoard());
+        AccordionPanel tickets = accordion.add("Tickets", ticketGrid);
         tickets.addThemeVariants(DetailsVariant.FILLED);
         AccordionPanel stats = accordion.add("Stats", createBoardStats());
         stats.addThemeVariants(DetailsVariant.FILLED);
@@ -98,27 +112,6 @@ public class DashboardView extends VerticalLayout {
         setAlignItems(FlexComponent.Alignment.BASELINE);
 
         add(accordion);
-    }
-
-
-    private Grid createTicketsBoard(){
-        ticketGrid.addClassNames("dashboard-ticket-grid");
-        ticketGrid.setSizeFull();
-        ticketGrid.setItems(service.findUserTickets());
-        ticketGrid.setColumns("ticketName", "ticketPriority", "ticketStatus", "project.projectName", "ticketCreationDate");
-        ticketGrid.getColumns().forEach(col -> col.setAutoWidth(true));
-
-        return ticketGrid;
-    }
-
-    private Grid createProjectsBoard(){
-        projectGrid.addClassNames("dashboard-ticket-grid");
-        projectGrid.setSizeFull();
-        projectGrid.setItems(service.getUserProjects());
-        projectGrid.setColumns("projectName", "manager");
-        projectGrid.getColumns().forEach(col -> col.setAutoWidth(true));
-
-        return projectGrid;
     }
 
     private void initCharts() {
