@@ -38,7 +38,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.component.charts.model.ChartType;
@@ -48,6 +47,7 @@ import com.vaadin.flow.component.charts.model.DataSeriesItem;
 import com.vaadin.flow.component.charts.model.XAxis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+
 
 @SpringComponent
 @Scope("prototype")
@@ -74,6 +74,9 @@ public class DashboardView extends VerticalLayout {
 
     @Autowired
     public DashboardView(PilotService service) {
+        addClassName("dashboard-view");
+        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+
         this.service = service;
         // Initialize the DatePicker
         this.fromFilter = new DatePicker();
@@ -83,7 +86,7 @@ public class DashboardView extends VerticalLayout {
         this.toFilter = new DatePicker();
         this.toFilter.setLabel("To date");
         this.toFilter.setValue(LocalDate.now());
-
+        // Initialize Grids
         projectGrid = new Grid<>(Project.class);
         projectGrid.setItems(this.service.getUserProjects());
         projectGrid.setColumns("projectName", "projectDescription", "projectStartDate", "projectEndDate");
@@ -92,12 +95,11 @@ public class DashboardView extends VerticalLayout {
         List<TicketStatus> ticketStatusList = Arrays.asList(TicketStatus.OPEN, TicketStatus.IN_PROGRESS, TicketStatus.REOPENED, TicketStatus.ON_HOLD);
         ticketGrid.setItems(this.service.getStatusUserTickets(ticketStatusList));
         ticketGrid.setColumns("ticketName", "ticketDescription", "ticketCreationDate", "ticketStatus", "ticketPriority");
-
+        // Initialize Charts
         initCharts();
 
-        addClassName("dashboard-view");
-        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
+        // Create accordion
         accordion.open(0);
         accordion.setSizeFull();
         AccordionPanel projects = accordion.add("Projects", projectGrid);
