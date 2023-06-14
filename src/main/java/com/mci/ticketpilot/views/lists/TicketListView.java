@@ -130,7 +130,7 @@ public class TicketListView extends VerticalLayout {
         updateList();
         closeEditor();
         // Benachrichtigung erstellen und anzeigen
-        Notification notification = new Notification("Ticket wurde erstellt!", 3000);
+        Notification notification = new Notification("Ticket saved", 3000);
         notification.setPosition(Notification.Position.BOTTOM_END);
         notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
         notification.open();
@@ -141,7 +141,7 @@ public class TicketListView extends VerticalLayout {
         updateList();
         closeEditor();
         // Benachrichtigung erstellen und anzeigen
-        Notification notification = new Notification("Ticket wurde gelöscht!", 3000);
+        Notification notification = new Notification("Ticket deleted", 3000);
         notification.setPosition(Notification.Position.BOTTOM_END);
         notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
         notification.open();

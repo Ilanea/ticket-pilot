@@ -76,7 +76,7 @@ public class ProjectListView extends VerticalLayout {
         updateList();
         closeEditor();
         // Benachrichtigung erstellen und anzeigen
-        Notification notification = new Notification("Neues Projekt wurde erstellt", 3000);
+        Notification notification = new Notification("Project saved", 3000);
         notification.setPosition(Notification.Position.BOTTOM_END);
         notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
         notification.open();
@@ -85,7 +85,7 @@ public class ProjectListView extends VerticalLayout {
     private void deleteProject(ProjectForm.DeleteEvent event) {
         if(event.getProject().getTickets().size() > 0) {
             // Benachrichtigung erstellen und anzeigen
-            Notification notification = new Notification("Projekt kann nicht gelöscht werden, da noch Tickets vorhanden sind", 3000);
+            Notification notification = new Notification("Project cannot be deleted", 3000);
             notification.setPosition(Notification.Position.BOTTOM_END);
             notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             notification.open();
@@ -94,7 +94,7 @@ public class ProjectListView extends VerticalLayout {
             updateList();
             closeEditor();
             // Benachrichtigung erstellen und anzeigen
-            Notification notification = new Notification("Projekt wurde gelöscht", 3000);
+            Notification notification = new Notification("Project deleted", 3000);
             notification.setPosition(Notification.Position.BOTTOM_END);
             notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
             notification.open();
