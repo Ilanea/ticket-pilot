@@ -117,12 +117,12 @@ public class DashboardView extends VerticalLayout {
         // Create accordion
         accordion.open(0);
         accordion.setSizeFull();
+        AccordionPanel stats = accordion.add("Stats", createBoardStats());
+        stats.addThemeVariants(DetailsVariant.FILLED);
         AccordionPanel projects = accordion.add("Projects", projectGrid);
         projects.addThemeVariants(DetailsVariant.FILLED);
         AccordionPanel tickets = accordion.add("Tickets", ticketGrid);
         tickets.addThemeVariants(DetailsVariant.FILLED);
-        AccordionPanel stats = accordion.add("Stats", createBoardStats());
-        stats.addThemeVariants(DetailsVariant.FILLED);
         AccordionPanel analytics = accordion.add("Analytics", createUserBoard());
         analytics.addThemeVariants(DetailsVariant.FILLED);
 
