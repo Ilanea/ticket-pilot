@@ -6,6 +6,7 @@ import com.mci.ticketpilot.data.entity.TicketStatus;
 import com.mci.ticketpilot.data.service.PdfService;
 import com.mci.ticketpilot.data.service.PilotService;
 
+import com.mci.ticketpilot.security.SecurityUtils;
 import com.mci.ticketpilot.views.lists.ProjectListView;
 import com.mci.ticketpilot.views.lists.TicketListView;
 import com.vaadin.flow.component.Component;
@@ -123,8 +124,11 @@ public class DashboardView extends VerticalLayout {
         projects.addThemeVariants(DetailsVariant.FILLED);
         AccordionPanel tickets = accordion.add("My Tickets", ticketGrid);
         tickets.addThemeVariants(DetailsVariant.FILLED);
-        AccordionPanel analytics = accordion.add("Analytics", createUserBoard());
-        analytics.addThemeVariants(DetailsVariant.FILLED);
+
+        if(SecurityUtils.userHasManagerRole() || SecurityUtils.userHasAdminRole()) {
+            AccordionPanel analytics = accordion.add("Analytics", createUserBoard());
+            analytics.addThemeVariants(DetailsVariant.FILLED);
+        }
 
         setAlignItems(FlexComponent.Alignment.BASELINE);
 
