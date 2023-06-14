@@ -3,11 +3,13 @@ package com.mci.ticketpilot.views;
 import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.entity.Ticket;
 import com.mci.ticketpilot.data.entity.TicketStatus;
-import com.mci.ticketpilot.data.repository.TicketRepository;
 import com.mci.ticketpilot.data.service.PdfService;
 import com.mci.ticketpilot.data.service.PilotService;
 
+import com.mci.ticketpilot.views.lists.ProjectListView;
+import com.mci.ticketpilot.views.lists.TicketListView;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.board.Board;
@@ -18,6 +20,7 @@ import com.vaadin.flow.component.charts.model.style.SolidColor;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.details.DetailsVariant;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -90,11 +93,23 @@ public class DashboardView extends VerticalLayout {
         projectGrid = new Grid<>(Project.class);
         projectGrid.setItems(this.service.getUserProjects());
         projectGrid.setColumns("projectName", "projectDescription", "projectStartDate", "projectEndDate");
+        projectGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
+        projectGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        projectGrid.addItemClickListener(event -> {
+            Project project = event.getItem();
+            UI.getCurrent().navigate(ProjectListView.class);
+        });
 
         ticketGrid = new Grid<>(Ticket.class);
         List<TicketStatus> ticketStatusList = Arrays.asList(TicketStatus.OPEN, TicketStatus.IN_PROGRESS, TicketStatus.REOPENED, TicketStatus.ON_HOLD);
         ticketGrid.setItems(this.service.getStatusUserTickets(ticketStatusList));
         ticketGrid.setColumns("ticketName", "ticketDescription", "ticketCreationDate", "ticketStatus", "ticketPriority");
+        ticketGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
+        ticketGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        ticketGrid.addItemClickListener(event -> {
+            Ticket ticket = event.getItem();
+            UI.getCurrent().navigate(TicketListView.class);
+        });
         // Initialize Charts
         initCharts();
 
