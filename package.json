@@ -2,6 +2,17 @@
   "name": "ticketpilot",
   "license": "UNLICENSED",
   "dependencies": {
+    "@fullcalendar/core": "6.1.6",
+    "@fullcalendar/daygrid": "6.1.6",
+    "@fullcalendar/interaction": "6.1.6",
+    "@fullcalendar/list": "6.1.6",
+    "@fullcalendar/moment": "6.1.6",
+    "@fullcalendar/moment-timezone": "6.1.6",
+    "@fullcalendar/multimonth": "6.1.6",
+    "@fullcalendar/resource": "6.1.6",
+    "@fullcalendar/resource-timegrid": "6.1.6",
+    "@fullcalendar/resource-timeline": "6.1.6",
+    "@fullcalendar/timegrid": "6.1.6",
     "@polymer/polymer": "3.5.1",
     "@vaadin/accordion": "24.0.2",
     "@vaadin/app-layout": "24.0.2",
@@ -74,6 +85,8 @@
     "construct-style-sheets-polyfill": "3.1.0",
     "date-fns": "2.29.3",
     "lit": "2.6.1",
+    "moment": "2.29.4",
+    "moment-timezone": "0.5.40",
     "proj4": "2.8.1"
   },
   "devDependencies": {
@@ -94,6 +107,17 @@
   },
   "vaadin": {
     "dependencies": {
+      "@fullcalendar/core": "6.1.6",
+      "@fullcalendar/daygrid": "6.1.6",
+      "@fullcalendar/interaction": "6.1.6",
+      "@fullcalendar/list": "6.1.6",
+      "@fullcalendar/moment": "6.1.6",
+      "@fullcalendar/moment-timezone": "6.1.6",
+      "@fullcalendar/multimonth": "6.1.6",
+      "@fullcalendar/resource": "6.1.6",
+      "@fullcalendar/resource-timegrid": "6.1.6",
+      "@fullcalendar/resource-timeline": "6.1.6",
+      "@fullcalendar/timegrid": "6.1.6",
       "@polymer/polymer": "3.5.1",
       "@vaadin/accordion": "24.0.2",
       "@vaadin/app-layout": "24.0.2",
@@ -166,6 +190,8 @@
       "construct-style-sheets-polyfill": "3.1.0",
       "date-fns": "2.29.3",
       "lit": "2.6.1",
+      "moment": "2.29.4",
+      "moment-timezone": "0.5.40",
       "proj4": "2.8.1"
     },
     "devDependencies": {
@@ -184,7 +210,7 @@
       "workbox-core": "6.5.4",
       "workbox-precaching": "6.5.4"
     },
-    "hash": "5223b75e31bb2cb984f77ab9462332eead0674741e3fb1344b1b4b59237d9b7a"
+    "hash": "23eda0b4b4f92d5f69b9efa2d894e1e4504792350a177d10f18f6274efbd8700"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
@@ -259,6 +285,19 @@
     "@polymer/polymer": "$@polymer/polymer",
     "proj4": "$proj4",
     "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
-    "date-fns": "$date-fns"
+    "date-fns": "$date-fns",
+    "@fullcalendar/core": "$@fullcalendar/core",
+    "@fullcalendar/list": "$@fullcalendar/list",
+    "@fullcalendar/moment-timezone": "$@fullcalendar/moment-timezone",
+    "@fullcalendar/interaction": "$@fullcalendar/interaction",
+    "@fullcalendar/timegrid": "$@fullcalendar/timegrid",
+    "moment": "$moment",
+    "@fullcalendar/daygrid": "$@fullcalendar/daygrid",
+    "moment-timezone": "$moment-timezone",
+    "@fullcalendar/multimonth": "$@fullcalendar/multimonth",
+    "@fullcalendar/moment": "$@fullcalendar/moment",
+    "@fullcalendar/resource-timeline": "$@fullcalendar/resource-timeline",
+    "@fullcalendar/resource": "$@fullcalendar/resource",
+    "@fullcalendar/resource-timegrid": "$@fullcalendar/resource-timegrid"
   }
 }
