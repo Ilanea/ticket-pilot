@@ -18,8 +18,8 @@ public class SendMailService {
     private String sendgridApiKey;
     private String senderEmail;
     public SendMailService() {
-        sendgridApiKey = ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("sendgrid.api.key");
-        senderEmail =  ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("sendgrid.sender.email");
+        sendgridApiKey = "test";
+        senderEmail =  "TicketPilot1337@gmail.com";
     }
 
     public void send(String Email, String firstname, String lastname, String ticketname, String ticketdescription) throws IOException {
