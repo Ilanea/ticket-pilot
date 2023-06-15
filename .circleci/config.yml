@@ -24,7 +24,9 @@ jobs:
                 destination: target
 
     vaadin_license:
+        description: add vaadin charts license
         steps:
+          - - checkout
           - run:
               name: get vaadin license from env
               command: |
