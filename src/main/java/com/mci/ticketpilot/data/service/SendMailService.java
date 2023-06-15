@@ -6,6 +6,7 @@ import com.sendgrid.*;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -16,12 +17,13 @@ import org.slf4j.LoggerFactory;
 @Component
 public class SendMailService {
     private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
+
+    @Value("${sendgrid.api.key}")
     private String sendgridApiKey;
+
+    @Value("${sendgrid.sender.email}")
     private String senderEmail;
-    public SendMailService() {
-        sendgridApiKey = ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("sendgrid.api.key");
-        senderEmail =  ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("sendgrid.sender.email");
-    }
+    public SendMailService() {}
 
     public void send(String Email, String firstname, String lastname, String ticketname, String ticketdescription) throws IOException {
         Email from = new Email(senderEmail);
