@@ -2,6 +2,7 @@ package com.mci.ticketpilot.views;
 
 import com.mci.ticketpilot.security.SecurityService;
 import com.mci.ticketpilot.security.SecurityUtils;
+import com.mci.ticketpilot.views.calendar.CalendarView;
 import com.mci.ticketpilot.views.lists.*;
 import com.vaadin.componentfactory.ToggleButton;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -101,8 +102,12 @@ public class MainLayout extends AppLayout {
         kanbanList.addClassName("router-link");
         kanbanList.setHighlightCondition(HighlightConditions.sameLocation());
 
+        RouterLink calendarView = new RouterLink("Calendar", CalendarView.class);
+        calendarView.addClassName("router-link");
+        calendarView.setHighlightCondition(HighlightConditions.sameLocation());
+
         HorizontalLayout linksLayout = new HorizontalLayout();
-        linksLayout.add(dashboard, projectlist, ticketlist, kanbanList); // helpList removed from here
+        linksLayout.add(dashboard, projectlist, ticketlist, kanbanList, calendarView); // helpList removed from here
         linksLayout.setWidthFull();
         linksLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
         linksLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
