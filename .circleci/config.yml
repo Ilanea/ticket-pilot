@@ -44,7 +44,7 @@ jobs:
             registry-url: eu.gcr.io
         - gcp-gcr/push-image:
             digest-path: /tmp/digest.txt
-            image: orb-test
+            image: ticket-pilot
             registry-url: eu.gcr.io
         - run:
             command: |
