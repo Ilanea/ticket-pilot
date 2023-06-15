@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +84,17 @@ public class PilotService {
     }
 
     public List<Project> findAllProjects(){ return projectRepository.findAll(); }
+
+    public List<Project> findAllProjectsForUser(String stringFilter) {
+        if (stringFilter == null || stringFilter.isEmpty()) {
+            return projectRepository.findByUser(SecurityUtils.getLoggedInUser());
+        } else {
+            return projectRepository.searchForUser(stringFilter, SecurityUtils.getLoggedInUser());
+        }
+    }
+
+    public List<Project> findAllProjectsForUser(){ return projectRepository.findByUser(SecurityUtils.getLoggedInUser()); }
+
     public long countProjects() { return projectRepository.count(); }
     public void deleteProject(Project project) {
         if(project.getTickets() == null || project.getTickets().isEmpty()) {
@@ -125,6 +137,16 @@ public class PilotService {
         return ticketRepository.findAll();
     }
 
+    public List<Ticket> findAllTicketsForUser(String stringFilter, Set<TicketStatus> status, Set<TicketPriority> priority) {
+        if (stringFilter == null || stringFilter.isEmpty()) {
+            return ticketRepository.findByAssigneeStatusPriority(SecurityUtils.getLoggedInUser(), status, priority);
+        } else {
+            return ticketRepository.searchForUser(stringFilter, SecurityUtils.getLoggedInUser());
+        }
+    }
+
+    public List<Ticket> findAllTicketsForUser(){ return ticketRepository.findByAssignee(SecurityUtils.getLoggedInUser()); }
+
     public List<Ticket> getTicketsperDate(LocalDate fromDate, LocalDate toDate){
         return ticketRepository.findByAssigneeAndCreationDateBetween(fromDate, toDate);
     }
@@ -152,19 +174,6 @@ public class PilotService {
         ticket.addComment(comment);
         logger.info("Saving Comment to Comment in DB: " + ticket);
         commentRepository.saveAndFlush(comment);
-    }
-
-    public Project findProjectToTicket(Ticket ticket) {
-        return ticketRepository.findProjectToTicket(ticket);
-    }
-
-    public List<Ticket> getUserTickets(){
-        Users currentUser = SecurityUtils.getLoggedInUser();
-        //logger.info("Current user: " + currentUser);
-        if (currentUser != null) {
-            return ticketRepository.findByAssignee(currentUser);
-        }
-        return Collections.emptyList();
     }
 
     public boolean isCurrentUserAssignee(Ticket ticket){

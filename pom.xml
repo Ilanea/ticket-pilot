@@ -222,6 +222,17 @@
             <artifactId>togglebutton</artifactId>
             <version>3.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.vaadin.stefan</groupId>
+            <artifactId>fullcalendar2</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.vaadin.stefan</groupId>
+            <artifactId>fullcalendar2-scheduler</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+
 
     </dependencies>
 

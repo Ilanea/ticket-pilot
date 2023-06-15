@@ -64,7 +64,7 @@ public class UserListView extends VerticalLayout {
         updateList();
         closeEditor();
         // Benachrichtigung erstellen und anzeigen
-        Notification notification = new Notification("Neuer User wurde erstellt!", 3000);
+        Notification notification = new Notification("User saved", 3000);
         notification.setPosition(Notification.Position.BOTTOM_END);
         notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
         notification.open();
@@ -75,7 +75,7 @@ public class UserListView extends VerticalLayout {
         updateList();
         closeEditor();
         // Benachrichtigung erstellen und anzeigen
-        Notification notification = new Notification("User wurde entfernt!", 3000);
+        Notification notification = new Notification("User deleted", 3000);
         notification.setPosition(Notification.Position.BOTTOM_END);
         notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
         notification.open();

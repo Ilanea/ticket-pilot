@@ -1,9 +1,9 @@
-package com.mci.ticketpilot.views.lists;
+package com.mci.ticketpilot.views.dashboard;
 
 import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.service.PilotService;
-import com.mci.ticketpilot.security.SecurityUtils;
-import com.mci.ticketpilot.views.MainLayout;
+import com.mci.ticketpilot.security.SecurityService;
+import com.mci.ticketpilot.views.lists.ProjectForm;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -14,34 +14,32 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.context.annotation.Scope;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @SpringComponent
 @Scope("prototype")
 @PermitAll
-@Route(value = "projects", layout = MainLayout.class)
-@PageTitle("Projects | Ticket Pilot")
-public class ProjectListView extends VerticalLayout {
-    private Grid<Project> grid = new Grid<>(Project.class);
+public class DashboardProjects extends VerticalLayout {
+    private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
+    private Grid<Project> grid = new Grid<>(Project.class);;
     private TextField filterText = new TextField();
     private ProjectForm form;
     private PilotService service;
     private Div gridContainer;
     private Div formContainer;
-    private Button createProjectButton;
     private Button backButton;
 
-
-    public ProjectListView(PilotService service) {
+    public DashboardProjects(PilotService service) {
         this.service = service;
-        addClassName("list-view");
+        addClassName("dashboard-projects-view");
         setSizeFull();
-        configureForm();
         configureGrid();
+        configureForm();
 
         add(getToolbar(), getGridContainer(), getFormContainer());
         updateList();
@@ -50,25 +48,31 @@ public class ProjectListView extends VerticalLayout {
 
     private Div getGridContainer() {
         gridContainer = new Div(grid);
-        gridContainer.addClassName("grid-container");
+        gridContainer.setClassName("dashboard-projects-grid-container");
+        gridContainer.setVisible(true);
         gridContainer.setSizeFull();
         return gridContainer;
     }
 
     private Div getFormContainer() {
         formContainer = new Div(form);
-        formContainer.addClassName("form-container");
+        formContainer.setClassName("dashboard-projects-form-container");
         formContainer.setVisible(false);
         formContainer.setSizeFull();
         return formContainer;
     }
 
     private void configureForm() {
-        form = new ProjectForm(service.findAllProjects(), service);
-        form.setSizeFull();
+        form = new ProjectForm(service.findAllProjectsForUser(), service);
         form.addSaveListener(this::saveProject);
         form.addDeleteListener(this::deleteProject);
         form.addCloseListener(e -> closeEditor());
+    }
+
+    private void configureGrid() {
+        grid.setColumns("projectName", "projectStartDate", "projectEndDate");
+        grid.getColumns().forEach(col -> col.setAutoWidth(true));
+        grid.asSingleSelect().addValueChangeListener(event -> editProject(event.getValue()));
     }
 
     private void saveProject(ProjectForm.SaveEvent event) {
@@ -101,23 +105,11 @@ public class ProjectListView extends VerticalLayout {
         }
     }
 
-    private void configureGrid() {
-        grid.addClassNames("project-grid");
-        grid.setSizeFull();
-        grid.setColumns("projectName", "manager");
-        grid.getColumns().forEach(col -> col.setAutoWidth(true));
-
-        grid.asSingleSelect().addValueChangeListener(event -> editProject(event.getValue()));
-    }
-
     private Component getToolbar() {
         filterText.setPlaceholder("Filter by title...");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
-
-        this.createProjectButton = new Button("Create Project");
-        createProjectButton.addClickListener(click -> createProject());
 
         this.backButton = new Button("Back to List");
         backButton.addClickListener(click -> closeEditor());
@@ -127,11 +119,6 @@ public class ProjectListView extends VerticalLayout {
         toolbar.addClassName("toolbar");
         toolbar.add(filterText, backButton);
 
-        // only add Create Project Button when current authenticated User has MANAGER or ADMIN role
-        if (SecurityUtils.userHasManagerRole() || SecurityUtils.userHasAdminRole()) {
-            toolbar.add(createProjectButton);
-        }
-
         return toolbar;
     }
 
@@ -140,9 +127,9 @@ public class ProjectListView extends VerticalLayout {
             closeEditor();
         } else {
             form.setProject(project);
+            filterText.setVisible(false);
             gridContainer.setVisible(false);
             formContainer.setVisible(true);
-            createProjectButton.setVisible(false);
             backButton.setVisible(true);
             addClassName("editing");
         }
@@ -150,23 +137,14 @@ public class ProjectListView extends VerticalLayout {
 
     private void closeEditor() {
         form.setProject(null);
+        filterText.setVisible(true);
         gridContainer.setVisible(true);
         formContainer.setVisible(false);
-        createProjectButton.setVisible(true);
         backButton.setVisible(false);
         removeClassName("editing");
     }
 
-    private void createProject() {
-        grid.asSingleSelect().clear();
-        formContainer.setVisible(true);
-        gridContainer.setVisible(false);
-        createProjectButton.setVisible(false);
-        backButton.setVisible(true);
-        editProject(new Project());
-    }
-
     private void updateList() {
-        grid.setItems(service.findAllProjects(filterText.getValue()));
+        grid.setItems(service.findAllProjectsForUser(filterText.getValue()));
     }
 }
