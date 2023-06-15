@@ -15,22 +15,17 @@ jobs:
         docker:
             - image: maven:3.8.1-openjdk-17-slim
         environment:
+          VAADIN_CHARTS_LICENSE: ${VAADIN_CHARTS_LICENSE}
           MAVEN_CLI_OPTS: "--batch-mode"
         steps:
             - checkout
+            - run:
+                name: get vaadin license from env
+                command: echo ${VAADIN_CHARTS_LICENSE} | > $HOME/vaadin.charts.developer.license
             - run: mvn $MAVEN_CLI_OPTS clean package -Pproduction -e
             - store_artifacts:
                 path: target
                 destination: target
-
-    vaadin_license:
-        description: add vaadin charts license
-        steps:
-          - - checkout
-          - run:
-              name: get vaadin license from env
-              command: |
-                echo ${VAADIN_CHARTS_LICENSE} | > $HOME/vaadin.charts.developer.license
 
     test:
         docker:
