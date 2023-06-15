@@ -21,7 +21,7 @@ jobs:
             - checkout
             - run:
                 name: get vaadin license from env
-                command: echo ${VAADIN_CHARTS_LICENSE} > $HOME/vaadin.charts.developer.license
+                command: echo ${VAADIN_CHARTS_LICENSE} > $HOME/.vaadin/offlineKey
             - run: mvn $MAVEN_CLI_OPTS clean package -Pproduction -e
             - store_artifacts:
                 path: target
