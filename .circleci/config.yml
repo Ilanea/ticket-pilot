@@ -33,23 +33,19 @@ jobs:
                 path: reports
                 destination: reports   
          
-    build_push_image_gcr:
-            
-        description: Build docker image and push to gcr registry
-        executor: gcp-gcr/default
-        machine:
-          image: ubuntu-2004:202010-01
-        steps:
-          - checkout
-          
-          - run:
-              name: Build app binary and Docker image
-              command: |
-                echo 'export PATH=~$PATH:~/.local/bin' >> $BASH_ENV
-                echo ${GCP_PROJECT_KEY} | base64 --decode --ignore-garbage > $HOME/gcloud-service-key.json
-                echo 'export GOOGLE_CLOUD_KEYS=$(cat $HOME/gcloud-service-key.json)' >> $BASH_ENV
-                echo 'export TAG=$CIRCLE_SHA1' >> $BASH_ENV                 
-          
-          - gcp-gcr/gcr-auth
-          
-         
+    build-and-push:
+      executor: gcp-gcr/default
+      steps:
+        - checkout
+        - gcp-gcr/gcr-auth
+        - gcp-gcr/build-image:
+            image: ticket-pilot
+            no_output_timeout: 20m
+            registry-url: eu.gcr.io
+        - gcp-gcr/push-image:
+            digest-path: /tmp/digest.txt
+            image: orb-test
+            registry-url: eu.gcr.io
+        - run:
+            command: |
+              echo "Digest is: $(</tmp/digest.txt)"
