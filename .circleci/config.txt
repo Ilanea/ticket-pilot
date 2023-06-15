@@ -1,0 +1,55 @@
+version: 2.1
+orbs:
+  gcp-gcr: circleci/gcp-gcr@0.15.0
+  cloudrun: circleci/gcp-cloud-run@1.0.1
+  gcp-cli: circleci/gcp-cli@2.1
+executors:
+
+  gcloud-executor:
+    docker:
+      - image: google/cloud-sdk
+  machine-executor:
+    machine: true
+jobs:
+    build:
+        docker:
+            - image: maven:3.8.1-openjdk-17-slim
+        environment:
+          MAVEN_CLI_OPTS: "--batch-mode"
+        steps:
+            - checkout
+            - run: mvn $MAVEN_CLI_OPTS clean package -Pproduction -e
+            - store_artifacts:
+                path: target
+                destination: target
+                
+    test:
+        docker:
+            - image: maven:3.8.1-openjdk-17-slim
+        steps:
+            - checkout
+            - run: mvn test -e
+            - store_artifacts:
+                path: reports
+                destination: reports   
+         
+    build_push_image_gcr:
+            
+        description: Build docker image and push to gcr registry
+        executor: gcp-gcr/default
+        machine:
+          image: ubuntu-2004:202010-01
+        steps:
+          - checkout
+          
+          - run:
+              name: Build app binary and Docker image
+              command: |
+                echo 'export PATH=~$PATH:~/.local/bin' >> $BASH_ENV
+                echo ${GCP_PROJECT_KEY} | base64 --decode --ignore-garbage > $HOME/gcloud-service-key.json
+                echo 'export GOOGLE_CLOUD_KEYS=$(cat $HOME/gcloud-service-key.json)' >> $BASH_ENV
+                echo 'export TAG=$CIRCLE_SHA1' >> $BASH_ENV                 
+          
+          - gcp-gcr/gcr-auth
+          
+         
