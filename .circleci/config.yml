@@ -2,6 +2,45 @@ version: '2.1'
 orbs:
   gcp-gcr: circleci/gcp-gcr@0.15.1
 jobs:
+
+  build-and-test:
+    docker:
+      - image: maven:3.8.1-openjdk-17-slim
+    environment:
+      MAVEN_CLI_OPTS: "--batch-mode"
+    steps:
+      - checkout
+      - run: mvn $MAVEN_CLI_OPTS clean package -Pproduction -e
+      - run: mvn test -e
+
+  add-properties:
+    docker:
+      - image: circleci/openjdk:17-jdk
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      SENDGRID_SENDER: ${SENDGRID_SENDER}
+    steps:
+      - checkout
+      - run:
+          name: Create ticketpilot.properties
+          command: |
+            echo "logging.level.org.atmosphere = warn" > ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "spring.datasource.url=jdbc:postgresql://${DB_URL}:5432/ticketpilot" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "spring.datasource.username=${DB_USERNAME}" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "spring.datasource.password=${DB_PASSWORD}" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "spring.jpa.properties.hibernate.default_schema=public" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "spring.datasource.driver-class-name=org.postgresql.Driver" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "spring.jpa.properties.javax.persistence.schema-generation.scripts.create-target=create.sql" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "spring.jpa.defer-datasource-initialization=true" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "spring.jpa.hibernate.ddl-auto=create" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "spring.sql.init.mode=always" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "sendgrid.api.key=${SENDGRID_API_KEY}" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "sendgrid.sender.email=${SENDGRID_SENDER}" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+
   build-and-push:
     executor: gcp-gcr/default
     steps:
@@ -18,7 +57,14 @@ jobs:
       - run:
           command: |
             echo "Digest is: $(</tmp/digest.txt)"
+
 workflows:
   commit:
     jobs:
-      - build-and-push
+      - build-and-test
+      - add-properties:
+          requires:
+            - build-and-test
+      - build-and-push:
+          requires:
+            - add-properties
