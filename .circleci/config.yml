@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  gcp-gcr: circleci/gcp-gcr@0.15.0
+  gcp-gcr: circleci/gcp-gcr@0.15.1
   cloudrun: circleci/gcp-cloud-run@1.0.1
   gcp-cli: circleci/gcp-cli@2.1
 executors:
@@ -19,6 +19,7 @@ jobs:
         steps:
             - checkout
             - run: mvn $MAVEN_CLI_OPTS clean package -Pproduction -e
+            - run: docker build -t ticket-pilot .
             - store_artifacts:
                 path: target
                 destination: target
@@ -38,11 +39,8 @@ jobs:
       steps:
         - checkout
         - gcp-gcr/gcr-auth
-        - gcp-gcr/build-image:
-            image: ticket-pilot
-            no_output_timeout: 20m
-            registry-url: eu.gcr.io
         - gcp-gcr/push-image:
+            name: Push Docker image
             digest-path: /tmp/digest.txt
             image: ticket-pilot
             registry-url: eu.gcr.io
