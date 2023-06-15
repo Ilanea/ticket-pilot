@@ -47,17 +47,17 @@ jobs:
           command: |
             echo "Digest is: $(</tmp/digest.txt)"
 
-    update-service:
-      docker:
-        - image: cimg/base:stable
-      steps:
-        - cloudrun/init
-        - cloudrun/deploy:
-            image: gcr.io/${GOOGLE_PROJECT_ID}/ticket-pilot:latest
-            platform: managed
-            region: europe-west1
-            service-name: ticket-pilot
-            unauthenticated: true
+  update-service:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - cloudrun/init
+      - cloudrun/deploy:
+          image: gcr.io/${GOOGLE_PROJECT_ID}/ticket-pilot:latest
+          platform: managed
+          region: europe-west1
+          service-name: ticket-pilot
+          unauthenticated: true
 
 workflows:
   commit:
