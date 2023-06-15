@@ -2,15 +2,13 @@ package com.mci.ticketpilot.views;
 
 import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.entity.Ticket;
-import com.mci.ticketpilot.data.entity.TicketStatus;
 import com.mci.ticketpilot.data.service.PdfService;
 import com.mci.ticketpilot.data.service.PilotService;
 
 import com.mci.ticketpilot.security.SecurityUtils;
-import com.mci.ticketpilot.views.lists.ProjectListView;
-import com.mci.ticketpilot.views.lists.TicketListView;
+import com.mci.ticketpilot.views.dashboard.DashboardProjects;
+import com.mci.ticketpilot.views.dashboard.DashboardTickets;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.accordion.AccordionPanel;
 import com.vaadin.flow.component.board.Board;
@@ -20,8 +18,6 @@ import com.vaadin.flow.component.charts.model.*;
 import com.vaadin.flow.component.charts.model.style.SolidColor;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.details.DetailsVariant;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -72,9 +68,10 @@ public class DashboardView extends VerticalLayout {
     private Chart createTicketsByUserBarChart;
     private VerticalLayout userLayout = new VerticalLayout();
     private Button applyFilterButton;
-    private Grid<Project> projectGrid;
-    private Grid<Ticket> ticketGrid;
+
     private Accordion accordion = new Accordion();
+    DashboardProjects dashboardProjects;
+    DashboardTickets dashboardTickets;
 
     @Autowired
     public DashboardView(PilotService service) {
@@ -90,39 +87,22 @@ public class DashboardView extends VerticalLayout {
         this.toFilter = new DatePicker();
         this.toFilter.setLabel("To date");
         this.toFilter.setValue(LocalDate.now());
-        // Initialize Grids
-        projectGrid = new Grid<>(Project.class);
-        projectGrid.setItems(this.service.getUserProjects());
-        projectGrid.setColumns("projectName", "projectDescription", "projectStartDate", "projectEndDate");
-        projectGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
-        projectGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
-        projectGrid.addItemClickListener(event -> {
-            Project project = event.getItem();
-            UI.getCurrent().navigate(ProjectListView.class);
-        });
 
-        ticketGrid = new Grid<>(Ticket.class);
-        List<TicketStatus> ticketStatusList = Arrays.asList(TicketStatus.OPEN, TicketStatus.IN_PROGRESS, TicketStatus.REOPENED, TicketStatus.ON_HOLD);
-        ticketGrid.setItems(this.service.getStatusUserTickets(ticketStatusList));
-        ticketGrid.setColumns("ticketName", "ticketDescription", "ticketCreationDate", "ticketStatus", "ticketPriority");
-        ticketGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
-        ticketGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
-        ticketGrid.addItemClickListener(event -> {
-            Ticket ticket = event.getItem();
-            UI.getCurrent().navigate(TicketListView.class);
-        });
         // Initialize Charts
         initCharts();
 
+        // Initialize Grids
+        this.dashboardProjects = new DashboardProjects(this.service);
+        this.dashboardTickets = new DashboardTickets(this.service);
 
         // Create accordion
         accordion.open(0);
         accordion.setSizeFull();
         AccordionPanel stats = accordion.add("Stats", createBoardStats());
         stats.addThemeVariants(DetailsVariant.FILLED);
-        AccordionPanel projects = accordion.add("My Projects", projectGrid);
+        AccordionPanel projects = accordion.add("My Projects", this.dashboardProjects);
         projects.addThemeVariants(DetailsVariant.FILLED);
-        AccordionPanel tickets = accordion.add("My Tickets", ticketGrid);
+        AccordionPanel tickets = accordion.add("My Tickets", this.dashboardTickets);
         tickets.addThemeVariants(DetailsVariant.FILLED);
 
         if(SecurityUtils.userHasManagerRole() || SecurityUtils.userHasAdminRole()) {

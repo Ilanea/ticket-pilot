@@ -15,6 +15,11 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
             "where lower(c.projectName) like lower(concat('%', :searchTerm, '%')) ")
     List<Project> search(@Param("searchTerm") String searchTerm);
 
+    @Query("SELECT c FROM Project c " +
+            "WHERE c.projectManager = :projectManager " +
+            "AND LOWER(c.projectName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+    List<Project> searchForUser(@Param("searchTerm") String searchTerm, @Param("projectManager") Users projectManager);
+
     @Query("SELECT c FROM Project c WHERE c.projectManager = :projectManager")
     List<Project> findByUser(Users projectManager);
 }
