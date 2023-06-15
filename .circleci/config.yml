@@ -21,9 +21,9 @@ jobs:
           name: Create ticketpilot.properties
           command: |
             echo "logging.level.org.atmosphere = warn" > ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
-            echo "spring.datasource.url=jdbc:postgresql://${DB_URL}:5432/ticketpilot" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
-            echo "spring.datasource.username=${DB_USERNAME}" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
-            echo "spring.datasource.password=${DB_PASSWORD}" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "spring.datasource.url=jdbc:postgresql://$DB_URL:5432/ticketpilot" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "spring.datasource.username=$DB_USERNAME" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "spring.datasource.password=$DB_PASSWORD" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
             echo "spring.jpa.properties.hibernate.default_schema=public" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
             echo "spring.datasource.driver-class-name=org.postgresql.Driver" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
             echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
@@ -31,8 +31,8 @@ jobs:
             echo "spring.jpa.defer-datasource-initialization=true" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
             echo "spring.jpa.hibernate.ddl-auto=create" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
             echo "spring.sql.init.mode=always" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
-            echo "sendgrid.api.key=${SENDGRID_API_KEY}" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
-            echo "sendgrid.sender.email=${SENDGRID_SENDER}" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "sendgrid.api.key=$SENDGRID_API_KEY" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
+            echo "sendgrid.sender.email=$SENDGRID_SENDER" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
           image: ticket-pilot
