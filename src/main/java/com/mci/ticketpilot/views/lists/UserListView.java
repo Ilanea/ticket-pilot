@@ -18,6 +18,7 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.context.annotation.Scope;
 import com.vaadin.flow.component.notification.Notification;
+
 @SpringComponent
 @Scope("prototype")
 @Route(value = "users", layout = MainLayout.class)

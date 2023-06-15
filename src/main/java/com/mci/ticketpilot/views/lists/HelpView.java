@@ -1,29 +1,19 @@
 package com.mci.ticketpilot.views.lists;
 
-import com.mci.ticketpilot.data.entity.Project;
-import com.mci.ticketpilot.data.entity.Ticket;
 import com.mci.ticketpilot.data.service.ApplicationContextProvider;
-import com.mci.ticketpilot.data.service.PilotService;
 import com.mci.ticketpilot.data.service.SendMailService;
 import com.mci.ticketpilot.views.MainLayout;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.board.Board;
-import com.vaadin.flow.component.board.Row;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextArea;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
-
-
-import java.util.List;
 
 @PermitAll
 @Route(value = "help", layout = MainLayout.class)
