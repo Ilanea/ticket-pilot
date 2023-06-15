@@ -15,7 +15,6 @@ jobs:
         docker:
             - image: maven:3.8.1-openjdk-17-slim
         environment:
-          VAADIN_CHARTS_LICENSE: ${VAADIN_CHARTS_LICENSE}
           MAVEN_CLI_OPTS: "--batch-mode"
         steps:
             - checkout
