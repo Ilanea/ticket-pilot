@@ -54,7 +54,7 @@ jobs:
     steps:
       - cloudrun/init
       - cloudrun/deploy:
-          image: gcr.io/${GOOGLE_PROJECT_ID}/ticket-pilot:latest
+          image: eu.gcr.io/${GOOGLE_PROJECT_ID}/ticket-pilot:latest
           platform: managed
           region: europe-west1
           service-name: ticket-pilot
