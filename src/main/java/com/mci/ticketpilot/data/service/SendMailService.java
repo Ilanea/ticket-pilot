@@ -6,21 +6,21 @@ import com.sendgrid.*;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Service
+@Component
 public class SendMailService {
     private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
     private String sendgridApiKey;
     private String senderEmail;
     public SendMailService() {
-        ApplicationContextProvider context = new ApplicationContextProvider();
-        sendgridApiKey = context.getApplicationContext().getEnvironment().getProperty("sendgrid.api.key");
-        senderEmail =  context.getApplicationContext().getEnvironment().getProperty("sendgrid.sender.email");
+        sendgridApiKey = ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("sendgrid.api.key");
+        senderEmail =  ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("sendgrid.sender.email");
     }
 
     public void send(String Email, String firstname, String lastname, String ticketname, String ticketdescription) throws IOException {
