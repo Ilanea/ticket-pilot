@@ -15,12 +15,6 @@ jobs:
 
   build-and-push:
     executor: gcp-gcr/default
-    environment:
-      DB_URL: ${DB_URL}
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
-      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
-      SENDGRID_SENDER: ${SENDGRID_SENDER}
     steps:
       - checkout
       - run:
