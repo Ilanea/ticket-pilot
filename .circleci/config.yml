@@ -13,9 +13,8 @@ jobs:
       - run: mvn $MAVEN_CLI_OPTS clean package -Pproduction -e
       - run: mvn test -e
 
-  add-properties:
-    docker:
-      - image: circleci/openjdk:17-jdk
+  build-and-push:
+    executor: gcp-gcr/default
     environment:
       DB_URL: ${DB_URL}
       DB_USERNAME: ${DB_USERNAME}
@@ -40,11 +39,6 @@ jobs:
             echo "spring.sql.init.mode=always" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
             echo "sendgrid.api.key=${SENDGRID_API_KEY}" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
             echo "sendgrid.sender.email=${SENDGRID_SENDER}" >> ${CIRCLE_WORKING_DIRECTORY}/src/main/resources/ticketpilot.properties;
-
-  build-and-push:
-    executor: gcp-gcr/default
-    steps:
-      - checkout
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
           image: ticket-pilot
@@ -62,9 +56,6 @@ workflows:
   commit:
     jobs:
       - build-and-test
-      - add-properties:
-          requires:
-            - build-and-test
       - build-and-push:
           requires:
-            - add-properties
+            - build-and-test
