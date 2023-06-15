@@ -70,7 +70,7 @@ public class DashboardProjects extends VerticalLayout {
     }
 
     private void configureGrid() {
-        grid.setColumns("projectName", "manager");
+        grid.setColumns("projectName", "projectStartDate", "projectEndDate");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.asSingleSelect().addValueChangeListener(event -> editProject(event.getValue()));
     }

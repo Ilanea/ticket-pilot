@@ -152,10 +152,14 @@ public class DashboardTickets extends VerticalLayout {
 
         ticketPriority.setItems(TicketPriority.values());
         ticketPriority.select(TicketPriority.values());
+        ticketPriority.setPlaceholder("Priority");
+        ticketPriority.setTooltipText("Priority");
         ticketPriority.addValueChangeListener(e -> updateList());
 
         ticketStatus.setItems(TicketStatus.values());
         ticketStatus.select(TicketStatus.values());
+        ticketStatus.setPlaceholder("Status");
+        ticketStatus.setTooltipText("Status");
         ticketStatus.addValueChangeListener(e -> updateList());
 
         this.backButton = new Button("Back to List");
