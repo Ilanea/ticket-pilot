@@ -1,49 +1,24 @@
-version: 2.1
+version: '2.1'
 orbs:
-  gcp-gcr: circleci/gcp-gcr@0.15.1
-  cloudrun: circleci/gcp-cloud-run@1.0.1
-  gcp-cli: circleci/gcp-cli@2.1
-executors:
-
-  gcloud-executor:
-    docker:
-      - image: google/cloud-sdk
-  machine-executor:
-    machine: true
+  gcp-gcr: circleci/gcp-gcr@x.y.z
 jobs:
-    build:
-        docker:
-            - image: maven:3.8.1-openjdk-17-slim
-        environment:
-          MAVEN_CLI_OPTS: "--batch-mode"
-        steps:
-            - checkout
-            - run: mvn $MAVEN_CLI_OPTS clean package -Pproduction -e
-            - run: docker build -t ticket-pilot .
-            - store_artifacts:
-                path: target
-                destination: target
-
-    test:
-        docker:
-            - image: maven:3.8.1-openjdk-17-slim
-        steps:
-            - checkout
-            - run: mvn test -e
-            - store_artifacts:
-                path: reports
-                destination: reports   
-         
-    build-and-push:
-      executor: gcp-gcr/default
-      steps:
-        - checkout
-        - gcp-gcr/gcr-auth
-        - gcp-gcr/push-image:
-            name: Push Docker image
-            digest-path: /tmp/digest.txt
-            image: ticket-pilot
-            registry-url: eu.gcr.io
-        - run:
-            command: |
-              echo "Digest is: $(</tmp/digest.txt)"
+  build-and-push:
+    executor: gcp-gcr/default
+    steps:
+      - checkout
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/build-image:
+          image: ticket-pilot
+          no_output_timeout: 20m
+          registry-url: eu.gcr.io
+      - gcp-gcr/push-image:
+          digest-path: /tmp/digest.txt
+          image: ticket-pilot
+          registry-url: eu.gcr.io
+      - run:
+          command: |
+            echo "Digest is: $(</tmp/digest.txt)"
+workflows:
+  commit:
+    jobs:
+      - build-and-push
