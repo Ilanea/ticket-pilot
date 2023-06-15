@@ -22,9 +22,7 @@ jobs:
           name: Create ticketpilot.properties
           command: |
             echo "logging.level.org.atmosphere = warn" > $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
-            echo "spring.datasource.url=$DB_URL" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
-            echo "spring.datasource.username=$DB_USERNAME" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
-            echo "spring.datasource.password=$DB_PASSWORD" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
+            echo "spring.datasource.url=jdbc:postgresql:///<$DATABASE_NAME>?cloudSqlInstance=<$POSTGRESQL_INSTANCE_CONNECTION_NAME>&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=<$POSTGRESQL_USER_NAME>&password=<$POSTGRESQL_USER_PASSWORD>" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
             echo "spring.jpa.properties.hibernate.default_schema=public" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
             echo "spring.datasource.driver-class-name=org.postgresql.Driver" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
             echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
