@@ -22,7 +22,14 @@ jobs:
             - store_artifacts:
                 path: target
                 destination: target
-                
+
+    vaadin_license:
+        steps:
+          - run:
+              name: get vaadin license from env
+              command: |
+                echo ${VAADIN_CHARTS_LICENSE} | > $HOME/vaadin.charts.developer.license
+
     test:
         docker:
             - image: maven:3.8.1-openjdk-17-slim
