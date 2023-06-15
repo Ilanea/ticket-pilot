@@ -42,6 +42,7 @@ jobs:
       - gcp-gcr/push-image:
           digest-path: /tmp/digest.txt
           image: ticket-pilot
+          tag: latest
           registry-url: eu.gcr.io
       - run:
           command: |
