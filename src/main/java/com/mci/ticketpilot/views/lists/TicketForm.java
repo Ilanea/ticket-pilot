@@ -40,17 +40,16 @@ public class TicketForm extends VerticalLayout {
     private PilotService service;
     private Project selectedProject;
     private Users selectedUser;
-    TextField ticketName = new TextField("Title");
-    ComboBox<TicketPriority> ticketPriority = new ComboBox<>("Priority");
-    ComboBox<TicketStatus> ticketStatus = new ComboBox<>("Status");
-    ComboBox<Project> linkedProject = new ComboBox<>("Project");
-    ComboBox<Users> linkedUser = new ComboBox<>("Assigned User");
-    TextArea ticketDescription = new TextArea("Description");
-
-    Button save = new Button("Save");
-    Button delete = new Button("Delete");
-    Button close = new Button("Cancel");
-
+    private TextField ticketName = new TextField("Title");
+    private ComboBox<TicketPriority> ticketPriority = new ComboBox<>("Priority");
+    private ComboBox<TicketStatus> ticketStatus = new ComboBox<>("Status");
+    private ComboBox<Project> linkedProject = new ComboBox<>("Project");
+    private ComboBox<Users> linkedUser = new ComboBox<>("Assigned User");
+    private TextArea ticketDescription = new TextArea("Description");
+    private Component buttonContainer;
+    private Button save = new Button("Save");
+    private Button delete = new Button("Delete");
+    private Button close = new Button("Cancel");
     private List<Ticket> tickets = new ArrayList<>();
     private Registration saveListener;
 
@@ -78,6 +77,7 @@ public class TicketForm extends VerticalLayout {
         linkedProject.setRequiredIndicatorVisible(true);
         linkedProject.setPrefixComponent(VaadinIcon.SEARCH.create());
         linkedUser.setClearButtonVisible(true);
+        linkedUser.setReadOnly(true);
         linkedUser.setPrefixComponent(VaadinIcon.SEARCH.create());
 
         linkedProject.setItems(projects);
@@ -108,7 +108,7 @@ public class TicketForm extends VerticalLayout {
         formLayout.setColspan(ticketName, 2);
         formLayout.setColspan(ticketDescription, 2);
 
-        Component buttonContainer = createButtonsLayout();
+        buttonContainer = createButtonsLayout();
         setHorizontalComponentAlignment(Alignment.CENTER, buttonContainer);
 
         add(formLayout, buttonContainer);
@@ -177,22 +177,32 @@ public class TicketForm extends VerticalLayout {
         }
     }
 
-    public void setTicket(Ticket ticket) {
+    public void setTicket(Ticket ticket, boolean isNew) {
         if(ticket != null){
             binder.setBean(ticket);
-
-            // Assignee can only be changed by Admins, Managers or the current assignee
-            if (SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole() || service.isCurrentUserAssignee(ticket)) {
-                linkedUser.setReadOnly(false);
+            if (!isNew) {
+                // Ticket Information can only be changed by Admins, Managers,the current assignee or the project manager of the project the ticket is assigned to
+                if (!SecurityUtils.userHasAdminRole() && !SecurityUtils.userHasManagerRole() && !service.isCurrentUserAssignee(ticket) && !service.isCurrentUserManager(ticket.getProject())) {
+                    logger.info("User is not allowed to edit this ticket");
+                    buttonContainer.setVisible(false);
+                    ticketName.setReadOnly(true);
+                    ticketDescription.setReadOnly(true);
+                    ticketPriority.setReadOnly(true);
+                    ticketStatus.setReadOnly(true);
+                    linkedProject.setReadOnly(true);
+                    linkedUser.setReadOnly(true);
+                }
             } else {
+                buttonContainer.setVisible(true);
+                ticketName.setReadOnly(false);
+                ticketDescription.setReadOnly(false);
+                ticketPriority.setReadOnly(false);
+                ticketStatus.setReadOnly(false);
+                linkedProject.setReadOnly(false);
                 linkedUser.setReadOnly(true);
             }
             logger.info("Set selected Ticket to: " + ticket);
         }
-    }
-
-    public void setTickets(List<Ticket> tickets) {
-        this.tickets = tickets;
     }
 
     // Events

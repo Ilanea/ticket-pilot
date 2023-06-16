@@ -198,7 +198,7 @@ public class TicketListView extends VerticalLayout {
         if (ticket == null) {
             closeEditor();
         } else {
-            form.setTicket(ticket);
+            form.setTicket(ticket, isNew);
 
             formAndDocumentsLayout.setVisible(true);
             contentLayout.setVisible(true);
@@ -230,7 +230,7 @@ public class TicketListView extends VerticalLayout {
     }
 
     private void closeEditor() {
-        form.setTicket(null);
+        form.setTicket(null, true);
 
         formAndDocumentsLayout.setVisible(false);
         contentLayout.setVisible(false);
