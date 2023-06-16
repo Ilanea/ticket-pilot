@@ -198,8 +198,19 @@ public class TicketForm extends VerticalLayout {
                     linkedProject.setReadOnly(true);
                     linkedUser.setReadOnly(true);
                     dueDate.setReadOnly(true);
+                } else {
+                    logger.info("User allowed to edit this ticket");
+                    buttonContainer.setVisible(true);
+                    ticketName.setReadOnly(false);
+                    ticketDescription.setReadOnly(false);
+                    ticketPriority.setReadOnly(false);
+                    ticketStatus.setReadOnly(false);
+                    linkedProject.setReadOnly(false);
+                    dueDate.setReadOnly(false);
+                    linkedUser.setReadOnly(false);
                 }
             } else {
+                logger.info("User allowed to edit this ticket");
                 buttonContainer.setVisible(true);
                 ticketName.setReadOnly(false);
                 ticketDescription.setReadOnly(false);
@@ -207,10 +218,10 @@ public class TicketForm extends VerticalLayout {
                 ticketStatus.setReadOnly(false);
                 linkedProject.setReadOnly(false);
                 dueDate.setReadOnly(false);
-                if(SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole()){
-                    linkedUser.setReadOnly(false);
-                } else {
+                if(!SecurityUtils.userHasAdminRole() && !SecurityUtils.userHasManagerRole()){
                     linkedUser.setReadOnly(true);
+                } else {
+                    linkedUser.setReadOnly(false);
                 }
             }
             logger.info("Set selected Ticket to: " + ticket);
