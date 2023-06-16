@@ -125,11 +125,11 @@ public class PilotService {
     ////////////////////////////////////////////////////////////////////
     // Tickets
     ////////////////////////////////////////////////////////////////////
-    public List<Ticket> findAllTickets(String stringFilter) {
+    public List<Ticket> findAllTickets(String stringFilter, Set<TicketStatus> status, Set<TicketPriority> priority) {
         if (stringFilter == null || stringFilter.isEmpty()) {
-            return ticketRepository.findAll();
+            return ticketRepository.findByStatusPriority(status, priority);
         } else {
-            return ticketRepository.search(stringFilter);
+            return ticketRepository.searchByStatusPriority(stringFilter, status, priority);
         }
     }
 
@@ -141,7 +141,7 @@ public class PilotService {
         if (stringFilter == null || stringFilter.isEmpty()) {
             return ticketRepository.findByAssigneeStatusPriority(SecurityUtils.getLoggedInUser(), status, priority);
         } else {
-            return ticketRepository.searchForUser(stringFilter, SecurityUtils.getLoggedInUser());
+            return ticketRepository.searchForUser(stringFilter, SecurityUtils.getLoggedInUser(), status, priority);
         }
     }
 
@@ -186,11 +186,11 @@ public class PilotService {
         return currentUser != null && currentUser.equals(project.getManager());
     }
 
-    public InputStream exportToExcel(String filterText) {
+    public InputStream exportToExcel(String filterText, Set<TicketStatus> status, Set<TicketPriority> priority){
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Tickets");
 
-        List<Ticket> tickets = findAllTickets(filterText);
+        List<Ticket> tickets = findAllTickets(filterText, status, priority);
 
         int rownum = 0;
         XSSFRow headerRow = sheet.createRow(rownum++);
@@ -212,7 +212,11 @@ public class PilotService {
             row.createCell(1).setCellValue(ticket.getTicketPriority().ordinal());
             row.createCell(2).setCellValue(ticket.getTicketStatus().ordinal());
             row.createCell(3).setCellValue(ticket.getProject().getProjectName());
-            row.createCell(4).setCellValue(ticket.getAssignee().getFirstName() + " " + ticket.getAssignee().getLastName());
+            if(ticket.getAssignee() == null){
+                row.createCell(4).setCellValue("Unassigned");
+            } else {
+                row.createCell(4).setCellValue(ticket.getAssignee().getFirstName() + " " + ticket.getAssignee().getLastName());
+            }
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();

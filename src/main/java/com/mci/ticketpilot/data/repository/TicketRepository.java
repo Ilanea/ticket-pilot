@@ -20,9 +20,9 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> search(@Param("searchTerm") String searchTerm);
 
     @Query("SELECT c FROM Ticket c " +
-            "WHERE c.assignee = :assignee " +
+            "WHERE c.assignee = :assignee AND c.ticketStatus IN :status AND c.ticketPriority IN :priority " +
             "AND LOWER(c.ticketName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
-    List<Ticket> searchForUser(@Param("searchTerm") String searchTerm, @Param("assignee") Users assignee);
+    List<Ticket> searchForUser(@Param("searchTerm") String searchTerm, @Param("assignee") Users assignee, Set<TicketStatus> status, Set<TicketPriority> priority);
 
     @Query("SELECT c.ticketProject FROM Ticket c WHERE c = :ticket")
     Project findProjectToTicket(Ticket ticket);
@@ -40,4 +40,11 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("SELECT t FROM Ticket t WHERE t.ticketCreationDate BETWEEN :fromDate AND :toDate")
     List<Ticket> findByAssigneeAndCreationDateBetween(@Param("fromDate") LocalDate fromDate, @Param("toDate") LocalDate toDate);
 
+    @Query("SELECT c FROM Ticket c WHERE c.ticketStatus IN :status AND c.ticketPriority IN :priority")
+    List<Ticket> findByStatusPriority(Set<TicketStatus> status, Set<TicketPriority> priority);
+
+    @Query("SELECT c FROM Ticket c " +
+            "WHERE  c.ticketStatus IN :status AND c.ticketPriority IN :priority " +
+            "AND LOWER(c.ticketName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+    List<Ticket> searchByStatusPriority(@Param("searchTerm") String searchTerm, Set<TicketStatus> status, Set<TicketPriority> priority);
 }

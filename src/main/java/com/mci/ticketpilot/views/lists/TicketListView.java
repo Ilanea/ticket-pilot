@@ -1,10 +1,13 @@
 package com.mci.ticketpilot.views.lists;
 
 import com.mci.ticketpilot.data.entity.Ticket;
+import com.mci.ticketpilot.data.entity.TicketPriority;
+import com.mci.ticketpilot.data.entity.TicketStatus;
 import com.mci.ticketpilot.data.service.PilotService;
 import com.mci.ticketpilot.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -40,6 +43,8 @@ public class TicketListView extends VerticalLayout {
     private Div documentsContainer;
     private Button createTicketButton;
     private Button backButton;
+    MultiSelectComboBox<TicketPriority> ticketPriority = new MultiSelectComboBox<>();
+    MultiSelectComboBox<TicketStatus> ticketStatus = new MultiSelectComboBox<>();
     private Button exportToExcelButton;
 
 
@@ -160,9 +165,21 @@ public class TicketListView extends VerticalLayout {
         backButton.addClickListener(click -> closeEditor());
         backButton.setVisible(false);
 
+        ticketPriority.setItems(TicketPriority.values());
+        ticketPriority.select(TicketPriority.values());
+        ticketPriority.setPlaceholder("Priority");
+        ticketPriority.setTooltipText("Priority");
+        ticketPriority.addValueChangeListener(e -> updateList());
+
+        ticketStatus.setItems(TicketStatus.values());
+        ticketStatus.select(TicketStatus.values());
+        ticketStatus.setPlaceholder("Status");
+        ticketStatus.setTooltipText("Status");
+        ticketStatus.addValueChangeListener(e -> updateList());
+
         // Button for Excel export
         this.exportToExcelButton = new Button("Export to Excel");
-        StreamResource sr = new StreamResource("tickets.xlsx", () -> service.exportToExcel(filterText.getValue()));
+        StreamResource sr = new StreamResource("tickets.xlsx", () -> service.exportToExcel(filterText.getValue(), ticketStatus.getValue(), ticketPriority.getValue()));
         Anchor downloadLink = new Anchor(sr, "");
         downloadLink.getElement().setAttribute("download", true);
         downloadLink.add(exportToExcelButton);
@@ -171,7 +188,7 @@ public class TicketListView extends VerticalLayout {
 
         var toolbar = new HorizontalLayout();
         toolbar.addClassName("toolbar");
-        toolbar.add(filterText, createTicketButton, backButton, downloadLink);
+        toolbar.add(filterText, backButton, ticketPriority, ticketStatus, createTicketButton, downloadLink);
 
         return toolbar;
     }
@@ -189,6 +206,8 @@ public class TicketListView extends VerticalLayout {
             formContainer.setVisible(true);
             createTicketButton.setVisible(false);
             backButton.setVisible(true);
+            ticketPriority.setVisible(false);
+            ticketStatus.setVisible(false);
             exportToExcelButton.setVisible(false);
 
             addClassName("editing");
@@ -222,6 +241,8 @@ public class TicketListView extends VerticalLayout {
         documentsContainer.setVisible(false);
         createTicketButton.setVisible(true);
         backButton.setVisible(false);
+        ticketPriority.setVisible(true);
+        ticketStatus.setVisible(true);
         exportToExcelButton.setVisible(true);
 
         removeClassName("editing");
@@ -237,12 +258,14 @@ public class TicketListView extends VerticalLayout {
         documentsContainer.setVisible(false);
         createTicketButton.setVisible(false);
         backButton.setVisible(true);
+        ticketPriority.setVisible(false);
+        ticketStatus.setVisible(false);
         exportToExcelButton.setVisible(false);
 
         editTicket(new Ticket(), true);
     }
 
     private void updateList() {
-        grid.setItems(service.findAllTickets(filterText.getValue()));
+        grid.setItems(service.findAllTickets(filterText.getValue(), ticketStatus.getValue(), ticketPriority.getValue()));
     }
 }
