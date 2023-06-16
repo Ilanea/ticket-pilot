@@ -1,6 +1,7 @@
 package com.mci.ticketpilot.views.calendar;
 
 import com.mci.ticketpilot.data.entity.Ticket;
+import com.mci.ticketpilot.data.entity.TicketPriority;
 import com.mci.ticketpilot.data.entity.TicketStatus;
 import com.mci.ticketpilot.data.service.PilotService;
 import com.mci.ticketpilot.views.MainLayout;
@@ -17,13 +18,15 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.context.annotation.Scope;
+import org.vaadin.stefan.fullcalendar.Entry;
+import org.vaadin.stefan.fullcalendar.FullCalendar;
+import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SpringComponent
 @Scope("prototype")
@@ -33,121 +36,66 @@ import java.util.Map;
 public class CalendarView extends VerticalLayout{
 
     private PilotService service;
-    private Map<String, VerticalLayout> dates;
-    private Select<String> monthPicker;
-    private Select<Integer> yearPicker;
-    private VerticalLayout calendarLayout; // New field to hold calendar
+    FullCalendar calendar;
 
     public CalendarView(PilotService service) {
         this.service = service;
 
         addClassName("calendar-view");
         setSizeFull();
-        this.dates = new HashMap<>();
 
-        monthPicker = new Select<>();
-        monthPicker.setItems("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
-        monthPicker.setValue("January");
-        monthPicker.addValueChangeListener(event -> createCalendar());
+        this.calendar = getCalendar();
 
-        yearPicker = new Select<>();
-        yearPicker.setItems(getYears());
-        yearPicker.setValue(YearMonth.now().getYear());
-        yearPicker.addValueChangeListener(event -> createCalendar());
+        add(calendar);
 
-        HorizontalLayout pickerLayout = new HorizontalLayout(monthPicker, yearPicker);
-        add(pickerLayout);
-
-        calendarLayout = new VerticalLayout(); // Initialize the calendar layout
-        add(calendarLayout); // Add it to the main layout
-
-        createCalendar();
     }
 
-    private void createCalendar() {
-        Month selectedMonth = Month.valueOf(monthPicker.getValue().toUpperCase());
-        int selectedYear = yearPicker.getValue();
-        YearMonth yearMonth = YearMonth.of(selectedYear, selectedMonth);
-        int daysInMonth = yearMonth.lengthOfMonth();
+    private FullCalendar getCalendar() {
 
-        calendarLayout.removeAll(); // Clear only the calendar layout
+        FullCalendar calendar = FullCalendarBuilder.create().withAutoBrowserTimezone().build();
+        calendar.addClassName("calendar");
+        calendar.setLocale(Locale.ENGLISH);
+        calendar.setFirstDay(DayOfWeek.MONDAY);
+        calendar.setEditable(false);
+        calendar.setDragScrollActive(false);
+        calendar.setSizeFull();
 
-        HorizontalLayout row = new HorizontalLayout();
-        for(int i = 1; i <= daysInMonth; i++) {
-            VerticalLayout day = createMonthColumn(String.valueOf(i));
-            day.addClassName("day");
-            day.setWidth("200px");
-            day.setHeight("200px");
-            dates.put(String.valueOf(i), day);
-            row.add(day);
+        List<Ticket> tickets = service.findAllTickets();
+        List<Entry> entries = new ArrayList<>();
 
-            if(i % 7 == 0) { // Create a new row for every 7 days
-                calendarLayout.add(row);
-                row = new HorizontalLayout();
+
+        for (Ticket ticket : tickets) {
+            if(ticket.getDueDate() != null){
+                Entry entry = new Entry();
+                entry.setTitle(ticket.getTicketName());
+                entry.setStart(ticket.getTicketCreationDate());
+                entry.setEnd(ticket.getDueDate());
+                entry.setColor(getColor(ticket));
+                entry.setEditable(false);
+                entries.add(entry);
             }
         }
 
-        if(daysInMonth % 7 != 0) { // Add the last row if it has less than 7 days
-            calendarLayout.add(row);
+        calendar.getEntryProvider().asInMemory().addEntries(entries);
+
+        return calendar;
+    }
+
+    private String getColor(Ticket ticket){
+        String color = "blue";
+
+        TicketPriority priority = ticket.getTicketPriority();
+        if (priority == TicketPriority.DEFAULT) {
+            color = "green";
+        } else if (priority == TicketPriority.LOW) {
+            color = "yellow";
+        } else if (priority == TicketPriority.MEDIUM) {
+            color = "orange";
+        } else if (priority == TicketPriority.HIGH) {
+            color = "red";
         }
-    }
 
-    private List<Integer> getYears() {
-        List<Integer> years = new ArrayList<>();
-        int currentYear = YearMonth.now().getYear();
-        for (int i = currentYear - 10; i <= currentYear + 10; i++) {
-            years.add(i);
-        }
-        return years;
-    }
-
-    private VerticalLayout createMonthColumn(String date) {
-        VerticalLayout month = new VerticalLayout();
-        month.addClassName("month-column");
-        month.setWidth("150px");
-        month.setHeight("150px");
-
-        Label label = new Label(date);
-        month.add(label);
-
-        return month;
-    }
-
-    private void updateView() {
-        for (Ticket ticket : service.findAllTickets()) {
-            TicketStatus status = ticket.getTicketStatus();
-            // Convert the status to a string
-            String statusString = status.name();
-            VerticalLayout column = dates.get(statusString);
-
-            if (column != null) {
-                Component ticketComponent = createTicketComponent(ticket);
-                column.add(ticketComponent);
-            } else {
-                System.out.println("Could not find column for status " + statusString);
-            }
-        }
-    }
-
-    private Component createTicketComponent(Ticket ticket) {
-        VerticalLayout ticketDiv = new VerticalLayout();
-        ticketDiv.addClassName("ticket");
-
-        Label ticketNameLabel = new Label("Name: " + ticket.getTicketName() + "\n");
-
-
-        ticketNameLabel.addClassName("ticket-name");
-
-
-        ticketDiv.add(ticketNameLabel);
-
-        ticketDiv.addClickListener(event -> openTicket());
-
-        return ticketDiv;
-    }
-
-    private void openTicket() {
-        UI.getCurrent().navigate(TicketListView.class);
+        return color;
     }
 
 }
