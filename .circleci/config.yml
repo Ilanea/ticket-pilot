@@ -58,7 +58,7 @@ jobs:
           unauthenticated: true
 
 workflows:
-  commit:
+  build-test-develop:
     jobs:
       - build-and-test
       - build-and-push:
