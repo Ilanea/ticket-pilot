@@ -49,7 +49,7 @@ public class Ticket extends AbstractEntity {
 
     @OneToMany(mappedBy = "ticket", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Document> documents = new ArrayList<>();
-
+    private LocalDate dueDate;
 
 
     // Getter and Setter methods
@@ -132,6 +132,14 @@ public class Ticket extends AbstractEntity {
 
     public void setDocuments(Document document) {
         this.documents.add(document);
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 }
 

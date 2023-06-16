@@ -13,6 +13,7 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -26,6 +27,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
 
 import java.io.IOException;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
@@ -41,6 +43,7 @@ public class TicketForm extends VerticalLayout {
     private Project selectedProject;
     private Users selectedUser;
     private TextField ticketName = new TextField("Title");
+    private DatePicker dueDate = new DatePicker("Due date");
     private ComboBox<TicketPriority> ticketPriority = new ComboBox<>("Priority");
     private ComboBox<TicketStatus> ticketStatus = new ComboBox<>("Status");
     private ComboBox<Project> linkedProject = new ComboBox<>("Project");
@@ -102,9 +105,12 @@ public class TicketForm extends VerticalLayout {
                     .setHelperText(e.getValue().length() + "/" + 300);
         });
 
+        LocalDate now = LocalDate.now(ZoneId.systemDefault());
+        dueDate.setMin(now);
+
 
         FormLayout formLayout = new FormLayout();
-        formLayout.add(ticketName, ticketStatus, ticketPriority ,ticketDescription, linkedProject, linkedUser);
+        formLayout.add(ticketName, ticketStatus, ticketPriority, dueDate, ticketDescription, linkedProject, linkedUser);
         formLayout.setColspan(ticketName, 2);
         formLayout.setColspan(ticketDescription, 2);
 
@@ -191,6 +197,7 @@ public class TicketForm extends VerticalLayout {
                     ticketStatus.setReadOnly(true);
                     linkedProject.setReadOnly(true);
                     linkedUser.setReadOnly(true);
+                    dueDate.setReadOnly(true);
                 }
             } else {
                 buttonContainer.setVisible(true);
@@ -199,7 +206,12 @@ public class TicketForm extends VerticalLayout {
                 ticketPriority.setReadOnly(false);
                 ticketStatus.setReadOnly(false);
                 linkedProject.setReadOnly(false);
-                linkedUser.setReadOnly(true);
+                dueDate.setReadOnly(false);
+                if(SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole()){
+                    linkedUser.setReadOnly(false);
+                } else {
+                    linkedUser.setReadOnly(true);
+                }
             }
             logger.info("Set selected Ticket to: " + ticket);
         }
