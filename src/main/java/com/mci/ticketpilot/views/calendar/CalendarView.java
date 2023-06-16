@@ -15,6 +15,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.context.annotation.Scope;
+import org.vaadin.stefan.fullcalendar.DisplayMode;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
 import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
@@ -71,6 +72,7 @@ public class CalendarView extends VerticalLayout {
         calendar.setLocale(Locale.ENGLISH);
         calendar.setFirstDay(DayOfWeek.MONDAY);
         calendar.setEditable(false);
+        calendar.setTimeslotsSelectable(false);
         calendar.setDragScrollActive(false);
         calendar.setSizeFull();
 
@@ -84,6 +86,30 @@ public class CalendarView extends VerticalLayout {
         add(calendar);
 
         updateCalendar();
+    }
+
+    private void updateCalendar() {
+
+        List<Ticket> tickets = service.findAllTickets();
+        List<Entry> entries = new ArrayList<>();
+
+        for (Ticket ticket : tickets) {
+            if (ticket.getDueDate() != null && service.isCurrentUserAssignee(ticket)) {
+                Entry entry = new Entry();
+                entry.setDisplayMode(DisplayMode.BLOCK);
+                entry.setEditable(false);
+                entry.setDurationEditable(false);
+                entry.setStartEditable(false);
+                entry.setTitle(ticket.getTicketName());
+                entry.setStart(ticket.getTicketCreationDate());
+                entry.setEnd(ticket.getDueDate());
+                entry.setColor(getColor(ticket));
+                entries.add(entry);
+            }
+        }
+
+        calendar.getEntryProvider().asInMemory().removeAllEntries();
+        calendar.getEntryProvider().asInMemory().addEntries(entries);
     }
 
     private void previousMonth() {
@@ -117,27 +143,6 @@ public class CalendarView extends VerticalLayout {
         String month = nextMonth.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
         String year = nextMonth.getYear() + "";
         return month + " " + year;
-    }
-
-    private void updateCalendar() {
-
-        List<Ticket> tickets = service.findAllTickets();
-        List<Entry> entries = new ArrayList<>();
-
-        for (Ticket ticket : tickets) {
-            if (ticket.getDueDate() != null && service.isCurrentUserAssignee(ticket)) {
-                Entry entry = new Entry();
-                entry.setTitle(ticket.getTicketName());
-                entry.setStart(ticket.getTicketCreationDate());
-                entry.setEnd(ticket.getDueDate());
-                entry.setColor(getColor(ticket));
-                entry.setEditable(false);
-                entries.add(entry);
-            }
-        }
-
-        calendar.getEntryProvider().asInMemory().removeAllEntries();
-        calendar.getEntryProvider().asInMemory().addEntries(entries);
     }
 
     private String getColor(Ticket ticket){
