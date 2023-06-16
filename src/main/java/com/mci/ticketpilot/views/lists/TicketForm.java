@@ -183,6 +183,7 @@ public class TicketForm extends VerticalLayout {
             if (!isNew) {
                 // Ticket Information can only be changed by Admins, Managers,the current assignee or the project manager of the project the ticket is assigned to
                 if (!SecurityUtils.userHasAdminRole() && !SecurityUtils.userHasManagerRole() && !service.isCurrentUserAssignee(ticket) && !service.isCurrentUserManager(ticket.getProject())) {
+                    logger.info("User is not allowed to edit this ticket");
                     buttonContainer.setVisible(false);
                     ticketName.setReadOnly(true);
                     ticketDescription.setReadOnly(true);
@@ -190,15 +191,15 @@ public class TicketForm extends VerticalLayout {
                     ticketStatus.setReadOnly(true);
                     linkedProject.setReadOnly(true);
                     linkedUser.setReadOnly(true);
-                } else {
-                    buttonContainer.setVisible(true);
-                    ticketName.setReadOnly(false);
-                    ticketDescription.setReadOnly(false);
-                    ticketPriority.setReadOnly(false);
-                    ticketStatus.setReadOnly(false);
-                    linkedProject.setReadOnly(false);
-                    linkedUser.setReadOnly(false);
                 }
+            } else {
+                buttonContainer.setVisible(true);
+                ticketName.setReadOnly(false);
+                ticketDescription.setReadOnly(false);
+                ticketPriority.setReadOnly(false);
+                ticketStatus.setReadOnly(false);
+                linkedProject.setReadOnly(false);
+                linkedUser.setReadOnly(true);
             }
             logger.info("Set selected Ticket to: " + ticket);
         }
