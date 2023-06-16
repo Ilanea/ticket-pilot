@@ -84,7 +84,7 @@ public class DashboardTickets extends VerticalLayout {
     }
 
     private void configureGrid() {
-        grid.setColumns("ticketName", "ticketPriority", "ticketStatus", "project.projectName", "ticketCreationDate");
+        grid.setColumns("ticketName", "ticketPriority", "ticketStatus", "project.projectName", "ticketCreationDate", "dueDate");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(event -> editTicket(event.getValue(), false));
