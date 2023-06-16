@@ -179,7 +179,7 @@ public class DashboardTickets extends VerticalLayout {
             closeEditor();
         } else {
             addClassName("editing");
-            form.setTicket(ticket);
+            form.setTicket(ticket, isNew);
 
             filterText.setVisible(false);
             ticketPriority.setVisible(false);
@@ -207,7 +207,7 @@ public class DashboardTickets extends VerticalLayout {
     }
 
     private void closeEditor() {
-        form.setTicket(null);
+        form.setTicket(null, true);
 
         filterText.setVisible(true);
         ticketPriority.setVisible(true);

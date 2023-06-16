@@ -31,14 +31,15 @@ import java.util.List;
 public class ProjectForm extends VerticalLayout {
 
     private PilotService service;
-    TextField projectName = new TextField("Project");
-    ComboBox<Users> projectManager = new ComboBox<>("Project Manager");
-    TextArea projectDescription = new TextArea("Description");
-    DatePicker projectStartDate = new DatePicker("Start date");
-    DatePicker projectEndDate = new DatePicker("End date");
-    Button save = new Button("Save");
-    Button delete = new Button("Delete");
-    Button close = new Button("Cancel");
+    private TextField projectName = new TextField("Project");
+    private ComboBox<Users> projectManager = new ComboBox<>("Project Manager");
+    private TextArea projectDescription = new TextArea("Description");
+    private DatePicker projectStartDate = new DatePicker("Start date");
+    private DatePicker projectEndDate = new DatePicker("End date");
+    private Component buttonContainer;
+    private Button save = new Button("Save");
+    private Button delete = new Button("Delete");
+    private Button close = new Button("Cancel");
 
     Binder<Project> binder = new BeanValidationBinder<>(Project.class);
 
@@ -79,11 +80,10 @@ public class ProjectForm extends VerticalLayout {
         formLayout.add(projectName, projectManager, projectDescription, projectStartDate, projectEndDate);
         formLayout.setColspan(projectDescription, 2);
 
-        Component buttonContainer = createButtonsLayout();
+        buttonContainer = createButtonsLayout();
         setHorizontalComponentAlignment(Alignment.CENTER, buttonContainer);
 
         add(formLayout, buttonContainer);
-
     }
 
     private Component createButtonsLayout() {
@@ -126,12 +126,14 @@ public class ProjectForm extends VerticalLayout {
         if(project != null) {
             binder.setBean(project);
 
-            // Project Name and Manager can only be changed by Admins, Managers or the current Manager
-            if (SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole() || service.isCurrentUserManager(project)) {
-                projectManager.setReadOnly(false);
-            } else {
+            // Project can only be changed by Admins, Managers or the current Manager
+            if (!SecurityUtils.userHasAdminRole() && !SecurityUtils.userHasManagerRole() && !service.isCurrentUserManager(project)) {
+                buttonContainer.setVisible(false);
                 projectManager.setReadOnly(true);
                 projectName.setReadOnly(true);
+                projectEndDate.setReadOnly(true);
+                projectStartDate.setReadOnly(true);
+                projectDescription.setReadOnly(true);
             }
         }
     }
