@@ -71,9 +71,8 @@ public class CalendarView extends VerticalLayout {
         calendar.addClassName("calendar");
         calendar.setLocale(Locale.ENGLISH);
         calendar.setFirstDay(DayOfWeek.MONDAY);
-        calendar.setEditable(false);
-        calendar.setTimeslotsSelectable(false);
-        calendar.setDragScrollActive(false);
+        calendar.setEntryStartEditable(false);
+        calendar.setMaxEntriesPerDay(3);
         calendar.setSizeFull();
 
         calendar.addDatesRenderedListener(event -> {
@@ -96,6 +95,7 @@ public class CalendarView extends VerticalLayout {
         for (Ticket ticket : tickets) {
             if (ticket.getDueDate() != null && service.isCurrentUserAssignee(ticket)) {
                 Entry entry = new Entry();
+                entry.setAllDay(true);
                 entry.setDisplayMode(DisplayMode.BLOCK);
                 entry.setEditable(false);
                 entry.setDurationEditable(false);
