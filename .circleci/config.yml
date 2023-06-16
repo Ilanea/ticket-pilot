@@ -62,8 +62,16 @@ workflows:
     jobs:
       - build-and-test
       - build-and-push:
+          filters:
+            branches:
+              only:
+                - develop
           requires:
             - build-and-test
       - update-service:
+          filters:
+            branches:
+              only:
+                - develop
           requires:
             - build-and-push
