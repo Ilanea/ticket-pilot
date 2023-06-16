@@ -22,8 +22,6 @@ import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.ZoneId;
 import java.time.format.TextStyle;
 import java.util.*;
 
