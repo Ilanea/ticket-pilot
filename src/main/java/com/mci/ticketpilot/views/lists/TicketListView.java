@@ -15,6 +15,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -41,6 +42,8 @@ public class TicketListView extends VerticalLayout {
     private Div formContainer;
     private Div commentsContainer;
     private Div documentsContainer;
+
+
     private Button createTicketButton;
     private Button backButton;
     MultiSelectComboBox<TicketPriority> ticketPriority = new MultiSelectComboBox<>();
@@ -92,11 +95,35 @@ public class TicketListView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassNames("ticket-grid");
         grid.setSizeFull();
-        grid.setColumns("ticketName", "ticketPriority", "ticketStatus", "project.projectName", "assignee", "ticketCreationDate", "dueDate");
+
+        // Definieren Sie die anderen Spalten wie gewohnt.
+        grid.setColumns("ticketName", "ticketStatus", "project.projectName", "assignee", "ticketCreationDate", "dueDate");
+
+        // Fügen Sie eine neue Spalte für Ticketpriorität hinzu.
+        grid.addColumn(new ComponentRenderer<>(ticket -> {
+            Div text = new Div();
+            text.setText(ticket.getTicketPriority().toString());
+
+            switch (ticket.getTicketPriority()) {
+                case LOW:
+                    text.getStyle().set("color", "green");
+                    break;
+                case MEDIUM:
+                    text.getStyle().set("color", "orange");
+                    break;
+                case HIGH:
+                    text.getStyle().set("color", "red");
+                    break;
+            }
+
+            return text;
+        })).setHeader("Ticket Priority").setAutoWidth(true);
+
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(event -> editTicket(event.getValue(), false));
     }
+
 
     private Div getCommentsContainer() {
         commentsContainer = new Div();
