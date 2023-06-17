@@ -153,7 +153,7 @@ public class TicketForm extends VerticalLayout {
         return buttonContainer;
     }
 
-    private void validateAndSave() throws EmailException, IOException {
+    public void validateAndSave() throws EmailException, IOException {
         if (binder.isValid()) {
             Ticket ticket = binder.getBean();
             if(ticket.getTicketCreationDate() == null){

@@ -3,8 +3,13 @@ package com.mci.ticketpilot.views.calendar;
 import com.mci.ticketpilot.data.entity.Ticket;
 import com.mci.ticketpilot.data.entity.TicketPriority;
 import com.mci.ticketpilot.data.service.PilotService;
+import com.mci.ticketpilot.security.SecurityUtils;
 import com.mci.ticketpilot.views.MainLayout;
+import com.mci.ticketpilot.views.lists.TicketForm;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -24,6 +29,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @SpringComponent
@@ -40,6 +46,8 @@ public class CalendarView extends VerticalLayout {
     private Button thisMonthButton;
     private Button todayButton;
     private LocalDate currentDate = LocalDate.now();
+    private TicketForm ticketForm;
+    private Dialog dialog;
 
     public CalendarView(PilotService service) {
         this.service = service;
@@ -47,6 +55,9 @@ public class CalendarView extends VerticalLayout {
         addClassName("calendar-view");
         setAlignItems(FlexComponent.Alignment.CENTER);
         setSizeFull();
+
+        dialog = new Dialog();
+        ticketForm = new TicketForm(service.findAllTickets(), service);
 
         prevMonthButton = new Button(getPreviousMonthName(), new Icon(VaadinIcon.ARROW_LEFT));
         prevMonthButton.addClickListener(event -> previousMonth());
@@ -69,7 +80,6 @@ public class CalendarView extends VerticalLayout {
         calendar.addClassName("calendar");
         calendar.setLocale(Locale.ENGLISH);
         calendar.setFirstDay(DayOfWeek.MONDAY);
-        calendar.setEntryStartEditable(false);
         calendar.setMaxEntriesPerDay(3);
         calendar.setSizeFull();
 
@@ -78,6 +88,14 @@ public class CalendarView extends VerticalLayout {
             prevMonthButton.setText(getPreviousMonthName());
             nextMonthButton.setText(getNextMonthName());
             thisMonthButton.setText(getcurrentMonth());
+        });
+
+        calendar.addEntryClickedListener(event -> {
+            Entry clickedEntry = event.getEntry();
+            Ticket ticket = findTicketByEntry(clickedEntry);
+            if (ticket != null) {
+                openTicketForm(ticket);
+            }
         });
 
         add(calendar);
@@ -91,23 +109,58 @@ public class CalendarView extends VerticalLayout {
         List<Entry> entries = new ArrayList<>();
 
         for (Ticket ticket : tickets) {
-            if (ticket.getDueDate() != null && service.isCurrentUserAssignee(ticket)) {
-                Entry entry = new Entry();
-                entry.setAllDay(true);
-                entry.setDisplayMode(DisplayMode.BLOCK);
-                entry.setEditable(false);
-                entry.setDurationEditable(false);
-                entry.setStartEditable(false);
-                entry.setTitle(ticket.getTicketName());
-                entry.setStart(ticket.getTicketCreationDate());
-                entry.setEnd(ticket.getDueDate());
-                entry.setColor(getColor(ticket));
-                entries.add(entry);
+            if(ticket.getDueDate() != null){
+                if(SecurityUtils.userHasAdminRole() || SecurityUtils.userHasManagerRole()){
+                    // Admins and Managers can see all tickets
+                    Entry entry = new Entry();
+                    entry.setAllDay(true);
+                    entry.setDisplayMode(DisplayMode.AUTO);
+                    entry.setStartEditable(false);
+                    entry.setTitle(ticket.getTicketName());
+                    entry.setStart(ticket.getTicketCreationDate());
+                    entry.setEnd(ticket.getDueDate());
+                    entry.setColor(getColor(ticket));
+                    entries.add(entry);
+                } else if (service.isCurrentUserManager(ticket.getProject()) || service.isCurrentUserAssignee(ticket)){
+                    // Managers can see all tickets in their projects and Users can see their own tickets
+                    Entry entry = new Entry();
+                    entry.setAllDay(true);
+                    entry.setDisplayMode(DisplayMode.AUTO);
+                    entry.setStartEditable(false);
+                    entry.setTitle(ticket.getTicketName());
+                    entry.setStart(ticket.getTicketCreationDate());
+                    entry.setEnd(ticket.getDueDate());
+                    entry.setColor(getColor(ticket));
+                    entries.add(entry);
+                }
             }
         }
 
         calendar.getEntryProvider().asInMemory().removeAllEntries();
         calendar.getEntryProvider().asInMemory().addEntries(entries);
+    }
+
+    private Ticket findTicketByEntry(Entry entry) {
+        List<Ticket> tickets = service.findAllTickets();
+        for (Ticket ticket : tickets) {
+            if (ticket.getTicketName().equals(entry.getTitle()) && ticket.getTicketCreationDate().equals(entry.getStart().toLocalDate()) && ticket.getDueDate().equals(entry.getEnd().toLocalDate())) {
+                return ticket;
+            }
+        }
+        return null;
+    }
+
+    private void openTicketForm(Ticket ticket) {
+        ticketForm.setTicket(ticket, false);
+        dialog.add(ticketForm);
+
+        // Save, Delete and Cancel Listeners kinda not working
+        ticketForm.setEnabled(false);
+
+        Button closeButton = new Button("Close", event -> dialog.close());
+        dialog.open();
+        dialog.removeAll();
+        dialog.add(ticketForm, closeButton);
     }
 
     private void previousMonth() {
