@@ -30,8 +30,8 @@ jobs:
             echo "spring.datasource.driver-class-name=org.postgresql.Driver" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
             echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
             echo "spring.jpa.defer-datasource-initialization=true" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
-            echo "#spring.jpa.hibernate.ddl-auto=create" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
-            echo "#spring.sql.init.mode=always" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
+            echo "spring.jpa.hibernate.ddl-auto=create" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
+            echo "spring.sql.init.mode=always" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
             echo "sendgrid.api.key=$SENDGRID_API_KEY" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
             echo "sendgrid.sender.email=$SENDGRID_SENDER" >> $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
       - gcp-gcr/gcr-auth
