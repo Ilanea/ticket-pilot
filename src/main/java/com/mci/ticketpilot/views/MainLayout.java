@@ -67,30 +67,22 @@ public class MainLayout extends AppLayout {
 
         HorizontalLayout header;
 
-        ToggleButton themeToggle = new ToggleButton("Dark Mode");
+        ToggleButton themeToggle = new ToggleButton("Dark Mode:");
+        themeToggle.setSizeFull();
         themeToggle.addClassName("theme-toggle");
         themeToggle.addValueChangeListener(evt -> setTheme(evt.getValue()));
 
 
         if (securityService.getAuthenticatedUser() != null) {
-            Button logout = new Button("Logout", click -> securityService.logout());
-            Paragraph smallText = new Paragraph("logged in as " + SecurityUtils.getLoggedInUser().getFirstName() + " " + SecurityUtils.getLoggedInUser().getLastName());
-            smallText.getStyle().set("font-size", "0.8em");
-
-            VerticalLayout logoutLayout = new VerticalLayout(logout, smallText);
-            logoutLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-
-            logoutLayout.setPadding(false);
-            logoutLayout.setSpacing(false);
+            Button logout = new Button("Logout: " +  SecurityUtils.getLoggedInUser().toString(), click -> securityService.logout());
 
             // Neue horizontalLayout Instanz für themeToggle und logoutLayout
-            HorizontalLayout rightLayout = new HorizontalLayout(themeToggle, logoutLayout);
-
+            HorizontalLayout rightLayout = new HorizontalLayout(themeToggle, logout);
 
             // Füge rightLayout zum Header hinzu, anstatt themeToggle und logoutLayout direkt hinzuzufügen
             header = new HorizontalLayout(logoImage, logo, rightLayout);
             header.addClassName("header-class");
-            header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN); // Platz zwischen den Komponenten verteilen
+            header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
             header.expand(logo);
         } else {
             header = new HorizontalLayout(logoImage, logo, themeToggle);

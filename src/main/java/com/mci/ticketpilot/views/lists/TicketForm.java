@@ -56,8 +56,6 @@ public class TicketForm extends VerticalLayout {
     private List<Ticket> tickets = new ArrayList<>();
     private Registration saveListener;
 
-    private TextArea asigneeField = new TextArea("Asignee");
-    //private TextField creatorField = new TextField("Creator");
 
     Binder<Ticket> binder = new BeanValidationBinder<>(Ticket.class);
 
@@ -111,11 +109,9 @@ public class TicketForm extends VerticalLayout {
         LocalDate now = LocalDate.now(ZoneId.systemDefault());
         dueDate.setMin(now);
 
-        asigneeField.setReadOnly(true);
-        //creatorField.setReadOnly(true);
 
         FormLayout formLayout = new FormLayout();
-        formLayout.add(ticketName, ticketStatus, ticketPriority, dueDate, ticketDescription, linkedProject, linkedUser, asigneeField);
+        formLayout.add(ticketName, ticketStatus, ticketPriority, dueDate, ticketDescription, linkedProject, linkedUser);
         formLayout.setColspan(ticketName, 2);
         formLayout.setColspan(ticketDescription, 2);
 
@@ -192,10 +188,13 @@ public class TicketForm extends VerticalLayout {
         if(ticket != null){
             binder.setBean(ticket);
 
-            asigneeField.setValue(ticket.getAssignee() != null ? ticket.getAssignee().getFirstName()+ " " + ticket.getAssignee().getLastName() + "\nContact Information: " + ticket.getAssignee().getEmail()  : "N/A");
-            //creatorField.setValue(ticket.getAssignee() != null ? ticket.getAssignee().getFirstName() : "N/A");
-
             if (!isNew) {
+                if(selectedUser != null){
+                    linkedUser.setTooltipText(selectedUser.getEmail());
+                }
+                if(selectedProject != null){
+                    linkedProject.setTooltipText("Project Manager: " + selectedProject.getManager().toString() + "\n" + selectedProject.getManager().getEmail());
+                }
                 // Ticket Information can only be changed by Admins, Managers,the current assignee or the project manager of the project the ticket is assigned to
                 if (!SecurityUtils.userHasAdminRole() && !SecurityUtils.userHasManagerRole() && !service.isCurrentUserAssignee(ticket) && !service.isCurrentUserManager(ticket.getProject())) {
                     logger.info("User is not allowed to edit this ticket");
