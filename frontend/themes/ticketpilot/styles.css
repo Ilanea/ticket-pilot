@@ -9,7 +9,7 @@ html {
     --lumo-success-color: hsl(145, 63%, 59%);
 }
 
-.router-link {
+.router-link, .router-link * {
     color: #337ab7;
     text-decoration: none;
     padding: 8px 40px;
@@ -113,3 +113,20 @@ html {
     margin: -10px;
 }
 
+.highlighted-row {
+    background-color: red; /* Choose your preferred color */
+}
+
+
+
+.low-priority {
+    background: lightgreen;
+}
+
+.medium-priority {
+    background: lightyellow;
+}
+
+.high-priority {
+    background: lightcoral;
+}

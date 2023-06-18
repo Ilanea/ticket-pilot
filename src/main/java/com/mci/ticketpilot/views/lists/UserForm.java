@@ -132,5 +132,7 @@ public class UserForm extends FormLayout {
     public Registration addCloseListener(ComponentEventListener<CloseEvent> listener) {
         return addListener(CloseEvent.class, listener);
     }
-
+    public String getCurrentUserEmail() {
+        return email.getValue();
+    }
 }

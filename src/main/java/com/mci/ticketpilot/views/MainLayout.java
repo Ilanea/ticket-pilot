@@ -9,6 +9,7 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -21,6 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vaadin.flow.component.html.Image;
+
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -67,24 +74,46 @@ public class MainLayout extends AppLayout {
 
         if (securityService.getAuthenticatedUser() != null) {
             Button logout = new Button("Logout", click -> securityService.logout());
-            header = new HorizontalLayout(logoImage, logo, themeToggle, logout);
+            Paragraph smallText = new Paragraph("logged in as " + SecurityUtils.getLoggedInUser().getFirstName() + " " + SecurityUtils.getLoggedInUser().getLastName());
+            smallText.getStyle().set("font-size", "0.8em");
+
+            VerticalLayout logoutLayout = new VerticalLayout(logout, smallText);
+            logoutLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+            logoutLayout.setPadding(false);
+            logoutLayout.setSpacing(false);
+
+            // Neue horizontalLayout Instanz für themeToggle und logoutLayout
+            HorizontalLayout rightLayout = new HorizontalLayout(themeToggle, logoutLayout);
+
+
+            // Füge rightLayout zum Header hinzu, anstatt themeToggle und logoutLayout direkt hinzuzufügen
+            header = new HorizontalLayout(logoImage, logo, rightLayout);
             header.addClassName("header-class");
+            header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN); // Platz zwischen den Komponenten verteilen
+            header.expand(logo);
         } else {
             header = new HorizontalLayout(logoImage, logo, themeToggle);
             header.addClassName("header-class");
+            header.expand(logo);
         }
 
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-        header.expand(logo);
         header.setWidthFull();
 
         RouterLink dashboard = new RouterLink("Dashboard", DashboardView.class);
         dashboard.addClassName("router-link");
         dashboard.setHighlightCondition(HighlightConditions.sameLocation());
 
+
+
+
         RouterLink userlist = new RouterLink("Users", UserListView.class);
         userlist.addClassName("router-link");
         userlist.setHighlightCondition(HighlightConditions.sameLocation());
+
+
+
 
         RouterLink projectlist = new RouterLink("Projects", ProjectListView.class);
         projectlist.addClassName("router-link");

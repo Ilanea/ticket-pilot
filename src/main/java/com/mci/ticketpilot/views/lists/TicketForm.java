@@ -56,6 +56,9 @@ public class TicketForm extends VerticalLayout {
     private List<Ticket> tickets = new ArrayList<>();
     private Registration saveListener;
 
+    private TextArea asigneeField = new TextArea("Asignee");
+    //private TextField creatorField = new TextField("Creator");
+
     Binder<Ticket> binder = new BeanValidationBinder<>(Ticket.class);
 
     public TicketForm(List<Ticket> tickets, PilotService service) {
@@ -108,9 +111,11 @@ public class TicketForm extends VerticalLayout {
         LocalDate now = LocalDate.now(ZoneId.systemDefault());
         dueDate.setMin(now);
 
+        asigneeField.setReadOnly(true);
+        //creatorField.setReadOnly(true);
 
         FormLayout formLayout = new FormLayout();
-        formLayout.add(ticketName, ticketStatus, ticketPriority, dueDate, ticketDescription, linkedProject, linkedUser);
+        formLayout.add(ticketName, ticketStatus, ticketPriority, dueDate, ticketDescription, linkedProject, linkedUser, asigneeField);
         formLayout.setColspan(ticketName, 2);
         formLayout.setColspan(ticketDescription, 2);
 
@@ -186,6 +191,10 @@ public class TicketForm extends VerticalLayout {
     public void setTicket(Ticket ticket, boolean isNew) {
         if(ticket != null){
             binder.setBean(ticket);
+
+            asigneeField.setValue(ticket.getAssignee() != null ? ticket.getAssignee().getFirstName()+ " " + ticket.getAssignee().getLastName() + "\nContact Information: " + ticket.getAssignee().getEmail()  : "N/A");
+            //creatorField.setValue(ticket.getAssignee() != null ? ticket.getAssignee().getFirstName() : "N/A");
+
             if (!isNew) {
                 // Ticket Information can only be changed by Admins, Managers,the current assignee or the project manager of the project the ticket is assigned to
                 if (!SecurityUtils.userHasAdminRole() && !SecurityUtils.userHasManagerRole() && !service.isCurrentUserAssignee(ticket) && !service.isCurrentUserManager(ticket.getProject())) {
