@@ -5,6 +5,7 @@ import com.mci.ticketpilot.security.SecurityUtils;
 import com.mci.ticketpilot.views.calendar.CalendarView;
 import com.mci.ticketpilot.views.lists.*;
 import com.vaadin.componentfactory.ToggleButton;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
@@ -101,37 +102,121 @@ public class MainLayout extends AppLayout {
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         header.setWidthFull();
 
-        RouterLink dashboard = new RouterLink("Dashboard", DashboardView.class);
+        Image dashboardIcon = new Image("images/homeicon.png", "Dashboard");
+        dashboardIcon.setHeight("25px");
+        dashboardIcon.setWidth("25px");
+
+        Image userIcon = new Image("images/usericon.png", "Users");
+        userIcon.setHeight("25px");
+        userIcon.setWidth("25px");
+
+        Image projectIcon = new Image("images/projecticon.png", "Projects");
+        projectIcon.setHeight("25px");
+        projectIcon.setWidth("25px");
+
+        Image ticketIcon = new Image("images/ticketicon.png", "Tickets");
+        ticketIcon.setHeight("25px");
+        ticketIcon.setWidth("25px");
+
+        Image calendarIcon = new Image("images/calendaricon.png", "Calendar");
+        calendarIcon.setHeight("25px");
+        calendarIcon.setWidth("25px");
+
+        Image helpIcon = new Image("images/helpicon.png", "Help");
+        helpIcon.setHeight("25px");
+        helpIcon.setWidth("25px");
+
+        Image kanbanIcon = new Image("images/kanbanicon.png", "Kanban");
+        kanbanIcon.setHeight("25px");
+        kanbanIcon.setWidth("25px");
+
+
+
+        VerticalLayout dashboardLayout = new VerticalLayout();
+        dashboardLayout.add( new Text("Dashboard"), dashboardIcon);
+        dashboardLayout.setSpacing(false);
+        dashboardLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+
+
+        RouterLink dashboard = new RouterLink((String) null, DashboardView.class);
+        dashboard.add(dashboardLayout);
         dashboard.addClassName("router-link");
         dashboard.setHighlightCondition(HighlightConditions.sameLocation());
 
 
 
 
-        RouterLink userlist = new RouterLink("Users", UserListView.class);
+        VerticalLayout userlayout = new VerticalLayout();
+        userlayout.add( new Text("Users"), userIcon);
+        userlayout.setSpacing(false);
+        userlayout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+
+
+
+        RouterLink userlist = new RouterLink((String) null, UserListView.class);
+        userlist.add(userlayout);
         userlist.addClassName("router-link");
         userlist.setHighlightCondition(HighlightConditions.sameLocation());
 
+        VerticalLayout projectlayout = new VerticalLayout();
+        projectlayout.setSpacing(false);
+        projectlayout.add( new Text("Projects"), projectIcon);
+        projectlayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
 
-
-        RouterLink projectlist = new RouterLink("Projects", ProjectListView.class);
+        RouterLink projectlist = new RouterLink((String) null, ProjectListView.class);
+        projectlist.add(projectlayout);
         projectlist.addClassName("router-link");
         projectlist.setHighlightCondition(HighlightConditions.sameLocation());
 
-        RouterLink ticketlist = new RouterLink("Tickets", TicketListView.class);
+
+
+        VerticalLayout ticketlayout = new VerticalLayout();
+        ticketlayout.setSpacing(false);
+        ticketlayout.add( new Text("Tickets"), ticketIcon);
+        ticketlayout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+
+
+        RouterLink ticketlist = new RouterLink((String) null, TicketListView.class);
+        ticketlist.add(ticketlayout);
         ticketlist.addClassName("router-link");
         ticketlist.setHighlightCondition(HighlightConditions.sameLocation());
 
-        RouterLink helpList = new RouterLink("Help", HelpView.class);
+
+        VerticalLayout helpiconLayout = new VerticalLayout();
+        helpiconLayout.setSpacing(false);
+        helpiconLayout.add( new Text("Help"), helpIcon);
+        helpiconLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+
+        RouterLink helpList = new RouterLink((String) null, HelpView.class);
+        helpList.add(helpiconLayout);
         helpList.addClassName("router-link");
         helpList.setHighlightCondition(HighlightConditions.sameLocation());
 
-        RouterLink kanbanList = new RouterLink("Kanban", KanbanView.class);
+
+        VerticalLayout kanbanLayout = new VerticalLayout();
+        kanbanLayout.add( new Text("Kanban"), kanbanIcon);
+        kanbanLayout.setSpacing(false);
+        kanbanLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+
+        RouterLink kanbanList = new RouterLink((String) null, KanbanView.class);
+        kanbanList.add(kanbanLayout);
         kanbanList.addClassName("router-link");
         kanbanList.setHighlightCondition(HighlightConditions.sameLocation());
 
-        RouterLink calendarView = new RouterLink("Calendar", CalendarView.class);
+
+        VerticalLayout calendarLayout = new VerticalLayout();
+        calendarLayout.setSpacing(false);
+        calendarLayout.add( new Text("Calendar"), calendarIcon);
+        calendarLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+        RouterLink calendarView = new RouterLink((String) null, CalendarView.class);
+        calendarView.add(calendarLayout);
         calendarView.addClassName("router-link");
         calendarView.setHighlightCondition(HighlightConditions.sameLocation());
 

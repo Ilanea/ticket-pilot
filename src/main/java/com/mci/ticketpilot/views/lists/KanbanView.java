@@ -117,7 +117,24 @@ public class KanbanView extends VerticalLayout {
 
         ticketNameLabel.addClassName("ticket-name");
         ticketDescriptionLabel.addClassName("ticket-description");
-        ticketPriorityLabel.addClassName("ticket-priority");
+        switch (ticket.getTicketPriority()) {
+            case LOW:
+                ticketPriorityLabel.addClassName("ticket-priority-low");
+                break;
+            case MEDIUM:
+                ticketPriorityLabel.addClassName("ticket-priority-medium");
+                break;
+            case HIGH:
+                ticketPriorityLabel.addClassName("ticket-priority-high");
+                break;
+            case DEFAULT:
+                ticketPriorityLabel.addClassName("ticket-priority-default");
+                break;
+            case NEXT_SPRINT:
+                ticketPriorityLabel.addClassName("ticket-priority-next-sprint");
+                break;
+        }
+
         ticketAssigneeLabel.addClassName("ticket-assignee");
 
         ticketDiv.add(ticketNameLabel, ticketDescriptionLabel, ticketPriorityLabel, ticketAssigneeLabel);
