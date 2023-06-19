@@ -118,7 +118,7 @@ public class TicketForm extends VerticalLayout {
         dueDate.setMin(now);
 
         assigneeField.setReadOnly(true);
-        assigneeField.setClassName("asignee-field");
+        assigneeField.setClassName("assignee-field");
         assigneeField.addThemeVariants(TextAreaVariant.LUMO_SMALL);
         authorField.setReadOnly(true);
         authorField.setClassName("author-field");
