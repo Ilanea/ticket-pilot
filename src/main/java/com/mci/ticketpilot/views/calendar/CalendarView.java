@@ -199,19 +199,19 @@ public class CalendarView extends VerticalLayout {
     private String getColor(Ticket ticket){
         String color = "blue";
 
-        TicketPriority priority = ticket.getTicketPriority();
-        if (priority == TicketPriority.DEFAULT) {
-            color = "gray";
-        } else if (priority == TicketPriority.LOW) {
-            color = "green";
-        } else if (priority == TicketPriority.MEDIUM) {
-            color = "orange";
-        } else if (priority == TicketPriority.HIGH) {
-            color = "red";
+        switch (ticket.getTicketPriority()) {
+            case LOW:
+                color = "green";
+                break;
+            case MEDIUM:
+                color = "orange";
+                break;
+            case HIGH:
+                color = "red";
+                break;
         }
-
+      
         return color;
     }
-
 }
 

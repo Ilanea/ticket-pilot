@@ -96,10 +96,8 @@ public class TicketListView extends VerticalLayout {
         grid.addClassNames("ticket-grid");
         grid.setSizeFull();
 
-        // Spalten definieren
         grid.setColumns("ticketName", "ticketStatus", "project.projectName", "assignee", "ticketCreationDate", "dueDate");
 
-        // Farbe der Priorität anzeigen
         grid.addColumn(new ComponentRenderer<>(ticket -> {
             Div text = new Div();
             text.setText(ticket.getTicketPriority().toString());

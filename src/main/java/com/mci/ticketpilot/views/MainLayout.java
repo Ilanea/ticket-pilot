@@ -68,30 +68,24 @@ public class MainLayout extends AppLayout {
 
         HorizontalLayout header;
 
-        ToggleButton themeToggle = new ToggleButton("Dark Mode");
+        ToggleButton themeToggle = new ToggleButton("Dark Mode:");
+        themeToggle.setSizeFull();
         themeToggle.addClassName("theme-toggle");
         themeToggle.addValueChangeListener(evt -> setTheme(evt.getValue()));
 
 
         if (securityService.getAuthenticatedUser() != null) {
-            Button logout = new Button("Logout", click -> securityService.logout());
-            Paragraph smallText = new Paragraph("logged in as " + SecurityUtils.getLoggedInUser().getFirstName() + " " + SecurityUtils.getLoggedInUser().getLastName());
-            smallText.getStyle().set("font-size", "0.8em");
-
-            VerticalLayout logoutLayout = new VerticalLayout(logout, smallText);
-            logoutLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-
-            logoutLayout.setPadding(false);
-            logoutLayout.setSpacing(false);
+            Button logout = new Button("Logout: " +  SecurityUtils.getLoggedInUser().toString(), click -> securityService.logout());
 
             // Neue horizontalLayout Instanz für themeToggle und logoutLayout
-            HorizontalLayout rightLayout = new HorizontalLayout(themeToggle, logoutLayout);
-
+            HorizontalLayout rightLayout = new HorizontalLayout(themeToggle, logout);
 
             // Füge rightLayout zum Header hinzu, anstatt themeToggle und logoutLayout direkt hinzuzufügen
             header = new HorizontalLayout(logoImage, logo, rightLayout);
             header.addClassName("header-class");
-            header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN); // Platz zwischen den Komponenten verteilen
+
+            header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+
             header.expand(logo);
         } else {
             header = new HorizontalLayout(logoImage, logo, themeToggle);
@@ -137,14 +131,10 @@ public class MainLayout extends AppLayout {
         dashboardLayout.setSpacing(false);
         dashboardLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
-
-
         RouterLink dashboard = new RouterLink((String) null, DashboardView.class);
         dashboard.add(dashboardLayout);
         dashboard.addClassName("router-link");
         dashboard.setHighlightCondition(HighlightConditions.sameLocation());
-
-
 
 
         VerticalLayout userlayout = new VerticalLayout();
@@ -152,19 +142,16 @@ public class MainLayout extends AppLayout {
         userlayout.setSpacing(false);
         userlayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
-
-
-
         RouterLink userlist = new RouterLink((String) null, UserListView.class);
         userlist.add(userlayout);
         userlist.addClassName("router-link");
         userlist.setHighlightCondition(HighlightConditions.sameLocation());
 
+      
         VerticalLayout projectlayout = new VerticalLayout();
         projectlayout.setSpacing(false);
         projectlayout.add( new Text("Projects"), projectIcon);
         projectlayout.setAlignItems(FlexComponent.Alignment.CENTER);
-
 
         RouterLink projectlist = new RouterLink((String) null, ProjectListView.class);
         projectlist.add(projectlayout);
@@ -172,13 +159,10 @@ public class MainLayout extends AppLayout {
         projectlist.setHighlightCondition(HighlightConditions.sameLocation());
 
 
-
         VerticalLayout ticketlayout = new VerticalLayout();
         ticketlayout.setSpacing(false);
         ticketlayout.add( new Text("Tickets"), ticketIcon);
         ticketlayout.setAlignItems(FlexComponent.Alignment.CENTER);
-
-
 
         RouterLink ticketlist = new RouterLink((String) null, TicketListView.class);
         ticketlist.add(ticketlayout);
@@ -191,7 +175,6 @@ public class MainLayout extends AppLayout {
         helpiconLayout.add( new Text("Help"), helpIcon);
         helpiconLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
-
         RouterLink helpList = new RouterLink((String) null, HelpView.class);
         helpList.add(helpiconLayout);
         helpList.addClassName("router-link");
@@ -202,7 +185,6 @@ public class MainLayout extends AppLayout {
         kanbanLayout.add( new Text("Kanban"), kanbanIcon);
         kanbanLayout.setSpacing(false);
         kanbanLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-
 
         RouterLink kanbanList = new RouterLink((String) null, KanbanView.class);
         kanbanList.add(kanbanLayout);
@@ -220,6 +202,7 @@ public class MainLayout extends AppLayout {
         calendarView.addClassName("router-link");
         calendarView.setHighlightCondition(HighlightConditions.sameLocation());
 
+      
         HorizontalLayout linksLayout = new HorizontalLayout();
         linksLayout.add(dashboard, projectlist, ticketlist, kanbanList, calendarView); // helpList removed from here
         linksLayout.setWidthFull();
