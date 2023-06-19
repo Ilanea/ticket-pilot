@@ -210,9 +210,8 @@ public class CalendarView extends VerticalLayout {
                 color = "red";
                 break;
         }
-
+      
         return color;
     }
-
 }
 

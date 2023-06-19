@@ -12,12 +12,12 @@ html {
 .router-link, .router-link * {
     color: #337ab7;
     text-decoration: none;
-    padding: 8px 40px;
+    padding: 4px 30px;
     transition: background-color 0.2s ease;
     font-weight: bold;
     font-size: 1.2em;
-    margin-left: -8px;
-    margin-right: -8px;
+    margin-left: -1px;
+    margin-right: -1px;
 }
 
 .router-link:hover {
@@ -96,8 +96,28 @@ html {
     font-size: 0.9em;
 }
 
-.ticket-priority {
+.ticket-priority-high {
     color: red;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+.ticket-priority-low {
+    color: green;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+.ticket-priority-medium {
+    color: orange;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+.ticket-priority-default {
+    color: grey;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+.ticket-priority-next-sprint {
+    color: blue;
     font-weight: bold;
     font-size: 0.9em;
 }

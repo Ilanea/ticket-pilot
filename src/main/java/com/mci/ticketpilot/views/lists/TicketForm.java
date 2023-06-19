@@ -16,8 +16,10 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
@@ -42,6 +44,9 @@ public class TicketForm extends VerticalLayout {
     private PilotService service;
     private Project selectedProject;
     private Users selectedUser;
+
+
+
     private TextField ticketName = new TextField("Title");
     private DatePicker dueDate = new DatePicker("Due date");
     private ComboBox<TicketPriority> ticketPriority = new ComboBox<>("Priority");
@@ -55,7 +60,8 @@ public class TicketForm extends VerticalLayout {
     private Button close = new Button("Cancel");
     private List<Ticket> tickets = new ArrayList<>();
     private Registration saveListener;
-
+    private TextArea asigneeField = new TextArea("Assignee");
+    private TextArea authorField = new TextArea("Author");
 
     Binder<Ticket> binder = new BeanValidationBinder<>(Ticket.class);
 
@@ -84,6 +90,7 @@ public class TicketForm extends VerticalLayout {
         linkedUser.setReadOnly(true);
         linkedUser.setPrefixComponent(VaadinIcon.SEARCH.create());
 
+
         linkedProject.setItems(projects);
         linkedUser.setItems(users);
 
@@ -109,9 +116,12 @@ public class TicketForm extends VerticalLayout {
         LocalDate now = LocalDate.now(ZoneId.systemDefault());
         dueDate.setMin(now);
 
+        asigneeField.setReadOnly(true);
+        authorField.setReadOnly(true);
+
 
         FormLayout formLayout = new FormLayout();
-        formLayout.add(ticketName, ticketStatus, ticketPriority, dueDate, ticketDescription, linkedProject, linkedUser);
+        formLayout.add(ticketName, ticketStatus, ticketPriority, dueDate, ticketDescription, linkedProject, linkedUser,authorField , asigneeField);
         formLayout.setColspan(ticketName, 2);
         formLayout.setColspan(ticketDescription, 2);
 
@@ -160,6 +170,7 @@ public class TicketForm extends VerticalLayout {
             if(ticket.getTicketCreationDate() == null){
                 ticket.setTicketCreationDate(LocalDate.now());
                 ticket.setTicketLastUpdateDate(LocalDate.now());
+                ticket.setAuthor(SecurityUtils.getLoggedInUser());
             } else {
                 ticket.setTicketLastUpdateDate(LocalDate.now());
             }
@@ -189,6 +200,10 @@ public class TicketForm extends VerticalLayout {
             binder.setBean(ticket);
 
             if (!isNew) {
+              
+                asigneeField.setValue(ticket.getAssignee() != null ? "\uD83D\uDC64 " +  ticket.getAssignee().getFirstName() + " " + ticket.getAssignee().getLastName()+ "\n✉ " +  ticket.getAssignee().getEmail() + "\n\uD83D\uDD54 " + ticket.getTicketLastUpdateDate() +" (assigned)": "N/A");
+                authorField.setValue(ticket.getAuthor() != null ?  "\uD83D\uDC64 " + ticket.getAuthor().getFirstName()+ " " + ticket.getAuthor().getLastName() + "\n✉ " + ticket.getAuthor().getEmail() + "\n\uD83D\uDD54 " + ticket.getTicketCreationDate() + " (created)": "N/A");
+              
                 if(selectedUser != null){
                     linkedUser.setTooltipText(selectedUser.getEmail());
                 }

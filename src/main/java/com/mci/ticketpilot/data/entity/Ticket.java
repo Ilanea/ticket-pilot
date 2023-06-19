@@ -43,6 +43,11 @@ public class Ticket extends AbstractEntity {
     @JoinColumn(name="user_id", referencedColumnName = "id")
     private Users assignee;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="author_id", referencedColumnName = "id")
+    private Users author;
+
+
     // One ticket can have multiple comments
     @OneToMany(mappedBy = "ticket", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
@@ -100,6 +105,15 @@ public class Ticket extends AbstractEntity {
     public void setAssignee(Users user) {
         this.assignee = user;
     }
+
+    public Users getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Users author) {
+        this.author = author;
+    }
+
 
     public List<Comment> getComments() {
         return comments;
