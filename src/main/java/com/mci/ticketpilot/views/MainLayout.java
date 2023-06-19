@@ -97,32 +97,32 @@ public class MainLayout extends AppLayout {
         header.setWidthFull();
 
         Image dashboardIcon = new Image("images/homeicon.png", "Dashboard");
-        dashboardIcon.setHeight("25px");
-        dashboardIcon.setWidth("25px");
+        dashboardIcon.setHeight("15px");
+        dashboardIcon.setWidth("15px");
 
         Image userIcon = new Image("images/usericon.png", "Users");
-        userIcon.setHeight("25px");
-        userIcon.setWidth("25px");
+        userIcon.setHeight("15px");
+        userIcon.setWidth("15px");
 
         Image projectIcon = new Image("images/projecticon.png", "Projects");
-        projectIcon.setHeight("25px");
-        projectIcon.setWidth("25px");
+        projectIcon.setHeight("15px");
+        projectIcon.setWidth("15px");
 
         Image ticketIcon = new Image("images/ticketicon.png", "Tickets");
-        ticketIcon.setHeight("25px");
-        ticketIcon.setWidth("25px");
+        ticketIcon.setHeight("15px");
+        ticketIcon.setWidth("15px");
 
         Image calendarIcon = new Image("images/calendaricon.png", "Calendar");
-        calendarIcon.setHeight("25px");
-        calendarIcon.setWidth("25px");
+        calendarIcon.setHeight("15px");
+        calendarIcon.setWidth("15px");
 
         Image helpIcon = new Image("images/helpicon.png", "Help");
-        helpIcon.setHeight("25px");
-        helpIcon.setWidth("25px");
+        helpIcon.setHeight("15px");
+        helpIcon.setWidth("15px");
 
         Image kanbanIcon = new Image("images/kanbanicon.png", "Kanban");
-        kanbanIcon.setHeight("25px");
-        kanbanIcon.setWidth("25px");
+        kanbanIcon.setHeight("15px");
+        kanbanIcon.setWidth("15px");
 
 
 

@@ -29,6 +29,9 @@ public class TicketDocument extends HorizontalLayout {
         this.service = service;
         this.currentTicket = ticket;
 
+        setSizeFull();
+        getStyle().set("border", "1px solid #9E9E9E");
+
         int maxFileSizeInBytes = 10 * 1024 * 1024;
         upload.setMaxFileSize(maxFileSizeInBytes);
 

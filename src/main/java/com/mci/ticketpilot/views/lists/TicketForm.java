@@ -22,6 +22,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextAreaVariant;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
@@ -60,7 +61,7 @@ public class TicketForm extends VerticalLayout {
     private Button close = new Button("Cancel");
     private List<Ticket> tickets = new ArrayList<>();
     private Registration saveListener;
-    private TextArea asigneeField = new TextArea("Assignee");
+    private TextArea assigneeField = new TextArea("Assignee");
     private TextArea authorField = new TextArea("Author");
 
     Binder<Ticket> binder = new BeanValidationBinder<>(Ticket.class);
@@ -116,12 +117,16 @@ public class TicketForm extends VerticalLayout {
         LocalDate now = LocalDate.now(ZoneId.systemDefault());
         dueDate.setMin(now);
 
-        asigneeField.setReadOnly(true);
+        assigneeField.setReadOnly(true);
+        assigneeField.setClassName("asignee-field");
+        assigneeField.addThemeVariants(TextAreaVariant.LUMO_SMALL);
         authorField.setReadOnly(true);
+        authorField.setClassName("author-field");
+        authorField.addThemeVariants(TextAreaVariant.LUMO_SMALL);
 
 
         FormLayout formLayout = new FormLayout();
-        formLayout.add(ticketName, ticketStatus, ticketPriority, dueDate, ticketDescription, linkedProject, linkedUser,authorField , asigneeField);
+        formLayout.add(ticketName, ticketStatus, ticketPriority, dueDate, ticketDescription, linkedProject, linkedUser, authorField , assigneeField);
         formLayout.setColspan(ticketName, 2);
         formLayout.setColspan(ticketDescription, 2);
 
@@ -201,8 +206,8 @@ public class TicketForm extends VerticalLayout {
 
             if (!isNew) {
               
-                asigneeField.setValue(ticket.getAssignee() != null ? "\uD83D\uDC64 " +  ticket.getAssignee().getFirstName() + " " + ticket.getAssignee().getLastName()+ "\n✉ " +  ticket.getAssignee().getEmail() + "\n\uD83D\uDD54 " + ticket.getTicketLastUpdateDate() +" (assigned)": "N/A");
-                authorField.setValue(ticket.getAuthor() != null ?  "\uD83D\uDC64 " + ticket.getAuthor().getFirstName()+ " " + ticket.getAuthor().getLastName() + "\n✉ " + ticket.getAuthor().getEmail() + "\n\uD83D\uDD54 " + ticket.getTicketCreationDate() + " (created)": "N/A");
+                assigneeField.setValue(ticket.getAssignee() != null ? "\uD83D\uDC64 " +  ticket.getAssignee().toString() + "\n✉ " +  ticket.getAssignee().getEmail() + "\n\uD83D\uDD54 " + ticket.getTicketLastUpdateDate() +" (assigned)": "N/A");
+                authorField.setValue(ticket.getAuthor() != null ?  "\uD83D\uDC64 " + ticket.getAuthor().toString() + "\n✉ " + ticket.getAuthor().getEmail() + "\n\uD83D\uDD54 " + ticket.getTicketCreationDate() + " (created)": "N/A");
               
                 if(selectedUser != null){
                     linkedUser.setTooltipText(selectedUser.getEmail());
