@@ -61,7 +61,7 @@ public class TicketForm extends VerticalLayout {
     private List<Ticket> tickets = new ArrayList<>();
     private Registration saveListener;
 
-    private TextArea asigneeField = new TextArea("Asignee");
+    private TextArea asigneeField = new TextArea("Assignee");
     private TextArea authorField = new TextArea("Author");
 
 
@@ -205,7 +205,7 @@ public class TicketForm extends VerticalLayout {
 
 
 
-            asigneeField.setValue(ticket.getAssignee() != null ? "\uD83D\uDC64 " +  ticket.getAssignee().getFirstName() + " " + ticket.getAssignee().getLastName()+ "\n✉ " +  ticket.getAssignee().getEmail() + "\n\uD83D\uDD54 " + ticket.getTicketLastUpdateDate() +" (asigned)": "N/A");
+            asigneeField.setValue(ticket.getAssignee() != null ? "\uD83D\uDC64 " +  ticket.getAssignee().getFirstName() + " " + ticket.getAssignee().getLastName()+ "\n✉ " +  ticket.getAssignee().getEmail() + "\n\uD83D\uDD54 " + ticket.getTicketLastUpdateDate() +" (assigned)": "N/A");
 
             authorField.setValue(ticket.getAuthor() != null ?  "\uD83D\uDC64 " + ticket.getAuthor().getFirstName()+ " " + ticket.getAuthor().getLastName() + "\n✉ " + ticket.getAuthor().getEmail() + "\n\uD83D\uDD54 " + ticket.getTicketCreationDate() + " (created)": "N/A");
 
