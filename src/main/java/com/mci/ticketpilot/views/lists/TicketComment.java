@@ -35,7 +35,7 @@ public class TicketComment extends VerticalLayout {
             commentDisplayContainer.setWidthFull();
             commentDisplayContainer.getStyle().set("margin-top", "10px");
             commentDisplayContainer.getStyle().set("overflow-y", "auto");
-            commentDisplayContainer.getStyle().set("height", "250px");
+            commentDisplayContainer.getStyle().set("height", "420px");
             commentDisplayContainer.add(commentDisplay);
             add(commentDisplayContainer);
         } else {

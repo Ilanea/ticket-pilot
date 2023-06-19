@@ -21,11 +21,13 @@ html {
 }
 
 .router-link:hover {
+    text-decoration: none;
     background-color: lightskyblue;
     color: white;
 }
 
 .router-link:active {
+    text-decoration: none;
     background-color: #f5f5f5;
 }
 
@@ -50,6 +52,10 @@ html {
 .applybutton-class {
     margin-top: 37px;
     width: 30%;
+}
+
+.comments-container {
+    height: 800px;
 }
 
 .filters-class {
