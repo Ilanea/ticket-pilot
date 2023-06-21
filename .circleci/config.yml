@@ -14,6 +14,10 @@ jobs:
       MAVEN_CLI_OPTS: "--batch-mode"
     steps:
       - checkout
+      - run:
+          name: Add Vaadin Server License
+          command: |
+            echo ${$VAADIN_LICENSE} | base64 --decode --ignore-garbage > ~/.vaadin/offlineKey
       - run: mvn $MAVEN_CLI_OPTS clean package -Pproduction -e
       - run: mvn test -e
 
@@ -21,6 +25,10 @@ jobs:
     executor: gcp-gcr/default
     steps:
       - checkout
+      - run:
+          name: Add Vaadin Server License
+          command: |
+            echo ${$VAADIN_LICENSE} | base64 --decode --ignore-garbage > ~/.vaadin/offlineKey
       - run:
           name: Create ticketpilot.properties
           command: |
