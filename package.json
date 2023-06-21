@@ -18,8 +18,10 @@
     "@vaadin/app-layout": "24.0.2",
     "@vaadin/avatar": "24.0.2",
     "@vaadin/avatar-group": "24.0.2",
+    "@vaadin/board": "24.0.2",
     "@vaadin/bundles": "24.0.2",
     "@vaadin/button": "24.0.2",
+    "@vaadin/charts": "24.0.2",
     "@vaadin/checkbox": "24.0.2",
     "@vaadin/checkbox-group": "24.0.2",
     "@vaadin/combo-box": "24.0.2",
@@ -27,6 +29,8 @@
     "@vaadin/component-base": "24.0.2",
     "@vaadin/confirm-dialog": "24.0.2",
     "@vaadin/context-menu": "24.0.2",
+    "@vaadin/cookie-consent": "24.0.2",
+    "@vaadin/crud": "24.0.2",
     "@vaadin/custom-field": "24.0.2",
     "@vaadin/date-picker": "24.0.2",
     "@vaadin/date-time-picker": "24.0.2",
@@ -37,6 +41,7 @@
     "@vaadin/field-highlighter": "24.0.2",
     "@vaadin/form-layout": "24.0.2",
     "@vaadin/grid": "24.0.2",
+    "@vaadin/grid-pro": "24.0.2",
     "@vaadin/horizontal-layout": "24.0.2",
     "@vaadin/icon": "24.0.2",
     "@vaadin/icons": "24.0.2",
@@ -46,6 +51,7 @@
     "@vaadin/list-box": "24.0.2",
     "@vaadin/lit-renderer": "24.0.2",
     "@vaadin/login": "24.0.2",
+    "@vaadin/map": "24.0.2",
     "@vaadin/menu-bar": "24.0.2",
     "@vaadin/message-input": "24.0.2",
     "@vaadin/message-list": "24.0.2",
@@ -57,6 +63,7 @@
     "@vaadin/polymer-legacy-adapter": "24.0.2",
     "@vaadin/progress-bar": "24.0.2",
     "@vaadin/radio-group": "24.0.2",
+    "@vaadin/rich-text-editor": "24.0.2",
     "@vaadin/router": "1.7.5",
     "@vaadin/scroller": "24.0.2",
     "@vaadin/select": "24.0.2",
@@ -79,7 +86,8 @@
     "date-fns": "2.29.3",
     "lit": "2.6.1",
     "moment": "2.29.4",
-    "moment-timezone": "0.5.40"
+    "moment-timezone": "0.5.40",
+    "proj4": "2.8.1"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "5.0.2",
@@ -115,8 +123,10 @@
       "@vaadin/app-layout": "24.0.2",
       "@vaadin/avatar": "24.0.2",
       "@vaadin/avatar-group": "24.0.2",
+      "@vaadin/board": "24.0.2",
       "@vaadin/bundles": "24.0.2",
       "@vaadin/button": "24.0.2",
+      "@vaadin/charts": "24.0.2",
       "@vaadin/checkbox": "24.0.2",
       "@vaadin/checkbox-group": "24.0.2",
       "@vaadin/combo-box": "24.0.2",
@@ -124,6 +134,8 @@
       "@vaadin/component-base": "24.0.2",
       "@vaadin/confirm-dialog": "24.0.2",
       "@vaadin/context-menu": "24.0.2",
+      "@vaadin/cookie-consent": "24.0.2",
+      "@vaadin/crud": "24.0.2",
       "@vaadin/custom-field": "24.0.2",
       "@vaadin/date-picker": "24.0.2",
       "@vaadin/date-time-picker": "24.0.2",
@@ -134,6 +146,7 @@
       "@vaadin/field-highlighter": "24.0.2",
       "@vaadin/form-layout": "24.0.2",
       "@vaadin/grid": "24.0.2",
+      "@vaadin/grid-pro": "24.0.2",
       "@vaadin/horizontal-layout": "24.0.2",
       "@vaadin/icon": "24.0.2",
       "@vaadin/icons": "24.0.2",
@@ -143,6 +156,7 @@
       "@vaadin/list-box": "24.0.2",
       "@vaadin/lit-renderer": "24.0.2",
       "@vaadin/login": "24.0.2",
+      "@vaadin/map": "24.0.2",
       "@vaadin/menu-bar": "24.0.2",
       "@vaadin/message-input": "24.0.2",
       "@vaadin/message-list": "24.0.2",
@@ -154,6 +168,7 @@
       "@vaadin/polymer-legacy-adapter": "24.0.2",
       "@vaadin/progress-bar": "24.0.2",
       "@vaadin/radio-group": "24.0.2",
+      "@vaadin/rich-text-editor": "24.0.2",
       "@vaadin/router": "1.7.5",
       "@vaadin/scroller": "24.0.2",
       "@vaadin/select": "24.0.2",
@@ -176,7 +191,8 @@
       "date-fns": "2.29.3",
       "lit": "2.6.1",
       "moment": "2.29.4",
-      "moment-timezone": "0.5.40"
+      "moment-timezone": "0.5.40",
+      "proj4": "2.8.1"
     },
     "devDependencies": {
       "@rollup/plugin-replace": "5.0.2",
@@ -194,7 +210,7 @@
       "workbox-core": "6.5.4",
       "workbox-precaching": "6.5.4"
     },
-    "hash": "33f6ec65821740936d80fc6f95a8e1634ec8f89f63a5eb229fe8d82955c23acb"
+    "hash": "23eda0b4b4f92d5f69b9efa2d894e1e4504792350a177d10f18f6274efbd8700"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
@@ -274,6 +290,14 @@
     "@fullcalendar/daygrid": "$@fullcalendar/daygrid",
     "moment-timezone": "$moment-timezone",
     "@fullcalendar/multimonth": "$@fullcalendar/multimonth",
-    "@fullcalendar/moment": "$@fullcalendar/moment"
+    "@fullcalendar/moment": "$@fullcalendar/moment",
+    "@vaadin/board": "$@vaadin/board",
+    "@vaadin/charts": "$@vaadin/charts",
+    "@vaadin/cookie-consent": "$@vaadin/cookie-consent",
+    "@vaadin/crud": "$@vaadin/crud",
+    "@vaadin/grid-pro": "$@vaadin/grid-pro",
+    "@vaadin/map": "$@vaadin/map",
+    "@vaadin/rich-text-editor": "$@vaadin/rich-text-editor",
+    "proj4": "$proj4"
   }
 }
