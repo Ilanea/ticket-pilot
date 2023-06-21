@@ -27,11 +27,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Add Vaadin Server License
-          command: |
-            mkdir ~/.vaadin
-            echo ${VAADIN_LICENSE} > ~/.vaadin/offlineKey
-      - run:
           name: Create ticketpilot.properties
           command: |
             echo "logging.level.org.atmosphere = warn" > $CIRCLE_WORKING_DIRECTORY/src/main/resources/ticketpilot.properties;
@@ -47,6 +42,7 @@ jobs:
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
           image: ticket-pilot
+          extra_build_args: VAADIN_OFFLINE_KEY=${VAADIN_LICENSE}
           no_output_timeout: 20m
           registry-url: eu.gcr.io
       - gcp-gcr/push-image:
