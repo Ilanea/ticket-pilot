@@ -18,7 +18,7 @@ COPY --chown=myuser:myuser src src
 COPY --chown=myuser:myuser frontend frontend
 
 # Build the production package, assuming that we validated the version before so no need for running tests again.
-RUN VAADIN_OFFLINE_KEY=${VAADIN_OFFLINE_KEY} mvn clean package -DskipTests -Pproduction
+RUN VAADIN_OFFLINE_KEY=[${VAADIN_OFFLINE_KEY}] mvn clean package -DskipTests -Pproduction
 
 # Running stage: the part that is used for running the application
 FROM maven:3.8.1-openjdk-17-slim
