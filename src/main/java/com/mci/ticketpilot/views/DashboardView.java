@@ -67,15 +67,12 @@ public class DashboardView extends VerticalLayout {
     private Chart statusPieChart;
     private Chart createTicketsbyDayBarChart;
     private Chart createTicketsByMonthLineChart;
-    private Board boardChart;
     private Chart createTicketsByUserBarChart;
     private VerticalLayout userLayout = new VerticalLayout();
-    private Component oldUserlayout;
     private Button applyFilterButton;
     private Accordion accordion = new Accordion();
     DashboardProjects dashboardProjects;
     DashboardTickets dashboardTickets;
-    HorizontalLayout layout;
 
     @Autowired
     public DashboardView(PilotService service) {
@@ -83,14 +80,18 @@ public class DashboardView extends VerticalLayout {
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
         this.service = service;
+
         // Initialize the DatePicker
         this.fromFilter = new DatePicker();
         this.fromFilter.setLabel("From date");
-        this.fromFilter.setValue(LocalDate.now());
+        this.fromFilter.setValue(LocalDate.now().minusDays(30));
         // Do the same for toDate if it's not initialized yet
         this.toFilter = new DatePicker();
         this.toFilter.setLabel("To date");
-        this.toFilter.setValue(LocalDate.now());
+        this.toFilter.setValue(LocalDate.now().plusDays(1));
+
+        this.fromDate = fromFilter.getValue();
+        this.toDate = toFilter.getValue();
 
         initCharts();
 
@@ -127,7 +128,7 @@ public class DashboardView extends VerticalLayout {
 
     private void initCharts() {
         createTicketsbyDayBarChart = createTicketsbyDayBarChart();
-        createTicketsByMonthLineChart = createTicketsByMonthLineChart(); // add this line
+        createTicketsByMonthLineChart = createTicketsByMonthLineChart();
         statusPieChart = createStatusPieChart();
         createTicketsByUserBarChart = createTicketsByUserBarChart();
 
@@ -140,8 +141,8 @@ public class DashboardView extends VerticalLayout {
         createTicketsbyDayBarChart.setWidth("850px");
         createTicketsByUserBarChart.setHeight("400px");
         createTicketsByUserBarChart.setWidth("850px");
-        createTicketsByMonthLineChart.setHeight("400px"); // add this line
-        createTicketsByMonthLineChart.setWidth("850px"); // add this line
+        createTicketsByMonthLineChart.setHeight("400px");
+        createTicketsByMonthLineChart.setWidth("850px");
     }
 
     private void updateContent() {
@@ -203,18 +204,13 @@ public class DashboardView extends VerticalLayout {
     }
 
     private Component createUserBoard() {
-        userLayout.removeAll(); // clears the layout
+        userLayout.removeAll();
 
         HorizontalLayout barLayout = new HorizontalLayout();
         HorizontalLayout chartLayout = new HorizontalLayout();
         HorizontalLayout ChartsTitelLayout = new HorizontalLayout();
-        // Move the initialization of the variables before their usage
-        fromFilter = new DatePicker();
-        fromFilter.setValue(LocalDate.now().minusDays(30));
-        fromFilter.setLabel("Filter From Date");
-        toFilter = new DatePicker();
-        toFilter.setValue(LocalDate.now().plusDays(1));
-        toFilter.setLabel("Filter To Date");
+
+
 
         applyFilterButton = new Button("Apply Filter");
         applyFilterButton.addClassName("applybutton-class");
@@ -223,10 +219,6 @@ public class DashboardView extends VerticalLayout {
             toDate = toFilter.getValue();
             updateContent();
         });
-        userLayout.add(new H1("Charts"));
-
-
-
 
         HorizontalLayout filters = new HorizontalLayout();
         filters.addClassName("filters");
@@ -237,9 +229,6 @@ public class DashboardView extends VerticalLayout {
         barLayout.add(statusPieChart, createTicketsByUserBarChart);
 
         userLayout.add(ChartsTitelLayout, chartLayout , barLayout);
-
-        add(userLayout); // add userLayout to the current layout
-
 
         return userLayout;
     }
@@ -424,17 +413,9 @@ public class DashboardView extends VerticalLayout {
      * @return
      */
     private Chart createTicketsByMonthLineChart() {
-        // Get dates from the DatePicker components
         LocalDate fromDate = fromFilter.getValue();
         LocalDate toDate = toFilter.getValue();
 
-        // If fromDate or toDate is null, set them to defaults (optional)
-        if (fromDate == null) {
-            fromDate = LocalDate.of(Year.now().getValue(), 1, 1); // start of current year
-        }
-        if (toDate == null) {
-            toDate = LocalDate.now(); // current date
-        }
 
         Map<Month, Long> ticketCountByMonth = getTicketCountsByMonth(service.getTicketsperDate(fromDate, toDate));
 
