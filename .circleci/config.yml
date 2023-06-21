@@ -24,6 +24,8 @@ jobs:
 
   build-and-push:
     executor: gcp-gcr/default
+    environment:
+      VAADIN_OFFLINE_KEY: $VAADIN_LICENSE
     steps:
       - checkout
       - run:
@@ -42,7 +44,7 @@ jobs:
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
           image: ticket-pilot
-          extra_build_args: --build-arg VAADIN_OFFLINE_KEY=$VAADIN_LICENSE
+          extra_build_args: --build-arg VAADIN_OFFLINE_KEY=$VAADIN_OFFLINE_KEY
           no_output_timeout: 20m
           registry-url: eu.gcr.io
       - gcp-gcr/push-image:
