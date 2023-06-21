@@ -17,6 +17,9 @@ RUN mvn dependency:go-offline -Pproduction
 COPY --chown=myuser:myuser src src
 COPY --chown=myuser:myuser frontend frontend
 
+ARG VAADIN_OFFLINE_KEY
+ENV VAADIN_OFFLINE_KEY=${VAADIN_OFFLINE_KEY}
+
 # Build the production package, assuming that we validated the version before so no need for running tests again.
 RUN VAADIN_OFFLINE_KEY=${VAADIN_OFFLINE_KEY} mvn clean package -DskipTests -Pproduction
 
