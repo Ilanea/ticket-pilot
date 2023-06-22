@@ -1,5 +1,6 @@
 package com.mci.ticketpilot.views;
 
+import com.vaadin.flow.component.notification.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,11 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
         login.getElement().getThemeList().add("dark");
         login.setAction("login");
+
+        login.addForgotPasswordListener(e -> {
+            Notification.show("Please contact the admin under admin@test.com. \nUse your Ticket Pilot email when contacting.", 10000, Notification.Position.BOTTOM_CENTER);
+        });
+
 
         add(new H1("Ticket Pilot | YA BOI"), login);
     }
