@@ -17,8 +17,6 @@ import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.lumo.Lumo;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +25,10 @@ import org.slf4j.LoggerFactory;
  */
 
 public class MainLayout extends AppLayout {
-    private final SecurityService securityService;
+    private SecurityService securityService ;
     private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
 
-    public MainLayout(@Autowired SecurityService securityService) {
+    public MainLayout(SecurityService securityService) {
         this.securityService = securityService;
         createHeaderAndDrawer();
     }
