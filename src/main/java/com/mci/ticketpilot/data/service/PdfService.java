@@ -1,4 +1,5 @@
 package com.mci.ticketpilot.data.service;
+
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -7,7 +8,6 @@ import com.mci.ticketpilot.data.entity.Project;
 import com.mci.ticketpilot.data.entity.Ticket;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 public class PdfService {
@@ -19,14 +19,21 @@ public class PdfService {
         Document document = new Document(pdf);
 
         document.add(new Paragraph("Stats"));
+
         document.add(new Paragraph("Projects:"));
         for (Project project : userProjects) {
-            document.add(new Paragraph(project.getProjectName()));
+            String projectName = project.getProjectName();
+            if (projectName != null && !projectName.isEmpty()) {
+                document.add(new Paragraph(projectName));
+            }
         }
 
         document.add(new Paragraph("Tickets:"));
         for (Ticket ticket : userTickets) {
-            document.add(new Paragraph(ticket.getTicketName()));
+            String ticketName = ticket.getTicketName();
+            if (ticketName != null && !ticketName.isEmpty()) {
+                document.add(new Paragraph(ticketName));
+            }
         }
 
         document.close();

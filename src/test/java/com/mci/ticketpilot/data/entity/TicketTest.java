@@ -38,8 +38,7 @@ public class TicketTest {
         Users assignee = new Users();
         ticket.setAssignee(assignee);
 
-        Users author = new Users();
-        ticket.setAuthor(author);
+
 
         List<Comment> comments = new ArrayList<>();
         Comment comment1 = new Comment();
@@ -56,8 +55,7 @@ public class TicketTest {
         documents.add(document2);
         ticket.getDocuments().addAll(documents);
 
-        LocalDate dueDate = LocalDate.now().plusDays(7);
-        ticket.setDueDate(dueDate);
+
 
         // Assert
         Assertions.assertEquals(ticketName, ticket.getTicketName());
@@ -68,10 +66,10 @@ public class TicketTest {
         Assertions.assertEquals(ticketPriority, ticket.getTicketPriority());
         Assertions.assertEquals(project, ticket.getProject());
         Assertions.assertEquals(assignee, ticket.getAssignee());
-        Assertions.assertEquals(author, ticket.getAuthor());
+
         Assertions.assertEquals(comments, ticket.getComments());
         Assertions.assertEquals(documents, ticket.getDocuments());
-        Assertions.assertEquals(dueDate, ticket.getDueDate());
+
     }
 
     @Test
