@@ -2,9 +2,7 @@ package com.mci.ticketpilot.data.entity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class UsersTest {
@@ -21,7 +19,6 @@ public class UsersTest {
         UserRole userRole = UserRole.USER;
         Set<Project> projects = new HashSet<>();
         Set<Ticket> tickets = new HashSet<>();
-        Document document = new Document();
 
         // Act
         user.setFirstName(firstName);
@@ -32,7 +29,6 @@ public class UsersTest {
         user.setUserRole(userRole);
         user.setProject(projects);
         user.setUserTickets(tickets);
-        user.setDocuments(document);
 
         // Assert
         Assertions.assertEquals(firstName, user.getFirstName());
@@ -43,7 +39,6 @@ public class UsersTest {
         Assertions.assertEquals(userRole, user.getUserRole());
         Assertions.assertEquals(projects, user.getProject());
         Assertions.assertEquals(tickets, user.getUserTickets());
-        Assertions.assertEquals(document, user.getDocuments());
     }
 
     @Test
