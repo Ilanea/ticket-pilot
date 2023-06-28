@@ -117,7 +117,7 @@ public class Users extends AbstractEntity {
         return documents;
     }
 
-    public void setDocuments(List<Document> documents) {
-        this.documents = documents;
+    public void setDocuments(Document document) {
+        this.documents.add(document);
     }
 }
