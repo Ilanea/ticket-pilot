@@ -1,17 +1,17 @@
 package com.mci.ticketpilot.views;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.testbench.TestBenchTestCase;
-import org.junit.Assert;
-import org.junit.Test;
+import com.vaadin.testbench.unit.UIUnitTest;
+import org.junit.jupiter.api.*;
 
-public class LoginViewTest extends TestBenchTestCase {
+
+public class LoginViewTest extends UIUnitTest {
 
     @Test
     public void loginViewShouldHaveLoginForm() {
         UI ui = new UI();
         LoginView loginView = new LoginView();
         ui.add(loginView);
-        Assert.assertEquals(2, loginView.getChildren().count());  //H1 and LoginForm
+        Assertions.assertEquals(2, loginView.getChildren().count());
     }
 }

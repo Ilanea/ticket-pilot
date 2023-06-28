@@ -21,7 +21,7 @@ public class UsersTest {
         UserRole userRole = UserRole.USER;
         Set<Project> projects = new HashSet<>();
         Set<Ticket> tickets = new HashSet<>();
-        List<Document> documents = new ArrayList<>();
+        Document document = new Document();
 
         // Act
         user.setFirstName(firstName);
@@ -32,7 +32,7 @@ public class UsersTest {
         user.setUserRole(userRole);
         user.setProject(projects);
         user.setUserTickets(tickets);
-        user.setDocuments(documents);
+        user.setDocuments(document);
 
         // Assert
         Assertions.assertEquals(firstName, user.getFirstName());
@@ -43,7 +43,7 @@ public class UsersTest {
         Assertions.assertEquals(userRole, user.getUserRole());
         Assertions.assertEquals(projects, user.getProject());
         Assertions.assertEquals(tickets, user.getUserTickets());
-        Assertions.assertEquals(documents, user.getDocuments());
+        Assertions.assertEquals(document, user.getDocuments());
     }
 
     @Test

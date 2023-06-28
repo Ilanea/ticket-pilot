@@ -29,7 +29,7 @@ public class SendMailServiceTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
         sendGrid = Mockito.mock(SendGrid.class);
-        sendMailService = new SendMailService(sendGrid);
+        sendMailService = new SendMailService();
     }
 
 
