@@ -15,16 +15,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Create ticketpilot.properties
+          name: Create ticketpilot.properties for tests
           command: |
             echo "logging.level.org.atmosphere = warn" > src/main/resources/ticketpilot.properties;
-            echo "spring.datasource.url=jdbc:postgresql:///$DATABASE_NAME?cloudSqlInstance=$POSTGRESQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$POSTGRESQL_USER_NAME&password=$POSTGRESQL_USER_PASSWORD" >> src/main/resources/ticketpilot.properties;
-            echo "spring.jpa.properties.hibernate.default_schema=public" >> src/main/resources/ticketpilot.properties;
-            echo "spring.datasource.driver-class-name=org.postgresql.Driver" >> src/main/resources/ticketpilot.properties;
-            echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> src/main/resources/ticketpilot.properties;
-            echo "spring.jpa.defer-datasource-initialization=true" >> src/main/resources/ticketpilot.properties;
-            echo "#spring.jpa.hibernate.ddl-auto=create" >> src/main/resources/ticketpilot.properties;
-            echo "#spring.sql.init.mode=always" >> src/main/resources/ticketpilot.properties;
             echo "sendgrid.api.key=$SENDGRID_API_KEY" >> src/main/resources/ticketpilot.properties;
             echo "sendgrid.sender.email=$SENDGRID_SENDER" >> src/main/resources/ticketpilot.properties;
       - run:
