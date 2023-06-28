@@ -6,9 +6,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 public class Ticket extends AbstractEntity {
@@ -54,6 +52,7 @@ public class Ticket extends AbstractEntity {
 
     @OneToMany(mappedBy = "ticket", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Document> documents = new ArrayList<>();
+
     private LocalDate dueDate;
 
 
@@ -89,6 +88,7 @@ public class Ticket extends AbstractEntity {
     public void setTicketPriority(TicketPriority ticketPriority) {
         this.ticketPriority = ticketPriority;
     }
+
 
     public Project getProject() {
         return ticketProject;

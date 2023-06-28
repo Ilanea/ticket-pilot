@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -29,6 +28,14 @@ public class Project extends AbstractEntity {
     // Each Project can have many Tickets
     @OneToMany(mappedBy = "ticketProject", fetch = FetchType.EAGER)
     private Set<Ticket> projectTickets;
+
+    public Project(String s) {
+        super();
+    }
+
+    public Project() {
+
+    }
 
 
     // Getter and Setter methods

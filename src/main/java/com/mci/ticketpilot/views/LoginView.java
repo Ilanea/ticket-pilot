@@ -12,6 +12,9 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @Route("login")
 @PageTitle("Login | Ticket Pilot")
