@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>com.mci.ticketpilot.data.entity.Users</OriginalElement>
+  <nodes>
+    <node x="-603.0" y="47.708333333333314">com.mci.ticketpilot.data.entity.Comment</node>
+    <node x="-613.0" y="389.0">com.mci.ticketpilot.data.entity.Users</node>
+    <node x="274.3104166666665" y="45.41249999999965">com.mci.ticketpilot.data.entity.TicketPriority</node>
+    <node x="-83.19791666666663" y="-29.291666666666657">com.mci.ticketpilot.data.entity.Ticket</node>
+    <node x="-89.19791666666663" y="769.5104166666667">com.mci.ticketpilot.data.entity.Document</node>
+    <node x="-838.7083333333334" y="489.5">com.mci.ticketpilot.data.entity.UserRole</node>
+    <node x="274.7115660919539" y="102.94941860465117">com.mci.ticketpilot.data.entity.TicketStatus</node>
+    <node x="-282.76041666666663" y="422.0">com.mci.ticketpilot.data.entity.Project</node>
+    <node x="-838.7083333333334" y="554.5416666666672">com.mci.ticketpilot.data.entity.UserStatus</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.mci.ticketpilot.data.entity.Users" target="com.mci.ticketpilot.data.entity.UserRole" relationship="TO_ONE">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Users" target="com.mci.ticketpilot.data.entity.Ticket" relationship="TO_MANY">
+      <point x="2.8421709430404007E-14" y="-6.241389894362456" />
+      <point x="0.0" y="-6.241389894362442" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Users" target="com.mci.ticketpilot.data.entity.Document" relationship="TO_MANY">
+      <point x="0.0" y="-5.852803301564826" />
+      <point x="0.0" y="-5.852803301564791" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Comment" target="com.mci.ticketpilot.data.entity.Ticket" relationship="TO_ONE">
+      <point x="-2.8421709430404007E-14" y="-5.095921457122415" />
+      <point x="0.0" y="-5.095921457122444" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Ticket" target="com.mci.ticketpilot.data.entity.TicketStatus" relationship="TO_ONE">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Users" target="com.mci.ticketpilot.data.entity.UserStatus" relationship="TO_ONE">
+      <point x="-0.5833333333321207" y="65.0416666666672" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Ticket" target="com.mci.ticketpilot.data.entity.Comment" relationship="TO_MANY">
+      <point x="-0.9655575053975127" y="4.905884089924115" />
+      <point x="-0.9655575053974985" y="4.905884089924086" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Ticket" target="com.mci.ticketpilot.data.entity.Document" relationship="TO_MANY">
+      <point x="5.000540628211567" y="0.0" />
+      <point x="5.000540628211581" y="0.0" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Ticket" target="com.mci.ticketpilot.data.entity.Users" relationship="TO_ONE">
+      <point x="2.992628442650471" y="4.005518069393702" />
+      <point x="2.992628442650471" y="4.005518069393702" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Document" target="com.mci.ticketpilot.data.entity.Users" relationship="TO_ONE">
+      <point x="-2.5989712658832786" y="4.271457404576665" />
+      <point x="-2.5989712658832786" y="4.271457404576694" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Document" target="com.mci.ticketpilot.data.entity.Ticket" relationship="TO_ONE">
+      <point x="-4.999459430237891" y="0.07352146220938494" />
+      <point x="-4.999459430237891" y="0.07352146220938494" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Ticket" target="com.mci.ticketpilot.data.entity.Project" relationship="TO_ONE">
+      <point x="5.406667515325324" y="0.0" />
+      <point x="5.4066675153253225" y="0.0" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Users" target="com.mci.ticketpilot.data.entity.Project" relationship="TO_MANY">
+      <point x="0.0" y="-5.005405406983925" />
+      <point x="0.0" y="-5.005405406983918" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Comment" target="com.mci.ticketpilot.data.entity.Users" relationship="TO_ONE">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Project" target="com.mci.ticketpilot.data.entity.Ticket" relationship="TO_MANY">
+      <point x="-4.623920359285433" y="-1.9024616976395805" />
+      <point x="-4.623920359285435" y="-1.9024616976395805" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Project" target="com.mci.ticketpilot.data.entity.Users" relationship="TO_ONE">
+      <point x="-0.23230699676234057" y="4.994600430390335" />
+      <point x="-0.23230699676233257" y="4.994600430390328" />
+    </edge>
+    <edge source="com.mci.ticketpilot.data.entity.Ticket" target="com.mci.ticketpilot.data.entity.TicketPriority" relationship="TO_ONE">
+      <point x="-7.214583333332072" y="-58.26250000000036" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.8292682926829268" showDependencies="true" x="-66.79411764705424" y="447.17647058823525" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>packageLocal</VISIBILITY>
+</Diagram>
+
