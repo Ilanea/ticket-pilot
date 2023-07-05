@@ -25,6 +25,11 @@ Test Installation in Ubuntu:
   ```
   export PATH="$PATH:/opt/apache-maven-3.9.3/bin"
   ```
+- Make sure Java 17 and Maven are installed
+  ```
+  java --version
+  mvn --version
+  ```
 - Clone the repository and run maven in it
   ```
   git clone https://github.com/Ilanea/ticket-pilot
