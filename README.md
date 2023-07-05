@@ -35,10 +35,11 @@ Test Installation in Ubuntu:
   git clone https://github.com/Ilanea/ticket-pilot
   cd ticket-pilot
   cp src/main/resources/application.properties src/main/resources/ticketpilot.properties
-  mvn package install
+  mvn package install -Pproduction -e
   ```
 - Run the created Java file
   ```
   java -jar target/ticketpilot-1.0-SNAPSHOT.jar
   ```
+- The application should now be running on http://localhost:8080
 
