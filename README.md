@@ -27,10 +27,13 @@ Test Installation in Ubuntu:
   ```
 - Clone the repository and run maven in it
   ```
+  git clone https://github.com/Ilanea/ticket-pilot
+  cd ticket-pilot
+  cp src/main/resources/application.properties src/main/resources/ticketpilot.properties
   mvn package install
   ```
 - Run the created Java file
   ```
-  java -jar target/NAME_OF_CREATED_JAR.jar
+  java -jar target/ticketpilot-1.0-SNAPSHOT.jar
   ```
 
